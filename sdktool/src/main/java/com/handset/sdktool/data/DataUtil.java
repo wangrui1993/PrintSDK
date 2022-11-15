@@ -45,7 +45,7 @@ public class DataUtil {
                     @Override
                     public void onNext(List<PrinterDTO> listBaseBean) {
                         list.addAll(listBaseBean);
-                        Log.e("sdfdfd===1", list.toString());
+                        Log.e("sdfdfd===sss1", list.toString());
                     }
 
                     @Override
