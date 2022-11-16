@@ -5,7 +5,7 @@ import androidx.annotation.NonNull;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.handset.sdktool.base.Config;
+import com.handset.sdktool.net.base.NetConfig;
 import com.handset.sdktool.util.DebugLog;
 
 import java.io.IOException;
@@ -33,7 +33,7 @@ public class ApiStore {
 
     private static Retrofit retrofit;
 
-    public static String baseUrl = Config.BASE_IP;
+    public static String baseUrl = NetConfig.BASE_IP;
 
     public static <T> T createApi(Class<T> service) {
         return retrofit.create(service);
@@ -77,8 +77,8 @@ public class ApiStore {
                         cookieStr += cookies.get(i);
                     }
 //                    UserUtil.saveUserCookieId(cookieStr);
-                    Config.COOKIE = cookieStr;
-                    DebugLog.e("cookieStr===" + Config.COOKIE);
+                    NetConfig.COOKIE = cookieStr;
+                    DebugLog.e("cookieStr===" + NetConfig.COOKIE);
                 }
                 return resp;
             }
@@ -87,7 +87,7 @@ public class ApiStore {
             @Override
             public Response intercept(Chain chain) throws IOException {
                 // 设置 Cookie
-                String cookieStr = Config.COOKIE;
+                String cookieStr = NetConfig.COOKIE;
                 DebugLog.e("222cookieStr===" + cookieStr);
                 if (cookieStr != null && cookieStr.length() > 0) {
                     return chain.proceed(chain.request().newBuilder().header("Cookie", cookieStr).build());
@@ -125,7 +125,7 @@ public class ApiStore {
                         cookieStr += cookies.get(i);
                     }
 //                    UserUtil.saveUserCookieId(cookieStr);
-                    Config.COOKIE = cookieStr;
+                    NetConfig.COOKIE = cookieStr;
                 }
                 return resp;
             }
@@ -134,7 +134,7 @@ public class ApiStore {
             @Override
             public Response intercept(Chain chain) throws IOException {
                 // 设置 Cookie
-                String cookieStr = Config.COOKIE;
+                String cookieStr = NetConfig.COOKIE;
                 if (cookieStr != null && cookieStr.length() > 0) {
                     return chain.proceed(chain.request().newBuilder().header("Cookie", cookieStr).build());
                 }

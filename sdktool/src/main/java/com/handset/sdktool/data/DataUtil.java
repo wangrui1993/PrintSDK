@@ -2,18 +2,34 @@ package com.handset.sdktool.data;
 
 import android.content.Context;
 import android.util.Log;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.handset.sdktool.dto.BusinessDTO;
+import com.handset.sdktool.dto.ElementDTO;
+import com.handset.sdktool.dto.PaperDTO;
 import com.handset.sdktool.dto.PrinterDTO;
+import com.handset.sdktool.listener.GetAllBusinessListener;
+import com.handset.sdktool.listener.GetAllPrintListener;
+import com.handset.sdktool.listener.GetAllTemplateListener;
+import com.handset.sdktool.listener.GetElementByBusiness;
+import com.handset.sdktool.listener.GetPaperByPrint;
 import com.handset.sdktool.net.NetUtil;
 import com.handset.sdktool.net.OnResponse;
+import com.handset.sdktool.net.base.BaseBean;
+import com.handset.sdktool.net.base.Bean;
+import com.handset.sdktool.net.base.ModleListBean;
+import com.handset.sdktool.util.DebugLog;
+import com.handset.sdktool.util.GetJsonDataUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
+import okhttp3.RequestBody;
 
 /**
  * @ClassName: DataUtil
@@ -26,32 +42,29 @@ public class DataUtil {
 
     }
 
-    ;
     private static DataUtil dataUtil = new DataUtil();
 
     public static DataUtil getInstance() {
         return dataUtil;
     }
 
+
     /**
-     * 获取所有打印机
+     * 获取业务
      */
-    public List<PrinterDTO> getPrits(Context context) {
-        List<PrinterDTO> list = new ArrayList<>();
-        NetUtil.getInstance().api().getAllPrinter()
+    public void getProfessionalWork(GetAllBusinessListener getAllBusinessListener) {
+        NetUtil.getInstance().api().addServiceInBatches()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new OnResponse<List<PrinterDTO>>() {
+                .subscribe(new OnResponse<List<BusinessDTO>>() {
                     @Override
-                    public void onNext(List<PrinterDTO> listBaseBean) {
-                        list.addAll(listBaseBean);
-                        Log.e("sdfdfd===sss1", list.toString());
+                    public void onNext(List<BusinessDTO> listBaseBean) {
+                        getAllBusinessListener.onSuccess(listBaseBean);
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        Log.e("onError===", e.getMessage() + "===" + e.getLocalizedMessage());
-                        Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
+                        getAllBusinessListener.onError(e);
                     }
 
                     @Override
@@ -59,7 +72,107 @@ public class DataUtil {
 
                     }
                 });
-        return list;
+    }
+
+    /**
+     * 获取业务关联的元素
+     *
+     * @param code
+     */
+    public void getElementByBusiness(String code, GetElementByBusiness getElementByBusiness) {
+        NetUtil.getInstance().api().getElementByBusiness(code)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new OnResponse<List<ElementDTO>>() {
+                    @Override
+                    public void onNext(List<ElementDTO> listBaseBean) {
+                        getElementByBusiness.onSuccess(listBaseBean);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        getElementByBusiness.onError(e);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    /**
+     * 2.13.获取所有模板
+     */
+    public void getAllTemplate(GetAllTemplateListener getAllTemplateListener) {
+        NetUtil.getInstance().api().getAllTemplate()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new OnResponse<List<ModleListBean>>() {
+                    @Override
+                    public void onNext(List<ModleListBean> listBaseBean) {
+                        getAllTemplateListener.onSuccess(listBaseBean);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        getAllTemplateListener.onError(e);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    /**
+     * 获取所有打印机
+     */
+    public void getPrits(GetAllPrintListener getAllPrintListener) {
+        NetUtil.getInstance().api().getAllPrinter()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new OnResponse<List<PrinterDTO>>() {
+                    @Override
+                    public void onNext(List<PrinterDTO> listBaseBean) {
+                        getAllPrintListener.onSuccess(listBaseBean);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        getAllPrintListener.onError(e);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+    /**
+     * 根据打印機获取纸张
+     */
+    public void getPaper(String printerId, GetPaperByPrint getPaperByPrint) {
+        NetUtil.getInstance().api().getPaperByPrinter(printerId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new OnResponse<List<PaperDTO>>() {
+                    @Override
+                    public void onNext(List<PaperDTO> listBaseBean) {
+                        getPaperByPrint.onSuccess(listBaseBean);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        getPaperByPrint.onError(e);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
     }
 
 }

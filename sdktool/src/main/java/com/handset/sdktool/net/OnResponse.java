@@ -1,9 +1,7 @@
 package com.handset.sdktool.net;
 
-import android.widget.Toast;
 
-
-import com.handset.sdktool.base.BaseBean;
+import com.handset.sdktool.net.base.BaseBean;
 
 
 import org.jetbrains.annotations.NotNull;

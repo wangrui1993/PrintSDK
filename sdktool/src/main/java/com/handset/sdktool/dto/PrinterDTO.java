@@ -62,4 +62,15 @@ public class PrinterDTO {
     public void setSupportWidth(double supportWidth) {
         this.supportWidth = supportWidth;
     }
+
+    @Override
+    public String toString() {
+        return "PrinterDTO{" +
+                "id='" + id + '\'' +
+                ", printerName='" + printerName + '\'' +
+                ", printerType='" + printerType + '\'' +
+                ", connectionType='" + connectionType + '\'' +
+                ", supportWidth=" + supportWidth +
+                '}';
+    }
 }

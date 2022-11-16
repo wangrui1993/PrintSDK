@@ -1,4 +1,4 @@
-package com.handset.sdktool.base;
+package com.handset.sdktool.net.base;
 
 
 import com.handset.sdktool.dto.BusinessDTO;

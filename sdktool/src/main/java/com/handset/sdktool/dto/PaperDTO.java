@@ -51,4 +51,14 @@ public class PaperDTO {
     public void setPaperHeight(double paperHeight) {
         this.paperHeight = paperHeight;
     }
+
+    @Override
+    public String toString() {
+        return "PaperDTO{" +
+                "id='" + id + '\'' +
+                ", paperType='" + paperType + '\'' +
+                ", paperWidth=" + paperWidth +
+                ", paperHeight=" + paperHeight +
+                '}';
+    }
 }

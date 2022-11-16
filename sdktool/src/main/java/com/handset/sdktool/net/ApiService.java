@@ -2,10 +2,10 @@ package com.handset.sdktool.net;
 
 
 
-import com.handset.sdktool.base.BaseBean;
-import com.handset.sdktool.base.Bean;
-import com.handset.sdktool.base.Config;
-import com.handset.sdktool.base.ModleListBean;
+import com.handset.sdktool.net.base.BaseBean;
+import com.handset.sdktool.net.base.Bean;
+import com.handset.sdktool.net.base.NetConfig;
+import com.handset.sdktool.net.base.ModleListBean;
 import com.handset.sdktool.dto.BusinessDTO;
 import com.handset.sdktool.dto.ElementDTO;
 import com.handset.sdktool.dto.ModleDTO;
@@ -30,7 +30,7 @@ public interface ApiService {
      * @return
      */
     @Headers({"Content-type:application/json;charset=UTF-8"})
-    @POST(Config.BASE_IP_PLUS + "printtemplate/config/addServiceInBatches")
+    @POST(NetConfig.BASE_IP_PLUS + "printtemplate/config/addServiceInBatches")
     Observable<BaseBean<Bean>> addServiceInBatches(@Body RequestBody body);
 
     /**
@@ -39,7 +39,7 @@ public interface ApiService {
      * @return
      */
     @Headers({"Content-type:application/json;charset=UTF-8"})
-    @GET(Config.BASE_IP_PLUS + "printtemplate/config/getAllService")
+    @GET(NetConfig.BASE_IP_PLUS + "printtemplate/config/getAllService")
     Observable<List<BusinessDTO>> addServiceInBatches();
 
     /**
@@ -48,7 +48,7 @@ public interface ApiService {
      * @return
      */
     @Headers({"Content-type:application/json;charset=UTF-8"})
-    @POST(Config.BASE_IP_PLUS + "printtemplate/config/addPrinterInBatches")
+    @POST(NetConfig.BASE_IP_PLUS + "printtemplate/config/addPrinterInBatches")
     Observable<BaseBean<Bean>> addPrinter(@Body RequestBody body);
 
 
@@ -58,7 +58,7 @@ public interface ApiService {
      * @return
      */
     @Headers({"Content-type:application/json;charset=UTF-8"})
-    @GET(Config.BASE_IP_PLUS + "printtemplate/config/getAllPrinter")
+    @GET(NetConfig.BASE_IP_PLUS + "printtemplate/config/getAllPrinter")
     Observable<List<PrinterDTO>> getAllPrinter();
 
     /**
@@ -67,7 +67,7 @@ public interface ApiService {
      * @return
      */
     @Headers({"Content-type:application/json;charset=UTF-8"})
-    @POST(Config.BASE_IP_PLUS + "printtemplate/config/addPaperInBatches")
+    @POST(NetConfig.BASE_IP_PLUS + "printtemplate/config/addPaperInBatches")
     Observable<BaseBean<Bean>> addPaper(@Body RequestBody body);
 
     /**
@@ -76,7 +76,7 @@ public interface ApiService {
      * @return
      */
     @Headers({"Content-type:application/json;charset=UTF-8"})
-    @POST(Config.BASE_IP_PLUS + "printtemplate/config/addPrinterPaperRelInBatches")
+    @POST(NetConfig.BASE_IP_PLUS + "printtemplate/config/addPrinterPaperRelInBatches")
     Observable<BaseBean<Bean>> addPrinterPaperRelInBatches(@Body RequestBody body);
 
 
@@ -86,7 +86,7 @@ public interface ApiService {
      * @return
      */
     @Headers({"Content-type:application/json;charset=UTF-8"})
-    @POST(Config.BASE_IP_PLUS + "printtemplate/config/addElementInBatches")
+    @POST(NetConfig.BASE_IP_PLUS + "printtemplate/config/addElementInBatches")
     Observable<BaseBean<Bean>> addElementInBatches(@Body RequestBody body);
 
     /**
@@ -95,7 +95,7 @@ public interface ApiService {
      * @return
      */
     @Headers({"Content-type:application/json;charset=UTF-8"})
-    @POST(Config.BASE_IP_PLUS + "printtemplate/config/addBusinessElementRelInBatches")
+    @POST(NetConfig.BASE_IP_PLUS + "printtemplate/config/addBusinessElementRelInBatches")
     Observable<BaseBean<Bean>> addBusinessElementRelInBatches(@Body RequestBody body);
 
     /**
@@ -104,7 +104,7 @@ public interface ApiService {
      * @return
      */
     @Headers({"Content-type:application/json;charset=UTF-8"})
-    @GET(Config.BASE_IP_PLUS + "printtemplate/config/getElementByBusiness")
+    @GET(NetConfig.BASE_IP_PLUS + "printtemplate/config/getElementByBusiness")
     Observable<List<ElementDTO>> getElementByBusiness(@Query("businessCode") String code);
 
 
@@ -114,7 +114,7 @@ public interface ApiService {
      * @return
      */
     @Headers({"Content-type:application/json;charset=UTF-8"})
-    @POST(Config.BASE_IP_PLUS + "printtemplate/template/saveTemplate")
+    @POST(NetConfig.BASE_IP_PLUS + "printtemplate/template/saveTemplate")
     Observable<BaseBean<Bean>> saveTemplate(@Body RequestBody body);
 
     /**
@@ -123,7 +123,7 @@ public interface ApiService {
      * @return
      */
     @Headers({"Content-type:application/json;charset=UTF-8"})
-    @GET(Config.BASE_IP_PLUS + "printtemplate/config/getPaperByPrinter")
+    @GET(NetConfig.BASE_IP_PLUS + "printtemplate/config/getPaperByPrinter")
     Observable<List<PaperDTO>> getPaperByPrinter(@Query("printerId") String printerId);
 
 
@@ -133,7 +133,7 @@ public interface ApiService {
      * @return
      */
     @Headers({"Content-type:application/json;charset=UTF-8"})
-    @GET(Config.BASE_IP_PLUS + "printtemplate/template/getTemplateByBusinessCode")
+    @GET(NetConfig.BASE_IP_PLUS + "printtemplate/template/getTemplateByBusinessCode")
     Observable<List<ModleDTO>> getTemplateByBusinessCode(@Query("businessCode") String businessCode);
 
     /**
@@ -142,7 +142,7 @@ public interface ApiService {
      * @return
      */
     @Headers({"Content-type:application/json;charset=UTF-8"})
-    @GET(Config.BASE_IP_PLUS + "printtemplate/template/getAllTemplate")
+    @GET(NetConfig.BASE_IP_PLUS + "printtemplate/template/getAllTemplate")
     Observable<List<ModleListBean>> getAllTemplate();
 
     /**
@@ -150,7 +150,7 @@ public interface ApiService {
      *
      * @return
      */
-    @DELETE(Config.BASE_IP_PLUS + "printtemplate/template/deleteTemplate")
+    @DELETE(NetConfig.BASE_IP_PLUS + "printtemplate/template/deleteTemplate")
     Observable<BaseBean> deleteModle(@Query("templateId") String templateId);
 
 
@@ -160,7 +160,7 @@ public interface ApiService {
      * @return
      */
     @Headers({"Content-type:application/json;charset=UTF-8"})
-    @GET(Config.BASE_IP_PLUS + "printtemplate/template/getTemplateById")
+    @GET(NetConfig.BASE_IP_PLUS + "printtemplate/template/getTemplateById")
     Observable<ModleDTO> getTemplateById(@Query("templateId") String templateId);
 
 }

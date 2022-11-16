@@ -1,0 +1,56 @@
+[
+  {
+    "printerDTO": {
+      "connectionType": "蓝牙",
+      "id": "1",
+      "printerName": "打印机1",
+      "printerType": "激光",
+      "supportWidth": 80.8
+    },
+    "paperDTOList": [
+      {
+        "id": "1",
+        "paperHeight": 21.0,
+        "paperType": "A4",
+        "paperWidth": 29.7
+      },
+      {
+        "id": "2",
+        "paperHeight": 25.0,
+        "paperType": "A1",
+        "paperWidth": 21.7
+      },
+      {
+        "id": "3",
+        "paperHeight": 30.0,
+        "paperType": "A2",
+        "paperWidth": 20.7
+      }
+    ]
+  },
+  {
+    "printerDTO": {
+      "connectionType": "蓝牙",
+      "id": "2",
+      "printerName": "打印机2",
+      "printerType": "熱敏",
+      "supportWidth": 60.8
+    },
+    "paperDTOList": [
+      {
+        "id": "1",
+        "paperHeight": 21.0,
+        "paperType": "A4",
+        "paperWidth": 29.7
+      },
+      {
+        "id": "4",
+        "paperHeight": 20.0,
+        "paperType": "A1",
+        "paperWidth": 30.0
+      }
+    ]
+  }
+]
+
+

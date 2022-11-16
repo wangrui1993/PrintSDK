@@ -30,7 +30,7 @@ public class ElementDTO {
     }
 
     private String id;
-    private String elementCode;
+    private String elementCode;//元素编码，对应字段code
     private String elementName;//元素名称，对应字段名称
     private String elementDesc;//元素描述，对应字段含义/字段描述
     private String elementType;//（“1”表示文字，“2”表示列表）

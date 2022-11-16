@@ -7,8 +7,27 @@ package com.handset.sdktool.dto;
  * @Description:添加业务
  */
 public class BusinessDTO {
+    public BusinessDTO() {
+    }
+
     /**
-     * servicetype : 入库
+     * @param servicetype 业务的名字
+     */
+    public BusinessDTO(String servicetype) {
+        this(servicetype, null);
+    }
+
+
+    /**
+     * @param servicetype   业务的名字
+     * @param servicetypeNo 业务的唯一标识
+     */
+    public BusinessDTO(String servicetype, String servicetypeNo) {
+        this.servicetype = servicetype;
+    }
+
+    /**
+     * servicetype : 入库单
      * servicetypeNo : 1
      */
     private String servicetype;
