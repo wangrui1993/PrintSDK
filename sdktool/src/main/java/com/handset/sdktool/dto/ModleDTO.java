@@ -1,6 +1,7 @@
 package com.handset.sdktool.dto;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -186,7 +187,38 @@ public class ModleDTO implements Serializable {
         private String templateId;
         private String aboveComponentId;
         private String childTemplateId;
+        private BigDecimal paperCoordProportion;
         private ElementsBean element;
+
+        private int bottomY=0;//作为列表底部Y轴高
+
+        public int getBottomY() {
+            return bottomY;
+        }
+
+        public void setBottomY(int bottomY) {
+            this.bottomY = bottomY;
+        }
+
+        //        private String father_elementCode;//有这个值说明是列表中的元素，好让我在赋值的时候判断
+
+
+//        public String getFather_elementCode() {
+//            return father_elementCode;
+//        }
+//
+//        public void setFather_elementCode(String father_elementCode) {
+//            this.father_elementCode = father_elementCode;
+//        }
+
+        public BigDecimal getPaperCoordProportion() {
+            return paperCoordProportion;
+        }
+
+        public void setPaperCoordProportion(BigDecimal paperCoordProportion) {
+            this.paperCoordProportion = paperCoordProportion;
+        }
+
 
         public ElementsBean getElement() {
             return element;

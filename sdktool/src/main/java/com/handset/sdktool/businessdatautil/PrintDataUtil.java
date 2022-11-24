@@ -1,4 +1,4 @@
-package com.handset.sdktool.businessutil;
+package com.handset.sdktool.businessdatautil;
 
 import android.content.Context;
 import android.widget.Toast;
@@ -7,12 +7,9 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.handset.sdktool.Config;
 import com.handset.sdktool.bean.PrintPaperBean;
-import com.handset.sdktool.dto.BusinessDTO;
 import com.handset.sdktool.dto.PrintPaperRelationshipDTO;
-import com.handset.sdktool.dto.ElementDTO;
 import com.handset.sdktool.dto.PaperDTO;
 import com.handset.sdktool.dto.PrinterDTO;
-import com.handset.sdktool.dto.PrinterPaperRelationshipDTO;
 import com.handset.sdktool.net.NetUtil;
 import com.handset.sdktool.net.OnResponse;
 import com.handset.sdktool.net.base.BaseBean;
@@ -29,30 +26,29 @@ import io.reactivex.schedulers.Schedulers;
 import okhttp3.RequestBody;
 
 /**
- * @ClassName: DataUtil
+ * @ClassName: PrintDataUtil
  * @author: wr
  * @date: 2022/11/15 16:07
- * @Description:作用描述
+ * @Description:初始化打印机数据 纸张数据和 打印机纸张关系
  */
-public class PrintUtil {
+public class PrintDataUtil {
     List<PrinterDTO> printerDTOList = new ArrayList<>();
     List<PaperDTO> paperDTOList = new ArrayList<>();
     List<PrintPaperRelationshipDTO> printPaperRelationshipDTOList = new ArrayList<>();
 
-    private PrintUtil() {
-
+    private PrintDataUtil() {
     }
 
-    private static PrintUtil dataUtil = new PrintUtil();
+    private static PrintDataUtil dataUtil = new PrintDataUtil();
 
-    public static PrintUtil getInstance() {
+    public static PrintDataUtil getInstance() {
         return dataUtil;
     }
 
     /**
-     * 设置业务数据（注意只有第一次或点击同步数据时会保存）
+     * 设置打印機数据（注意只有第一次或点击同步数据时会保存）
      */
-    public void initBusinessData(Context context) {
+    public void initPrintData(Context context) {
 
 
         String printpaper = new GetJsonDataUtil().getJson(context, "printpaper.json");

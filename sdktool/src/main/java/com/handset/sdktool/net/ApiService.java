@@ -134,7 +134,7 @@ public interface ApiService {
      */
     @Headers({"Content-type:application/json;charset=UTF-8"})
     @GET(NetConfig.BASE_IP_PLUS + "printtemplate/template/getTemplateByBusinessCode")
-    Observable<List<ModleDTO>> getTemplateByBusinessCode(@Query("businessCode") String businessCode);
+    Observable<ModleDTO> getTemplateByBusinessCode(@Query("businessCode") String businessCode);
 
     /**
      * 2.13.获取所有模板

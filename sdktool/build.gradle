@@ -29,9 +29,18 @@ android {
     buildFeatures {
         viewBinding true
     }
+
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
+    }
 }
 
 dependencies {
+
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+    implementation files('libs/CPCL_SDK_V1.12.jar')
 
     implementation 'androidx.appcompat:appcompat:1.4.1'
     implementation 'com.google.android.material:material:1.5.0'
@@ -58,4 +67,15 @@ dependencies {
     //LDK
     implementation 'com.gitee.LauHao:EasyLDK:1.2.6'
     implementation "org.jetbrains.kotlin:kotlin-stdlib:1.6.10"
+
+    //Used for Demo Ui interface display, has nothing to do with function
+    implementation 'com.sunmi:sunmiui:1.1.27'
+    //zxing to generate barcode
+    implementation files('libs/core-3.3.0.jar')
+    implementation 'com.sunmi:printerlibrary:1.0.18'
+
+    //    //XPopup
+    implementation 'com.github.li-xiaojun:XPopup:2.8.6'
+//    //XPopup时间选择器
+    implementation 'com.github.li-xiaojun:XPopupExt:0.0.8'
 }

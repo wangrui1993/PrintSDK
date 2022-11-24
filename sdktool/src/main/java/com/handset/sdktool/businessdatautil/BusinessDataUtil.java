@@ -1,7 +1,6 @@
-package com.handset.sdktool.businessutil;
+package com.handset.sdktool.businessdatautil;
 
 import android.content.Context;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -17,13 +16,11 @@ import com.handset.sdktool.net.NetUtil;
 import com.handset.sdktool.net.OnResponse;
 import com.handset.sdktool.net.base.BaseBean;
 import com.handset.sdktool.net.base.Bean;
-import com.handset.sdktool.net.base.NetConfig;
 import com.handset.sdktool.util.DebugLog;
 import com.handset.sdktool.util.SharedPreferenceUtil;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -35,18 +32,18 @@ import okhttp3.RequestBody;
  * @date: 2022/11/15 16:07
  * @Description:作用描述
  */
-public class BusinessUtil {
+public class BusinessDataUtil {
     List<BusinessDTO> businessDTOList = new ArrayList<>();
     List<ElementDTO> elementDTOList = new ArrayList<>();
     List<BusinessElementRelationshipDTO> businessElementRelationshipDTOList = new ArrayList<>();
 
-    private BusinessUtil() {
+    private BusinessDataUtil() {
 
     }
 
-    private static BusinessUtil dataUtil = new BusinessUtil();
+    private static BusinessDataUtil dataUtil = new BusinessDataUtil();
 
-    public static BusinessUtil getInstance() {
+    public static BusinessDataUtil getInstance() {
         return dataUtil;
     }
 

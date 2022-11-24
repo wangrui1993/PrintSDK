@@ -16,15 +16,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.handset.sdktool.R;
-import com.handset.sdktool.businessutil.PrintUtil;
 import com.handset.sdktool.data.DataUtil;
 import com.handset.sdktool.dto.BusinessDTO;
 import com.handset.sdktool.dto.ElementDTO;
 import com.handset.sdktool.listener.GetAllBusinessListener;
-import com.handset.sdktool.listener.GetAllTemplateListener;
 import com.handset.sdktool.listener.GetElementByBusiness;
 import com.handset.sdktool.listener.OnRecycleViewItemClickListener;
-import com.handset.sdktool.net.base.ModleListBean;
 
 import java.util.ArrayList;
 import java.util.List;

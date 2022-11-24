@@ -9,6 +9,7 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.handset.sdktool.dto.BusinessDTO;
 import com.handset.sdktool.dto.ElementDTO;
+import com.handset.sdktool.dto.ModleDTO;
 import com.handset.sdktool.dto.PaperDTO;
 import com.handset.sdktool.dto.PrinterDTO;
 import com.handset.sdktool.listener.GetAllBusinessListener;
@@ -16,17 +17,20 @@ import com.handset.sdktool.listener.GetAllPrintListener;
 import com.handset.sdktool.listener.GetAllTemplateListener;
 import com.handset.sdktool.listener.GetElementByBusiness;
 import com.handset.sdktool.listener.GetPaperByPrint;
+import com.handset.sdktool.listener.GetTemplateByBusinessCode;
 import com.handset.sdktool.net.NetUtil;
 import com.handset.sdktool.net.OnResponse;
 import com.handset.sdktool.net.base.BaseBean;
 import com.handset.sdktool.net.base.Bean;
 import com.handset.sdktool.net.base.ModleListBean;
+import com.handset.sdktool.printutil.PrintUtil;
 import com.handset.sdktool.util.DebugLog;
 import com.handset.sdktool.util.GetJsonDataUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import cpcl.PrinterHelper;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.RequestBody;
@@ -35,7 +39,7 @@ import okhttp3.RequestBody;
  * @ClassName: DataUtil
  * @author: wr
  * @date: 2022/11/15 16:07
- * @Description:作用描述
+ * @Description:获取各类数据
  */
 public class DataUtil {
     private DataUtil() {
@@ -47,7 +51,6 @@ public class DataUtil {
     public static DataUtil getInstance() {
         return dataUtil;
     }
-
 
     /**
      * 获取业务
@@ -150,6 +153,7 @@ public class DataUtil {
                     }
                 });
     }
+
     /**
      * 根据打印機获取纸张
      */
@@ -175,4 +179,30 @@ public class DataUtil {
                 });
     }
 
+    /**
+     * 2.14.根据业务获取启用模板
+     *
+     * @param code
+     */
+    public void getTemplateByBusinessCode(String code, GetTemplateByBusinessCode getTemplateByBusinessCode) {
+        NetUtil.getInstance().api().getTemplateByBusinessCode(code)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new OnResponse<ModleDTO>() {
+                    @Override
+                    public void onNext(ModleDTO listBaseBean) {
+                        getTemplateByBusinessCode.onSuccess(listBaseBean);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        getTemplateByBusinessCode.onError(e);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
 }

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Widget.MaterialProgressBar.ProgressBar" parent="@android:style/Widget.ProgressBar">
+        <item name="android:maxWidth">48.0dip</item>
+        <item name="android:maxHeight">48.0dip</item>
+        <item name="android:indeterminateOnly">false</item>
+        <item name="android:indeterminateDrawable">@null</item>
+        <item name="android:minWidth">48.0dip</item>
+        <item name="android:minHeight">48.0dip</item>
+    </style>
+    <style name="Widget.MaterialProgressBar.ProgressBar.Horizontal" parent="@android:style/Widget.ProgressBar.Horizontal">
+        <item name="android:maxHeight">16.0dip</item>
+        <item name="android:indeterminateDrawable">@null</item>
+        <item name="android:minHeight">16.0dip</item>
+    </style>
+    <style name="Widget.MaterialProgressBar.ProgressBar.Horizontal.NoPadding" parent="@style/Widget.MaterialProgressBar.ProgressBar.Horizontal">
+        <item name="android:maxHeight">4.0dip</item>
+        <item name="android:minHeight">4.0dip</item>
+    </style>
+    <style name="Widget.MaterialProgressBar.ProgressBar.Large" parent="@style/Widget.MaterialProgressBar.ProgressBar">
+        <item name="android:maxWidth">76.0dip</item>
+        <item name="android:maxHeight">76.0dip</item>
+        <item name="android:minWidth">76.0dip</item>
+        <item name="android:minHeight">76.0dip</item>
+    </style>
+    <style name="Widget.MaterialProgressBar.ProgressBar.Large.NoPadding" parent="@style/Widget.MaterialProgressBar.ProgressBar.Large">
+        <item name="android:maxWidth">66.5dip</item>
+        <item name="android:maxHeight">66.5dip</item>
+        <item name="android:minWidth">66.5dip</item>
+        <item name="android:minHeight">66.5dip</item>
+    </style>
+    <style name="Widget.MaterialProgressBar.ProgressBar.NoPadding" parent="@style/Widget.MaterialProgressBar.ProgressBar">
+        <item name="android:maxWidth">42.0dip</item>
+        <item name="android:maxHeight">42.0dip</item>
+        <item name="android:minWidth">42.0dip</item>
+        <item name="android:minHeight">42.0dip</item>
+    </style>
+    <style name="Widget.MaterialProgressBar.ProgressBar.Small" parent="@style/Widget.MaterialProgressBar.ProgressBar">
+        <item name="android:maxWidth">16.0dip</item>
+        <item name="android:maxHeight">16.0dip</item>
+        <item name="android:minWidth">16.0dip</item>
+        <item name="android:minHeight">16.0dip</item>
+    </style>
+    <style name="Widget.MaterialProgressBar.ProgressBar.Small.NoPadding" parent="@style/Widget.MaterialProgressBar.ProgressBar.Small">
+        <item name="android:maxWidth">14.0dip</item>
+        <item name="android:maxHeight">14.0dip</item>
+        <item name="android:minWidth">14.0dip</item>
+        <item name="android:minHeight">14.0dip</item>
+    </style>
+</resources>
