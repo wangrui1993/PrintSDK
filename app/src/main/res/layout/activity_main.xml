@@ -10,7 +10,7 @@
     <TextView
         android:id="@+id/tv_business_data"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/dp_50"
+        android:layout_height="50dp"
         android:gravity="center"
         android:text="同步业务元素数据" />
 
