@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,7 +36,8 @@ import kotlin.jvm.internal.Intrinsics;
 public class SynchronizePrintActivity extends AppCompatActivity {
     private RecyclerView recycle_view;
     private RecyclerView list_menu;
-    private TextView tv_nodata, title;
+    private TextView title;
+    private ImageView tv_nodata;
     private PrintSelectAdapter mPrintSelectAdapter;
     private PaperAdapter mPaperAdapter;
     private List<PrinterDTO> mListBusiness = new ArrayList<>();
@@ -47,7 +49,7 @@ public class SynchronizePrintActivity extends AppCompatActivity {
         setContentView(R.layout.activity_set_business);
         recycle_view = (RecyclerView) findViewById(R.id.recycle_view);
         list_menu = (RecyclerView) findViewById(R.id.list_menu);
-        tv_nodata = (TextView) findViewById(R.id.tv_nodata);
+        tv_nodata = (ImageView) findViewById(R.id.tv_nodata);
         title = (TextView) findViewById(R.id.title);
         title.setText("打印机纸张数据");
         mPrintSelectAdapter = new PrintSelectAdapter(this, mListBusiness);

@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -25,9 +26,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.gson.Gson;
 import com.handset.sdktool.R;
 import com.handset.sdktool.data.DataUtil;
 import com.handset.sdktool.dto.ModleDTO;
+import com.handset.sdktool.event.LabelBoard;
+import com.handset.sdktool.event.LabelItem;
 import com.handset.sdktool.listener.GetAllTemplateListener;
 import com.handset.sdktool.listener.GetTemplateByBusinessCode;
 import com.handset.sdktool.listener.OnRecycleViewItemClickListener;
@@ -67,6 +71,9 @@ public class ConnectBlueToothActivity extends AppCompatActivity {
     private RelativeLayout rl_search;
     private LinearLayout ll_location;
     protected BasePopupView popupView;
+    private ImageView iv_image;
+    private RelativeLayout rl_pre;
+    private TextView tv_pre;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +85,9 @@ public class ConnectBlueToothActivity extends AppCompatActivity {
         progress_bar = findViewById(R.id.progress_bar);
         rl_search = findViewById(R.id.rl_search);
         ll_location = findViewById(R.id.ll_location);
-
+        iv_image = findViewById(R.id.iv_image);
+        rl_pre = findViewById(R.id.rl_pre);
+        tv_pre = findViewById(R.id.tv_pre);
         mBlueToothDeviseAdapter = new BlueToothDeviseAdapter(this, mList);
         recycler_view.setLayoutManager(new LinearLayoutManager(this));
         recycler_view.setAdapter(mBlueToothDeviseAdapter);
@@ -119,6 +128,51 @@ public class ConnectBlueToothActivity extends AppCompatActivity {
 
             }
         });
+        rl_pre.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                rl_pre.setVisibility(View.GONE);
+            }
+        });
+        tv_pre.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showLoadingDialog("请求打印数据..");
+                DataUtil.getInstance().getTemplateByBusinessCode(getIntent().getStringExtra("id"), new GetTemplateByBusinessCode() {
+                    @Override
+                    public void onSuccess(ModleDTO listBaseBean) {
+                        for (ModleDTO.ComponentsBean componentsBean : listBaseBean.getComponents()) {
+                            if (componentsBean.getComponentTypeId().equals("5")) {
+                                LabelBoard labelBoard=new Gson().fromJson(componentsBean.getComponentContent(),LabelBoard.class);
+
+
+                                for (LabelItem labelItem2 : labelBoard.getLabelItems()) {
+                                    LabelBoard labelBoard2=new Gson().fromJson(labelItem2.getDataJson(),LabelBoard.class);
+
+                                    for (LabelItem labelItem3 : labelBoard2.getLabelItems()) {
+                                        LabelBoard labelBoard3=new Gson().fromJson(labelItem3.getDataJson(),LabelBoard.class);
+                                        Log.e("3cha---", labelItem3.getDataJson());
+                                    }
+
+                                    Log.e("2cha---", labelItem2.getDataJson());
+                                }
+                                Log.e("1cha---", componentsBean.getComponentContent());
+                            }
+                        }
+                        dismissLoadingDialog();
+                        PrintUtil printUtil = new PrintUtil(listBaseBean);
+                        rl_pre.setVisibility(View.VISIBLE);
+                        printUtil.preview(iv_image);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        dismissLoadingDialog();
+                        Toast.makeText(ConnectBlueToothActivity.this, "业务对应有多个启用模板或为设置启用模板,请调整模板启用状态", Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+        });
         print.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -151,7 +205,7 @@ public class ConnectBlueToothActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 String device = DeviceUtil.deviceInit(ConnectBlueToothActivity.this);
-                print.setText(device);
+                print.setText("打印（" + device + ")");
             }
         });
         //搜索本地（如果是手持打印一体机）

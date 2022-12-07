@@ -7,7 +7,7 @@ package com.handset.sdktool.net.base;
  * @Description:
  */
 public class NetConfig {
-    public static final String BASE_IP = "http://192.168.31.66:8090/";
+    public static final String BASE_IP = "http://192.168.31.33:8090/";
     public static final String BASE_IP_PLUS = BASE_IP + "";
 
     public static String TOKEN;

@@ -49,6 +49,11 @@ public class LabelBoardAnalysisUtil {
                 if (labelText.getContentSource().equals(Label.CONTENTSOURCE_TEXT) || labelText.getContentSource().equals(Label.CONTENTSOURCE_S)) {
                     DebugLog.e("getLabelTexts==id2===" + labelText.getContent());
                     componentsBean.setComponentContent(labelText.getContent());
+                    ModleDTO.ComponentsBean.ElementsBean elementsBean = new ModleDTO.ComponentsBean.ElementsBean();
+                    elementsBean.setElementCode("");
+                    elementsBean.setElementDesc("");
+                    elementsBean.setElementName("");
+                    componentsBean.setElement(elementsBean);
                 } else {
                     DebugLog.e("getLabelTexts==id3===" + labelText.getElementId());
                     componentsBean.setComponentContent(labelText.getElementId());
@@ -137,9 +142,7 @@ public class LabelBoardAnalysisUtil {
             }
             for (int i = 0; i < labelBoard.getLabelItems().size(); i++) {
                 LabelItem labelItem = labelBoard.getLabelItems().get(i);
-                if (labelItem.getDataJson().length() > 3000) {
-                    break;
-                }
+
                 ModleDTO.ComponentsBean componentsBean = new ModleDTO.ComponentsBean();
                 String id = labelItem.getComponentId() == null ? String.valueOf(System.currentTimeMillis() + "5" + i + getNum()) : labelItem.getComponentId();
                 DebugLog.e("id====" + id);
@@ -179,9 +182,22 @@ public class LabelBoardAnalysisUtil {
                 if (labelText.getContentSource().equals(Label.CONTENTSOURCE_TEXT) || labelText.getContentSource().equals(Label.CONTENTSOURCE_S)) {
                     DebugLog.e("getLabelTexts==id2===" + labelText.getContent());
                     componentsBean.setComponentContent(labelText.getContent());
+                    ModleDTO.ComponentsBean.ElementsBean elementsBean = new ModleDTO.ComponentsBean.ElementsBean();
+                    elementsBean.setElementCode("");
+                    elementsBean.setElementDesc("");
+                    elementsBean.setElementName("");
+                    componentsBean.setElement(elementsBean);
                 } else {
                     DebugLog.e("getLabelTexts==id3===" + labelText.getElementId());
                     componentsBean.setComponentContent(labelText.getElementId());
+                    ModleDTO.ComponentsBean.ElementsBean elementsBean = new ModleDTO.ComponentsBean.ElementsBean();
+                    elementsBean.setElementCode(labelText.getElementCode());
+                    elementsBean.setElementDesc(labelText.getElementDesc());
+                    elementsBean.setElementName(labelText.getElementName());
+                    componentsBean.setElement(elementsBean);
+                }
+                if (componentsBean.getElement() == null || componentsBean.getElement().getElementCode() == null) {
+                    DebugLog.e("getElement=nul====" + componentsBean.getComponentContent() + "===" + componentsBean.getId());
                 }
                 componentsBean.setPrefix(labelText.getPrefix());
                 componentsBean.setSuffix(labelText.getSuffix());
@@ -206,6 +222,11 @@ public class LabelBoardAnalysisUtil {
                     componentsBean.setComponentContent(labelBarcode.getContent());
                 } else {
                     componentsBean.setComponentContent(labelBarcode.getElementId());
+                    ModleDTO.ComponentsBean.ElementsBean elementsBean = new ModleDTO.ComponentsBean.ElementsBean();
+                    elementsBean.setElementCode(labelBarcode.getElementCode());
+                    elementsBean.setElementDesc(labelBarcode.getElementDesc());
+                    elementsBean.setElementName(labelBarcode.getElementName());
+                    componentsBean.setElement(elementsBean);
                 }
                 componentsBean.setComponentTypeId("2");
                 componentsBean.setCoordX((int) labelBarcode.getX());
@@ -226,6 +247,11 @@ public class LabelBoardAnalysisUtil {
                     componentsBean.setComponentContent(labelQRCode.getContent());
                 } else {
                     componentsBean.setComponentContent(labelQRCode.getElementId());
+                    ModleDTO.ComponentsBean.ElementsBean elementsBean = new ModleDTO.ComponentsBean.ElementsBean();
+                    elementsBean.setElementCode(labelQRCode.getElementCode());
+                    elementsBean.setElementDesc(labelQRCode.getElementDesc());
+                    elementsBean.setElementName(labelQRCode.getElementName());
+                    componentsBean.setElement(elementsBean);
                 }
                 componentsBean.setComponentTypeId("3");
                 componentsBean.setCoordX((int) labelQRCode.getX());
@@ -252,9 +278,7 @@ public class LabelBoardAnalysisUtil {
             }
             for (int i = 0; i < labelBoard.getLabelItems().size(); i++) {
                 LabelItem labelItem = labelBoard.getLabelItems().get(i);
-                if (labelItem.getDataJson().length() > 3000) {
-                    break;
-                }
+
                 ModleDTO.ComponentsBean componentsBean = new ModleDTO.ComponentsBean();
                 String id = labelItem.getComponentId() == null ? String.valueOf(System.currentTimeMillis() + "5" + i + getNum()) : labelItem.getComponentId();
                 DebugLog.e("id====" + id);
@@ -263,7 +287,147 @@ public class LabelBoardAnalysisUtil {
                 componentsBean.setCoordX((int) labelItem.getX());
                 componentsBean.setCoordY((int) labelItem.getY());
                 componentsBean.setComponentContent(labelItem.getDataJson());
-//                componentsBean.setComponentContent("4444444");
+                ModleDTO.ComponentsBean.ElementsBean elementsBean = new ModleDTO.ComponentsBean.ElementsBean();
+                elementsBean.setElementCode(labelItem.getElementCode());
+                elementsBean.setElementDesc(labelItem.getElementDesc());
+                elementsBean.setElementName(labelItem.getElementName());
+                componentsBean.setElement(elementsBean);
+                DebugLog.e("labelItem====" + labelItem.getDataJson());
+                componentsBean.setComponentWidth((int) labelItem.getWidth());
+                componentsBean.setComponentHeight((int) labelItem.getHeight());
+                componentsBean.setChildTemplateId(labelItem.getChildTemplateId());
+                componentsBeanList.add(componentsBean);
+            }
+            DebugLog.e("getLabelTexts==id===3=" + componentsBeanList.toString());
+        }
+        return componentsBeanList;
+    }
+
+    public static List<ModleDTO.ComponentsBean> setDataToModle3(LabelBoard labelBoard) {
+        List<ModleDTO.ComponentsBean> componentsBeanList = new ArrayList<>();
+
+        if (labelBoard != null) {
+            componentsBeanList.clear();
+            for (int i = 0; i < labelBoard.getLabelTexts().size(); i++) {
+                LabelText labelText = labelBoard.getLabelTexts().get(i);
+                ModleDTO.ComponentsBean componentsBean = new ModleDTO.ComponentsBean();
+                String id = labelText.getComponentId() == null ? String.valueOf(System.currentTimeMillis() + "1" + i + getNum()) : labelText.getComponentId();
+                DebugLog.e("getLabelTexts==id===" + id);
+                componentsBean.setId(id);
+                componentsBean.setComponentTypeId("1");
+                if (labelText.getContentSource().equals(Label.CONTENTSOURCE_TEXT) || labelText.getContentSource().equals(Label.CONTENTSOURCE_S)) {
+                    DebugLog.e("getLabelTexts==id2===" + labelText.getContent());
+                    componentsBean.setComponentContent(labelText.getContent());
+                    ModleDTO.ComponentsBean.ElementsBean elementsBean = new ModleDTO.ComponentsBean.ElementsBean();
+                    elementsBean.setElementCode("");
+                    elementsBean.setElementDesc("");
+                    elementsBean.setElementName("");
+                    componentsBean.setElement(elementsBean);
+                } else {
+                    DebugLog.e("getLabelTexts==id3===" + labelText.getElementId());
+                    componentsBean.setComponentContent(labelText.getElementId());
+                    ModleDTO.ComponentsBean.ElementsBean elementsBean = new ModleDTO.ComponentsBean.ElementsBean();
+                    elementsBean.setElementCode(labelText.getElementCode());
+                    elementsBean.setElementDesc(labelText.getElementDesc());
+                    elementsBean.setElementName(labelText.getElementName());
+                    componentsBean.setElement(elementsBean);
+                }
+                if (componentsBean.getElement() == null || componentsBean.getElement().getElementCode() == null) {
+                    DebugLog.e("getElement=nul====" + componentsBean.getComponentContent() + "===" + componentsBean.getId());
+                }
+                componentsBean.setPrefix(labelText.getPrefix());
+                componentsBean.setSuffix(labelText.getSuffix());
+                componentsBean.setSize(String.valueOf(labelText.getFontSize()));
+                componentsBean.setAlignType(labelText.getAlignType());
+                componentsBean.setCoordX((int) labelText.getX());
+                componentsBean.setCoordY((int) labelText.getY());
+                componentsBean.setFontBold(labelText.isBold() ? "0" : "1");
+                componentsBean.setComponentWidth((int) labelText.getWidth());
+                componentsBean.setComponentHeight((int) labelText.getHeight());
+                componentsBean.setContentSource(labelText.getContentSource());
+                componentsBeanList.add(componentsBean);
+            }
+            DebugLog.e("getLabelTexts==id333===3=" + componentsBeanList.toString());
+            for (int i = 0; i < labelBoard.getLabelBarcodes().size(); i++) {
+                LabelBarcode labelBarcode = labelBoard.getLabelBarcodes().get(i);
+                ModleDTO.ComponentsBean componentsBean = new ModleDTO.ComponentsBean();
+                String id = labelBarcode.getComponentId() == null ? String.valueOf(System.currentTimeMillis() + "2" + i + getNum()) : labelBarcode.getComponentId();
+                DebugLog.e("id====" + id);
+                componentsBean.setId(id);
+                if (labelBarcode.getContentSource().equals(Label.CONTENTSOURCE_TEXT) || labelBarcode.getContentSource().equals(Label.CONTENTSOURCE_S)) {
+                    componentsBean.setComponentContent(labelBarcode.getContent());
+                } else {
+                    componentsBean.setComponentContent(labelBarcode.getElementId());
+                    ModleDTO.ComponentsBean.ElementsBean elementsBean = new ModleDTO.ComponentsBean.ElementsBean();
+                    elementsBean.setElementCode(labelBarcode.getElementCode());
+                    elementsBean.setElementDesc(labelBarcode.getElementDesc());
+                    elementsBean.setElementName(labelBarcode.getElementName());
+                    componentsBean.setElement(elementsBean);
+                }
+                componentsBean.setComponentTypeId("2");
+                componentsBean.setCoordX((int) labelBarcode.getX());
+                componentsBean.setCoordY((int) labelBarcode.getY());
+                componentsBean.setComponentWidth((int) labelBarcode.getWidth());
+                componentsBean.setComponentHeight((int) labelBarcode.getHeight());
+                componentsBean.setEncodingType(labelBarcode.getEncodeType());
+                componentsBean.setContentSource(labelBarcode.getContentSource());
+                componentsBeanList.add(componentsBean);
+            }
+            for (int i = 0; i < labelBoard.getLabelQRCodes().size(); i++) {
+                LabelQRCode labelQRCode = labelBoard.getLabelQRCodes().get(i);
+                ModleDTO.ComponentsBean componentsBean = new ModleDTO.ComponentsBean();
+                String id = labelQRCode.getComponentId() == null ? String.valueOf(System.currentTimeMillis() + "3" + i + getNum()) : labelQRCode.getComponentId();
+                DebugLog.e("id====" + id);
+                componentsBean.setId(id);
+                if (labelQRCode.getContentSource().equals(Label.CONTENTSOURCE_TEXT) || labelQRCode.getContentSource().equals(Label.CONTENTSOURCE_S)) {
+                    componentsBean.setComponentContent(labelQRCode.getContent());
+                } else {
+                    componentsBean.setComponentContent(labelQRCode.getElementId());
+                    ModleDTO.ComponentsBean.ElementsBean elementsBean = new ModleDTO.ComponentsBean.ElementsBean();
+                    elementsBean.setElementCode(labelQRCode.getElementCode());
+                    elementsBean.setElementDesc(labelQRCode.getElementDesc());
+                    elementsBean.setElementName(labelQRCode.getElementName());
+                    componentsBean.setElement(elementsBean);
+                }
+                componentsBean.setComponentTypeId("3");
+                componentsBean.setCoordX((int) labelQRCode.getX());
+                componentsBean.setCoordY((int) labelQRCode.getY());
+                componentsBean.setComponentWidth((int) labelQRCode.getWidth());
+                componentsBean.setComponentHeight((int) labelQRCode.getHeight());
+                componentsBean.setEncodingType(labelQRCode.getEncodeType());
+                componentsBean.setContentSource(labelQRCode.getContentSource());
+                componentsBeanList.add(componentsBean);
+
+            }
+            for (int i = 0; i < labelBoard.getLabelShapes().size(); i++) {
+                LabelShape labelShape = labelBoard.getLabelShapes().get(i);
+                ModleDTO.ComponentsBean componentsBean = new ModleDTO.ComponentsBean();
+                String id = labelShape.getComponentId() == null ? String.valueOf(System.currentTimeMillis() + "4" + i + getNum()) : labelShape.getComponentId();
+                DebugLog.e("id====" + id);
+                componentsBean.setId(id);
+                componentsBean.setComponentTypeId("4");
+                componentsBean.setCoordX((int) labelShape.getX());
+                componentsBean.setCoordY((int) labelShape.getY());
+                componentsBean.setComponentWidth((int) labelShape.getWidth());
+                componentsBean.setComponentHeight((int) labelShape.getHeight() - 60);
+                componentsBeanList.add(componentsBean);
+            }
+            for (int i = 0; i < labelBoard.getLabelItems().size(); i++) {
+                LabelItem labelItem = labelBoard.getLabelItems().get(i);
+
+                ModleDTO.ComponentsBean componentsBean = new ModleDTO.ComponentsBean();
+                String id = labelItem.getComponentId() == null ? String.valueOf(System.currentTimeMillis() + "5" + i + getNum()) : labelItem.getComponentId();
+                DebugLog.e("id====" + id);
+                componentsBean.setId(id);
+                componentsBean.setComponentTypeId("5");
+                componentsBean.setCoordX((int) labelItem.getX());
+                componentsBean.setCoordY((int) labelItem.getY());
+                componentsBean.setComponentContent(labelItem.getDataJson());
+                ModleDTO.ComponentsBean.ElementsBean elementsBean = new ModleDTO.ComponentsBean.ElementsBean();
+                elementsBean.setElementCode(labelItem.getElementCode());
+                elementsBean.setElementDesc(labelItem.getElementDesc());
+                elementsBean.setElementName(labelItem.getElementName());
+                componentsBean.setElement(elementsBean);
                 DebugLog.e("labelItem====" + labelItem.getDataJson());
                 componentsBean.setComponentWidth((int) labelItem.getWidth());
                 componentsBean.setComponentHeight((int) labelItem.getHeight());

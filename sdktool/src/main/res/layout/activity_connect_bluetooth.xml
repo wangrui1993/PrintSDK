@@ -1,150 +1,181 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical"
     android:tag="layout/print_activity_connect_0">
 
     <LinearLayout
         android:layout_width="fill_parent"
-        android:layout_height="50.0dip"
-        android:background="@color/teal_200"
-        android:orientation="horizontal">
-
-        <ImageView
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:padding="5dp"
-            android:src="@mipmap/print_ic_printer" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:gravity="center"
-            android:text="设备列表"
-            android:textColor="@color/white"
-            android:textSize="14.0sp" />
-        <!--        <com.handset.base.ui.DrawableTextView-->
-        <!--            style="@style/print_text_h1"-->
-        <!--            android:layout_width="wrap_content"-->
-        <!--            android:layout_height="fill_parent"-->
-        <!--            android:layout_marginStart="20.0dip"-->
-        <!--            android:layout_marginLeft="20.0dip"-->
-        <!--            android:drawableLeft="@drawable/print_ic_printer"-->
-        <!--            android:drawablePadding="5.0dip"-->
-        <!--            android:gravity="center"-->
-        <!--            android:text="@string/print_device_list"-->
-        <!--            app:drawableSize="30.0dip"-->
-        <!--            app:drawableTint="@color/colorPrimary" />-->
-    </LinearLayout>
-
-
-    <TextView
-        android:id="@+id/print"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:gravity="center"
-        android:text="打印"
-        android:textColor="@color/black"
-        android:textSize="14.0sp" />
-
-    <View
-        android:layout_width="fill_parent"
-        android:layout_height="1px"
-        android:background="@color/print_divider" />
-
-    <RelativeLayout
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
+        android:layout_height="fill_parent"
+        android:orientation="vertical">
 
         <LinearLayout
-            android:id="@+id/ll_location"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_width="fill_parent"
+            android:layout_height="50.0dip"
+            android:background="@color/teal_200"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:padding="5dp"
+                android:src="@mipmap/print_ic_printer" />
 
             <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="50dp"
+                android:gravity="center"
+                android:text="设备列表"
+                android:textColor="@color/white"
+                android:textSize="14.0sp" />
+
+            <TextView
+                android:id="@+id/tv_pre"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:gravity="center"
+                android:text="预览"
+                android:paddingHorizontal="15dp"
+                android:textColor="@color/white"
+                android:textSize="14.0sp" />
+            <!--        <com.handset.base.ui.DrawableTextView-->
+            <!--            style="@style/print_text_h1"-->
+            <!--            android:layout_width="wrap_content"-->
+            <!--            android:layout_height="fill_parent"-->
+            <!--            android:layout_marginStart="20.0dip"-->
+            <!--            android:layout_marginLeft="20.0dip"-->
+            <!--            android:drawableLeft="@drawable/print_ic_printer"-->
+            <!--            android:drawablePadding="5.0dip"-->
+            <!--            android:gravity="center"-->
+            <!--            android:text="@string/print_device_list"-->
+            <!--            app:drawableSize="30.0dip"-->
+            <!--            app:drawableTint="@color/colorPrimary" />-->
+        </LinearLayout>
+
+
+        <TextView
+            android:id="@+id/print"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:gravity="center"
+            android:text="打印"
+            android:textColor="@color/black"
+            android:textSize="14.0sp" />
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1px"
+            android:background="@color/print_divider" />
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+
+            <LinearLayout
+                android:id="@+id/ll_location"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#eeeeee"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="15dp"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp"
+                    android:text="本机"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/tv_location"
+                    android:layout_width="match_parent"
+                    android:layout_height="45dp"
+                    android:background="@color/white"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="15dp"
+                    android:textColor="@color/black" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tv_blue"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/ll_location"
                 android:background="#eeeeee"
                 android:gravity="center_vertical"
                 android:paddingHorizontal="15dp"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"
-                android:text="本机"
+                android:text="蓝牙打印机"
                 android:textSize="12sp" />
 
-            <TextView
-                android:id="@+id/tv_location"
-                android:layout_width="match_parent"
-                android:layout_height="45dp"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view_blue"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tv_blue"
+                android:layout_marginTop="5.0dip"
                 android:background="@color/white"
-                android:gravity="center_vertical"
-                android:paddingHorizontal="15dp"
-                android:textColor="@color/black" />
-        </LinearLayout>
+                android:tag="binding_2"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
-        <TextView
-            android:id="@+id/tv_blue"
+            <RelativeLayout
+                android:id="@+id/rl_search"
+                android:layout_width="70.0dip"
+                android:layout_height="70.0dip"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="30.0dip"
+                android:background="@drawable/print_button_bg_oval"
+                android:tag="binding_3">
+
+                <ProgressBar
+                    android:id="@+id/progress_bar"
+                    android:layout_width="45.0dip"
+                    android:layout_height="45.0dip"
+                    android:layout_centerInParent="true"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="10.0dip"
+                    android:indeterminateTint="#ffffff"
+                    android:tag="binding_4" />
+
+                <ImageView
+                    android:layout_width="25.0dip"
+                    android:layout_height="25.0dip"
+                    android:layout_centerInParent="true"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="10.0dip"
+                    android:src="@mipmap/print_ic_search"
+                    android:tag="binding_5" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|center"
+                    android:layout_marginBottom="12.0dip"
+                    android:tag="binding_6"
+                    android:textColor="@color/white"
+                    android:textSize="14.0sp" />
+            </RelativeLayout>
+        </RelativeLayout>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_pre"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#30000000"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/iv_image"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/ll_location"
-            android:background="#eeeeee"
-            android:gravity="center_vertical"
-            android:paddingHorizontal="15dp"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
-            android:text="蓝牙打印机"
-            android:textSize="12sp" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_view_blue"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/tv_blue"
-            android:layout_marginTop="5.0dip"
-            android:background="@color/white"
-            android:tag="binding_2"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
-
-        <RelativeLayout
-            android:id="@+id/rl_search"
-            android:layout_width="70.0dip"
-            android:layout_height="70.0dip"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="30.0dip"
-            android:background="@drawable/print_button_bg_oval"
-            android:tag="binding_3">
-
-            <ProgressBar
-                android:id="@+id/progress_bar"
-                android:layout_width="45.0dip"
-                android:layout_height="45.0dip"
-                android:layout_centerInParent="true"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="10.0dip"
-                android:indeterminateTint="#ffffff"
-                android:tag="binding_4" />
-
-            <ImageView
-                android:layout_width="25.0dip"
-                android:layout_height="25.0dip"
-                android:layout_centerInParent="true"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="10.0dip"
-                android:src="@mipmap/print_ic_search"
-                android:tag="binding_5" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|center"
-                android:layout_marginBottom="12.0dip"
-                android:tag="binding_6"
-                android:textColor="@color/white"
-                android:textSize="14.0sp" />
-        </RelativeLayout>
+            android:layout_centerInParent="true"
+            android:elevation="5dp" />
     </RelativeLayout>
-</LinearLayout>
+</RelativeLayout>

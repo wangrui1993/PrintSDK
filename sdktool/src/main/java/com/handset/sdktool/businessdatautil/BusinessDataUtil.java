@@ -1,6 +1,7 @@
 package com.handset.sdktool.businessdatautil;
 
 import android.content.Context;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -79,12 +80,13 @@ public class BusinessDataUtil {
             businessElementRelationshipDTOList.add(businessElementRelationshipDTO);
         }
 
-        if (SharedPreferenceUtil.get(context, Config.RELATIONSHIPMAPDATA, "").toString().length() == 0) {
-            String businessdata = new Gson().toJson(businessElementBeanList);
-            SharedPreferenceUtil.put(context, Config.RELATIONSHIPMAPDATA, businessdata);
+//        if (SharedPreferenceUtil.get(context, Config.RELATIONSHIPMAPDATA, "").toString().length() == 0) {
+        String businessdata = new Gson().toJson(businessElementBeanList);
+        Log.e("dddd===",businessdata+"");
+        SharedPreferenceUtil.put(context, Config.RELATIONSHIPMAPDATA, businessdata);
 
-            addProfessionalWork(context, businessDTOList);
-        }
+        addProfessionalWork(context, businessDTOList);
+//        }
 
 
     }

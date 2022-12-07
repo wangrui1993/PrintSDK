@@ -2,6 +2,7 @@ package com.handset.sdktool.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -189,6 +190,34 @@ public class ModleDTO implements Serializable {
         private String childTemplateId;
         private BigDecimal paperCoordProportion;
         private ElementsBean element;
+        private List<ModleDTO.ComponentsBean> chlieComponentList;//单个的模板列表 (模板存放的是各组件信息)
+        private List<ModleDTO.ComponentsBean> chlieComponentLists=new ArrayList<>();//这个是子模板的实体 存放的是一个个子模板
+//        private List<ModleDTO.ComponentsBean> componentList=new ArrayList<>();;//这里是一个模板中的除列表外的所有组件
+
+
+//        public List<ComponentsBean> getComponentList() {
+//            return componentList;
+//        }
+
+//        public void setComponentList(List<ComponentsBean> componentList) {
+//            this.componentList = componentList;
+//        }
+
+        public List<ComponentsBean> getChlieComponentLists() {
+            return chlieComponentLists;
+        }
+
+        public void setChlieComponentLists(List<ComponentsBean> chlieComponentLists) {
+            this.chlieComponentLists = chlieComponentLists;
+        }
+
+        public List<ComponentsBean> getChlieComponentList() {
+            return chlieComponentList;
+        }
+
+        public void setChlieComponentList(List<ComponentsBean> chlieComponentList) {
+            this.chlieComponentList = chlieComponentList;
+        }
 
         private int bottomY=0;//作为列表底部Y轴高
 

@@ -1,67 +1,32 @@
 package com.handset.sdktool.printutil;
 
-import android.Manifest;
-import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.app.ProgressDialog;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.text.TextUtils;
 import android.util.Log;
 import android.widget.ImageView;
-import android.widget.Toast;
-
-import androidx.core.app.ActivityCompat;
 
 import com.blankj.utilcode.util.ImageUtils;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import com.handset.sdktool.Config;
-import com.handset.sdktool.R;
-import com.handset.sdktool.bean.PrintPaperBean;
 import com.handset.sdktool.data.BusinessData;
-import com.handset.sdktool.dto.ElementDTO;
 import com.handset.sdktool.dto.ModleDTO;
-import com.handset.sdktool.dto.PaperDTO;
-import com.handset.sdktool.dto.PrintPaperRelationshipDTO;
-import com.handset.sdktool.dto.PrinterDTO;
 import com.handset.sdktool.event.Label;
 import com.handset.sdktool.event.LabelBoard;
-import com.handset.sdktool.net.NetUtil;
-import com.handset.sdktool.net.OnResponse;
-import com.handset.sdktool.net.base.BaseBean;
-import com.handset.sdktool.net.base.Bean;
 import com.handset.sdktool.printer.sunmi.SunmiPrintHelper;
-import com.handset.sdktool.util.Bluetooth;
 import com.handset.sdktool.util.CalculationUtil;
 import com.handset.sdktool.util.DebugLog;
 import com.handset.sdktool.util.DeviceUtil;
-import com.handset.sdktool.util.GetJsonDataUtil;
 import com.handset.sdktool.util.LabelBoardAnalysisUtil;
-import com.handset.sdktool.util.SharedPreferenceUtil;
-import com.tbruyelle.rxpermissions.RxPermissions;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import cpcl.PrinterHelper;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
-import okhttp3.RequestBody;
-import rx.functions.Action1;
 
 /**
  * @ClassName: DataUtil
@@ -69,11 +34,11 @@ import rx.functions.Action1;
  * @date: 2022/11/15 16:07
  * @Description:作用描述
  */
-public class PrintUtil {
+public class PrintUtil3 {
 
     private ModleDTO modleDTO;
 
-    public PrintUtil(ModleDTO modleDTO) {
+    public PrintUtil3(ModleDTO modleDTO) {
         this.modleDTO = modleDTO;
     }
 
@@ -82,7 +47,7 @@ public class PrintUtil {
         if (modleDTO == null || modleDTO.getTemplate() == null) {
             return;
         }
-        aaa aaa = new aaa();
+        aaa aaa=  new aaa() ;
         //200dpi 8 dot = 1mm dot-墨点  汉印1mm 8墨点
         int pagew = (int) modleDTO.getTemplate().getWidth() * 8;
 //        int pageh = (int) modleDTO.getTemplate().getHeight() * 8;
@@ -91,9 +56,35 @@ public class PrintUtil {
 //        pageh = calculationHeight(modleDTO.getComponents(), pageh, 0, BusinessData.getInstance().getMap());
 //        setBelowComponentY();
 
-//        Log.e("dfdcccsds===", aaa.calculationHeight1(modleDTO.getComponents(), BusinessData.getInstance().getMap(), 0) + "");
-//        imageView.setImageBitmap(printByBitmap1(pagew, pageh));
-        imageView.setImageBitmap(sfasf(modleDTO.getComponents(), BusinessData.getInstance().getMap(),pagew, pageh));
+        Log.e("dfdcccsds===", aaa.calculationHeight1(modleDTO.getComponents(), BusinessData.getInstance().getMap(), 0 ) + "");
+        for(ModleDTO.ComponentsBean componentsBean:modleDTO.getComponents()){
+            Log.e("1-ceng",componentsBean.getCoordY()+"==="+componentsBean.getChlieComponentLists().size()+"==="+componentsBean.getComponentContent());
+
+            for(ModleDTO.ComponentsBean componentsBean2:componentsBean.getChlieComponentLists()){//
+                //componentsBean2.getChlieComponentLists() 库列表
+                Log.e("2-ceng",componentsBean2.getCoordY()+"==="+componentsBean2.getChlieComponentLists().size()+"==="+componentsBean2.getComponentContent());
+
+                for(ModleDTO.ComponentsBean componentsBean3:componentsBean2.getChlieComponentLists()){
+                    Log.e("3-ceng",componentsBean3.getCoordY()+"==="+componentsBean3.getChlieComponentLists().size()+"==="+componentsBean3.getComponentContent());
+
+                    for(ModleDTO.ComponentsBean componentsBean4:componentsBean3.getChlieComponentLists()){
+                        //componentsBean4.getChlieComponentLists() 合同列表
+                        Log.e("4-ceng",componentsBean4.getCoordY()+"==="+componentsBean4.getChlieComponentLists().size()+"==="+componentsBean4.getComponentContent());
+
+                        for(ModleDTO.ComponentsBean componentsBean5:componentsBean4.getChlieComponentLists()){
+                            Log.e("5-ceng",componentsBean5.getCoordY()+"==="+componentsBean5.getChlieComponentLists().size()+"==="+componentsBean5.getComponentContent());
+                            for(ModleDTO.ComponentsBean componentsBean6:componentsBean5.getChlieComponentLists()){
+                                Log.e("6-ceng",componentsBean6.getCoordY()+"==="+componentsBean6.getChlieComponentLists().size()+"==="+componentsBean6.getComponentContent());
+                            }
+                        }
+                    }
+
+                }
+
+            }
+
+        }
+        imageView.setImageBitmap(printByBitmap1(pagew, pageh));
     }
 
     public void print() {
@@ -119,223 +110,6 @@ public class PrintUtil {
 
     }
 
-
-    /**
-     * 根据嵌套关系重新给组件Y轴赋值
-     *
-     * @param l      组件集合
-     * @param map_in 业务数据用于 根据实际数量计算高度
-     * @return 返回的是item这一项有多高
-     */
-    public Bitmap sfasf(List<ModleDTO.ComponentsBean> l, Map<String, Object> map_in, int pagew, int pageh) {
-
-        Bitmap finalBitmap = Bitmap.createBitmap(pagew, pageh, Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(finalBitmap);
-        canvas.drawColor(Color.WHITE);
-
-        Paint paint = new Paint();
-        //线
-        Paint paintDashLine = new Paint();
-        paintDashLine.setStyle(Paint.Style.STROKE);
-        paintDashLine.setColor(Color.BLACK);
-
-
-        aaa.paixu(l);
-        aaa.setElement(l);
-        int ku_Y = -1;
-        int item_totle_h = 0;
-        int ku_item_h_inmodle = 0;
-        int ku_list_height = 0;//库列表高
-        //循环中累计的库item的高，就是当前库上面的 库的总高
-        //整体组件（其中的一项 是一个component   如：天应泰发货通知单   时间   库列表）
-        for (int j = 0; j < l.size(); j++) {
-            ModleDTO.ComponentsBean componentsBean = l.get(j);
-            ku_Y = componentsBean.getCoordY();
-            if (componentsBean.getComponentTypeId().equals("5")) {
-                ku_item_h_inmodle = componentsBean.getComponentHeight();
-                //模板（其中的一项 是一个component   如：仓库名   规格   合同列表）
-                List<ModleDTO.ComponentsBean> list = componentsBean.getChlieComponentList();
-                //模板列表的数据列表
-                List<Map<String, Object>> list_map_ku = (List<Map<String, Object>>) map_in.get(componentsBean.getElement().getElementCode());
-                if (list_map_ku != null) {
-                    componentsBean.getChlieComponentLists().clear();
-                    for (int i = 0; i < list_map_ku.size(); i++) {
-                        Map<String, Object> map = list_map_ku.get(i);//代表其中的一个仓库
-                        ModleDTO.ComponentsBean componentsBean_ku_item = new ModleDTO.ComponentsBean();
-                        componentsBean_ku_item.setComponentHeight(componentsBean.getComponentHeight());
-                        componentsBean_ku_item.setElement(componentsBean.getElement());
-                        componentsBean_ku_item.setId(componentsBean.getId());
-                        //设置数据
-                        aaa.creatNenData(componentsBean, componentsBean_ku_item, list);
-
-                        //=====================================================================================================合同
-
-
-                        if (i == 0) {
-                            //coordY+外层item上方的item累计的高
-                            componentsBean_ku_item.setCoordY(componentsBean_ku_item.getCoordY());
-                            //本高+列表高-一项列表的高 //TODO 这里只考虑了一个列表，没考虑多个同级别列表 需要优化
-                            componentsBean_ku_item.setComponentHeight(componentsBean_ku_item.getComponentHeight() + setYH1(canvas,list, map, ku_list_height, componentsBean_ku_item));
-                        } else {
-                            //上一个的Y+上一个的高
-                            componentsBean_ku_item.setCoordY(componentsBean.getChlieComponentLists().get(i - 1).getCoordY() + componentsBean.getChlieComponentLists().get(i - 1).getComponentHeight());
-                            //本高+列表高-一项列表的高 //TODO 这里只考虑了一个列表，没考虑多个同级别列表 需要优化
-                            componentsBean_ku_item.setComponentHeight(componentsBean_ku_item.getComponentHeight() + setYH1(canvas,list, map, ku_list_height, componentsBean_ku_item));
-                        }
-                        //此列表总高 最后一个item的高加最后一个item 的Y轴
-                        ku_list_height = ku_list_height + componentsBean_ku_item.getComponentHeight();
-                        Log.e("1级检验-H=", "===" + componentsBean_ku_item.getComponentHeight());
-                        Log.e("1级检验-Y=", "===" + componentsBean_ku_item.getCoordY());
-
-                        //TODO 这里应该给仓库bean完善组件信息
-                        componentsBean.getChlieComponentLists().add(componentsBean_ku_item);
-                        Log.e("1whatpp=", componentsBean.getChlieComponentLists().size() + "");
-                    }
-
-                }
-            } else {
-                //是组件下面的 就把列表的高加上
-                if (componentsBean.getCoordY() > ku_Y && ku_Y > 0) {
-                    componentsBean.setCoordY(componentsBean.getCoordY() + ku_list_height - ku_item_h_inmodle);
-                }
-                componentsBean.setComponentContent(getShowContent(componentsBean, map_in, 0));
-                if (componentsBean.getComponentTypeId().equals("1")) {
-                    double bili = componentsBean.getPaperCoordProportion().doubleValue();
-                    componentsBean.setComponentContent(getShowContent(componentsBean, map_in, 0));
-                    //画笔
-                    paint.setColor(Color.BLACK);
-                    paint.setTextSize(Integer.valueOf(componentsBean.getSize()));
-                    DebugLog.e("6getCoordY=====" + "==getCoordY=" + componentsBean.getCoordY());
-                    printTextBitmap(canvas, paint, componentsBean, bili, 0);
-                } else if (componentsBean.getComponentTypeId().equals("2")) {
-                    componentsBean.setComponentContent(getShowContent(componentsBean, map_in, 0));
-                    double bili = componentsBean.getPaperCoordProportion().doubleValue();
-                    printBarBitmap(canvas, componentsBean, bili, 0);
-                } else if (componentsBean.getComponentTypeId().equals("3")) {
-                    componentsBean.setComponentContent(getShowContent(componentsBean, map_in, 0));
-                    double bili = componentsBean.getPaperCoordProportion().doubleValue();
-                    printQRBitmap(canvas, componentsBean, bili, 0);
-                } else if (componentsBean.getComponentTypeId().equals("4")) {
-                    double bili = componentsBean.getPaperCoordProportion().doubleValue();
-                    printShapeBitmap(canvas, paintDashLine, componentsBean, bili, 0);
-                }
-
-            }
-        }
-        canvas.save();
-        canvas.restore();
-        finalBitmap = compressQuality(finalBitmap, 100);
-        return finalBitmap;
-
-    }
-
-    private int setYH1(Canvas canvas,List<ModleDTO.ComponentsBean> list, Map<String, Object> map, int above_list_h, ModleDTO.ComponentsBean componentsBean_ku_item) {
-        double bili = 0.445;
-        int pulsHeight = 0;
-        Paint paint = new Paint();
-        //线
-        Paint paintDashLine = new Paint();
-        paintDashLine.setStyle(Paint.Style.STROKE);
-        paintDashLine.setColor(Color.BLACK);
-
-
-        aaa.setElement(list);
-        aaa.paixu(list);
-        //合同模板Y
-        int hetong_Y = -1;
-        //合同列表的高
-        int hetong_list_h = 0;
-        Log.e("00hetong_list_hkk=", hetong_list_h + "===" + map.get("stockName"));
-        //合同列表在模板中的高
-        int hetong_item_h_inmodle = 0;
-        for (int j2 = 0; j2 < list.size(); j2++) {
-            ModleDTO.ComponentsBean componentsBean2 = list.get(j2);
-            if (componentsBean2.getComponentTypeId().equals("5")) {
-                componentsBean2.setComponentHeight(600);//TODO 这里模板传入的数据有问题，需要改高
-                componentsBean2.setCoordY(140);//TODO 这里模板传入的数据有问题，需要改Y
-            } else {
-                if (componentsBean2.getElement() == null || componentsBean2.getElement().getElementCode() == null) {
-                    Log.e("kanjieguoba===", "===" + componentsBean2.getCoordY() + "===" + componentsBean2.getComponentContent());
-                } else {
-                    Log.e("kanjieguoba===", "===" + componentsBean2.getCoordY() + "===" + componentsBean2.getElement().getElementCode() + "===" + componentsBean2.getComponentContent());
-                }
-            }
-
-            if (componentsBean2.getComponentTypeId().equals("5")) {
-                hetong_item_h_inmodle = componentsBean2.getComponentHeight();
-                hetong_Y = componentsBean2.getCoordY();
-                List<ModleDTO.ComponentsBean> list_hetong = componentsBean2.getChlieComponentList();
-                List<Map<String, Object>> listmap_hetong = (List<Map<String, Object>>) map.get(componentsBean2.getElement().getElementCode());
-                if (listmap_hetong != null) {
-                    componentsBean2.getChlieComponentLists().clear();
-                    for (int i2 = 0; i2 < listmap_hetong.size(); i2++) {
-                        Map<String, Object> map_hetong = listmap_hetong.get(i2);//代表其中的一个合同
-                        ModleDTO.ComponentsBean componentsBean_hetong_item = new ModleDTO.ComponentsBean();
-                        componentsBean_hetong_item.setComponentHeight(componentsBean2.getComponentHeight());
-                        componentsBean_hetong_item.setElement(componentsBean2.getElement());
-                        componentsBean_hetong_item.setId(componentsBean2.getId());
-                        //设置数据
-                        aaa.creatNenData2(componentsBean2, componentsBean_hetong_item, list_hetong);
-                        componentsBean_hetong_item.setCoordY(hetong_Y);
-
-                        if (i2 == 0) {
-                            //coordY+外层item上方的item累计的高
-                            componentsBean_hetong_item.setCoordY(componentsBean_hetong_item.getCoordY() + above_list_h);
-                            //本高+列表高-一项列表的高 //TODO 这里只考虑了一个列表，没考虑多个同级别列表 需要优化
-                            componentsBean_hetong_item.setComponentHeight(componentsBean_hetong_item.getComponentHeight() + setYH1(canvas,list_hetong, map_hetong, hetong_list_h + above_list_h, componentsBean_hetong_item));
-                        } else {
-                            //上一个的Y+上一个的高+外层item上方的item累计的高
-                            componentsBean_hetong_item.setCoordY(componentsBean_hetong_item.getCoordY() + above_list_h + hetong_list_h);
-                            //本高+列表高-一项列表的高 //TODO 这里只考虑了一个列表，没考虑多个同级别列表 需要优化
-                            componentsBean_hetong_item.setComponentHeight(componentsBean_hetong_item.getComponentHeight() + setYH1(canvas,list_hetong, map_hetong, hetong_list_h + above_list_h, componentsBean_hetong_item));
-
-                        }
-                        Log.e("2级检验-H=", "===" + componentsBean_hetong_item.getComponentHeight());
-                        Log.e("2级检验-Y=", "===" + componentsBean_hetong_item.getCoordY());
-                        hetong_list_h = hetong_list_h + componentsBean_hetong_item.getComponentHeight();
-
-                        //TODO 这里应该给仓库bean完善组件信息
-                        componentsBean_ku_item.getChlieComponentLists().add(componentsBean_hetong_item);
-                        componentsBean2.getChlieComponentLists().add(componentsBean_hetong_item);
-                        Log.e("2whatpp=", componentsBean2.getChlieComponentLists().size() + "");
-                    }
-                }
-            } else {
-
-                //是组件下面的 就把列表的高加上
-//                if (componentsBean2.getCoordY() > hetong_Y && hetong_Y > 0) {
-                componentsBean2.setCoordY(componentsBean2.getCoordY() + above_list_h + hetong_list_h);
-//                }
-                Log.e("scxxxc===", componentsBean2.getCoordY() + "===" + above_list_h + "===" + hetong_list_h);
-
-
-                componentsBean2.setComponentContent(aaa.getShowContent(componentsBean2, map, 0));
-                componentsBean_ku_item.getChlieComponentLists().add(componentsBean2);
-
-                if (componentsBean2.getComponentTypeId().equals("1")) {
-                    componentsBean2.setComponentContent(getShowContent(componentsBean2, map, 0));
-                    //画笔
-                    paint.setColor(Color.BLACK);
-                    paint.setTextSize(Integer.valueOf(componentsBean2.getSize()));
-                    Log.e("componentsBean=tt===", componentsBean2.getComponentContent());
-                    DebugLog.e("3getCoordY=====" + "==getCoordY=" + componentsBean2.getCoordY());
-                    printTextBitmap(canvas, paint, componentsBean2, bili, pulsHeight);
-                } else if (componentsBean2.getComponentTypeId().equals("2")) {
-                    componentsBean2.setComponentContent(getShowContent(componentsBean2, map, 0));
-                    printBarBitmap(canvas, componentsBean2, bili, pulsHeight);
-                } else if (componentsBean2.getComponentTypeId().equals("3")) {
-                    componentsBean2.setComponentContent(getShowContent(componentsBean2, map, 0));
-                    printQRBitmap(canvas, componentsBean2, bili, pulsHeight);
-                } else if (componentsBean2.getComponentTypeId().equals("4")) {
-                    printShapeBitmap(canvas, paintDashLine, componentsBean2, bili, pulsHeight);
-                }
-
-            }
-        }
-        return hetong_list_h - hetong_item_h_inmodle;
-    }
-
-
     /**
      * Bitmap打印机
      */
@@ -358,8 +132,18 @@ public class PrintUtil {
                 Log.e("listdata===", componentsBean.getComponentContent());
                 LabelBoard lb = new Gson().fromJson(componentsBean.getComponentContent(), LabelBoard.class);
 //                List<ModleDTO.ComponentsBean> list = LabelBoardAnalysisUtil.setDataToModle(lb, componentsBean);
-                List<ModleDTO.ComponentsBean> list = componentsBean.getChlieComponentList();
+                List<ModleDTO.ComponentsBean> list=componentsBean.getChlieComponentList();
 
+                for (ModleDTO.ComponentsBean componentsBean1 : list) {
+                    Log.e("1caha===", componentsBean1.getComponentTypeId() + componentsBean1.getComponentContent());
+                    if (componentsBean1.getComponentTypeId().equals("5")) {
+                        LabelBoard lb2 = new Gson().fromJson(componentsBean1.getComponentContent(), LabelBoard.class);
+                        Log.e("caha===", componentsBean1.getComponentContent());
+                        ModleDTO.ComponentsBean.ElementsBean elementsBean = new ModleDTO.ComponentsBean.ElementsBean();//这两行代码 是因为模板的element存不上 我存在了LabelBoard中
+                        elementsBean.setElementCode(lb2.getElementCode());
+                        componentsBean1.setElement(elementsBean);
+                    }
+                }
 
                 ModleDTO.ComponentsBean.ElementsBean elementsBean = new ModleDTO.ComponentsBean.ElementsBean();//这两行代码 是因为模板的element存不上 我存在了LabelBoard中
                 elementsBean.setElementCode(lb.getElementCode());
@@ -373,7 +157,7 @@ public class PrintUtil {
 
                     int position = 0;
                     for (Map<String, Object> map : listmap) {
-                        printAnalysisBitmap1(canvas, list, componentsBean, map, position, componentsBean.getComponentHeight());
+                        printAnalysisBitmap(canvas, list, componentsBean, map, position, componentsBean.getComponentHeight());
                         position++;
                     }
                 }
@@ -405,82 +189,6 @@ public class PrintUtil {
         return finalBitmap;
     }
 
-    private void printAnalysisBitmap1(Canvas canvas, List<ModleDTO.ComponentsBean> list0, ModleDTO.ComponentsBean componentsBean_father, Map<String, Object> map, int position, int itemHeight) {
-        double bili = 0.445;
-        if (componentsBean_father.getPaperCoordProportion() != null) {
-            bili = componentsBean_father.getPaperCoordProportion().doubleValue();
-        } else {
-            Log.e("benghkui===", componentsBean_father.getComponentContent() + "===" + componentsBean_father.getId());
-        }
-        int pulsHeight = 0;
-        if (position == 0) {
-            pulsHeight = 0;
-        } else {
-            pulsHeight = position * itemHeight;
-        }
-        Paint paint = new Paint();
-        //线
-        Paint paintDashLine = new Paint();
-        paintDashLine.setStyle(Paint.Style.STROKE);
-        paintDashLine.setColor(Color.BLACK);
-        for (ModleDTO.ComponentsBean componentsBean : list0) {
-            if (componentsBean.getComponentTypeId().equals("5")) {
-
-
-                Log.e("222listdata===", componentsBean.getComponentContent());
-                //把数据拿出来
-                LabelBoard lb = new Gson().fromJson(componentsBean.getComponentContent(), LabelBoard.class);
-                //保存到集合并给列表元素完善数据
-//                List<ModleDTO.ComponentsBean> list = LabelBoardAnalysisUtil.setDataToModle(lb, componentsBean);
-                List<ModleDTO.ComponentsBean> list = componentsBean.getChlieComponentList();
-
-                for (ModleDTO.ComponentsBean componentsBean1 : list) {
-                    Log.e("3caha===", componentsBean1.getComponentTypeId() + componentsBean1.getComponentContent());
-                    if (componentsBean1.getComponentTypeId().equals("5")) {
-                        LabelBoard lb2 = new Gson().fromJson(componentsBean1.getComponentContent(), LabelBoard.class);
-                        Log.e("4caha===", componentsBean1.getComponentContent());
-                        ModleDTO.ComponentsBean.ElementsBean elementsBean = new ModleDTO.ComponentsBean.ElementsBean();//这两行代码 是因为模板的element存不上 我存在了LabelBoard中
-                        elementsBean.setElementCode(lb2.getElementCode());
-                        componentsBean1.setElement(elementsBean);
-                    }
-                }
-
-
-                ModleDTO.ComponentsBean.ElementsBean elementsBean = new ModleDTO.ComponentsBean.ElementsBean(); //这两行代码 是因为模板的element存不上 我存在了LabelBoard中
-                elementsBean.setElementCode(lb.getElementCode());
-                componentsBean.setElement(elementsBean);
-                Log.e("1收到=getElementCode==", componentsBean.getElement().getElementCode());
-                Log.e("2收到=getElementCode==", new Gson().toJson(map));
-                List<Map<String, Object>> listmap = (List<Map<String, Object>>) map.get(componentsBean.getElement().getElementCode());
-                if (listmap != null) {
-                    Log.e("2222收到===", new Gson().toJson(list));
-                    Log.e("收到==listmap2=", new Gson().toJson(listmap));
-
-                    int position2 = 0;
-                    for (Map<String, Object> map2 : listmap) {
-                        printAnalysisBitmap1(canvas, list, componentsBean, map2, position2, componentsBean.getComponentHeight());
-                    }
-                }
-
-            } else if (componentsBean.getComponentTypeId().equals("1")) {
-                componentsBean.setComponentContent(getShowContent(componentsBean, map, position));
-                //画笔
-                paint.setColor(Color.BLACK);
-                paint.setTextSize(Integer.valueOf(componentsBean.getSize()));
-                Log.e("componentsBean=tt===", componentsBean.getComponentContent());
-                DebugLog.e("3getCoordY=====" + "==getCoordY=" + componentsBean.getCoordY());
-                printTextBitmap(canvas, paint, componentsBean, bili, pulsHeight);
-            } else if (componentsBean.getComponentTypeId().equals("2")) {
-                componentsBean.setComponentContent(getShowContent(componentsBean, map, position));
-                printBarBitmap(canvas, componentsBean, bili, pulsHeight);
-            } else if (componentsBean.getComponentTypeId().equals("3")) {
-                componentsBean.setComponentContent(getShowContent(componentsBean, map, position));
-                printQRBitmap(canvas, componentsBean, bili, pulsHeight);
-            } else if (componentsBean.getComponentTypeId().equals("4")) {
-                printShapeBitmap(canvas, paintDashLine, componentsBean, bili, pulsHeight);
-            }
-        }
-    }
 
     /**
      * Bitmap打印机
@@ -581,7 +289,7 @@ public class PrintUtil {
                 LabelBoard lb = new Gson().fromJson(componentsBean.getComponentContent(), LabelBoard.class);
                 //保存到集合并给列表元素完善数据
 //                List<ModleDTO.ComponentsBean> list = LabelBoardAnalysisUtil.setDataToModle(lb);
-                List<ModleDTO.ComponentsBean> list = componentsBean.getChlieComponentList();
+                List<ModleDTO.ComponentsBean> list=componentsBean.getChlieComponentList();
 
                 for (ModleDTO.ComponentsBean componentsBean1 : list) {
                     Log.e("3caha===", componentsBean1.getComponentTypeId() + componentsBean1.getComponentContent());
@@ -630,6 +338,160 @@ public class PrintUtil {
         }
     }
 
+    private void printAnalysisBitmap2(Canvas canvas, List<ModleDTO.ComponentsBean> list0, ModleDTO.ComponentsBean componentsBean_father, Map<String, Object> map, int position, int itemHeight) {
+        double bili = 0.445;
+        if (componentsBean_father.getPaperCoordProportion() != null) {
+            bili = componentsBean_father.getPaperCoordProportion().doubleValue();
+        } else {
+            Log.e("benghkui===", componentsBean_father.getComponentContent() + "===" + componentsBean_father.getId());
+        }
+        int pulsHeight = 0;
+        if (position == 0) {
+            pulsHeight = 0;
+        } else {
+            pulsHeight = position * itemHeight;
+        }
+        Paint paint = new Paint();
+        //线
+        Paint paintDashLine = new Paint();
+        paintDashLine.setStyle(Paint.Style.STROKE);
+        paintDashLine.setColor(Color.BLACK);
+        for (ModleDTO.ComponentsBean componentsBean : list0) {
+            if (componentsBean.getComponentTypeId().equals("5")) {
+
+
+                Log.e("222listdata===", componentsBean.getComponentContent());
+                //把数据拿出来
+                LabelBoard lb = new Gson().fromJson(componentsBean.getComponentContent(), LabelBoard.class);
+                //保存到集合并给列表元素完善数据
+//                List<ModleDTO.ComponentsBean> list = LabelBoardAnalysisUtil.setDataToModle(lb, componentsBean);
+                List<ModleDTO.ComponentsBean> list=componentsBean.getChlieComponentList();
+
+                for (ModleDTO.ComponentsBean componentsBean1 : list) {
+                    Log.e("3caha===", componentsBean1.getComponentTypeId() + componentsBean1.getComponentContent());
+                    if (componentsBean1.getComponentTypeId().equals("5")) {
+                        LabelBoard lb2 = new Gson().fromJson(componentsBean1.getComponentContent(), LabelBoard.class);
+                        Log.e("4caha===", componentsBean1.getComponentContent());
+                        ModleDTO.ComponentsBean.ElementsBean elementsBean = new ModleDTO.ComponentsBean.ElementsBean();//这两行代码 是因为模板的element存不上 我存在了LabelBoard中
+                        elementsBean.setElementCode(lb2.getElementCode());
+                        componentsBean1.setElement(elementsBean);
+                    }
+                }
+
+
+                ModleDTO.ComponentsBean.ElementsBean elementsBean = new ModleDTO.ComponentsBean.ElementsBean(); //这两行代码 是因为模板的element存不上 我存在了LabelBoard中
+                elementsBean.setElementCode(lb.getElementCode());
+                componentsBean.setElement(elementsBean);
+                Log.e("1收到=getElementCode==", componentsBean.getElement().getElementCode());
+                Log.e("2收到=getElementCode==", new Gson().toJson(map));
+                List<Map<String, Object>> listmap = (List<Map<String, Object>>) map.get(componentsBean.getElement().getElementCode());
+                if (listmap != null) {
+                    Log.e("2222收到===", new Gson().toJson(list));
+                    Log.e("收到==listmap2=", new Gson().toJson(listmap));
+
+                    int position2 = 0;
+                    for (Map<String, Object> map2 : listmap) {
+                        printAnalysisBitmap3(canvas, list, componentsBean, map2, position2, componentsBean.getComponentHeight());
+                    }
+                }
+
+            } else if (componentsBean.getComponentTypeId().equals("1")) {
+                componentsBean.setComponentContent(getShowContent(componentsBean, map, position));
+                //画笔
+                paint.setColor(Color.BLACK);
+                paint.setTextSize(Integer.valueOf(componentsBean.getSize()));
+                Log.e("componentsBean=tt===", componentsBean.getComponentContent());
+                DebugLog.e("3getCoordY=====" + "==getCoordY=" + componentsBean.getCoordY());
+                printTextBitmap(canvas, paint, componentsBean, bili, pulsHeight);
+            } else if (componentsBean.getComponentTypeId().equals("2")) {
+                componentsBean.setComponentContent(getShowContent(componentsBean, map, position));
+                printBarBitmap(canvas, componentsBean, bili, pulsHeight);
+            } else if (componentsBean.getComponentTypeId().equals("3")) {
+                componentsBean.setComponentContent(getShowContent(componentsBean, map, position));
+                printQRBitmap(canvas, componentsBean, bili, pulsHeight);
+            } else if (componentsBean.getComponentTypeId().equals("4")) {
+                printShapeBitmap(canvas, paintDashLine, componentsBean, bili, pulsHeight);
+            }
+        }
+    }
+
+    private void printAnalysisBitmap3(Canvas canvas, List<ModleDTO.ComponentsBean> list0, ModleDTO.ComponentsBean componentsBean_father, Map<String, Object> map, int position, int itemHeight) {
+        double bili = 0.445;
+        if (componentsBean_father.getPaperCoordProportion() != null) {
+            bili = componentsBean_father.getPaperCoordProportion().doubleValue();
+        } else {
+            Log.e("benghkui===", componentsBean_father.getComponentContent() + "===" + componentsBean_father.getId());
+        }
+        int pulsHeight = 0;
+        if (position == 0) {
+            pulsHeight = 0;
+        } else {
+            pulsHeight = position * itemHeight;
+        }
+        Paint paint = new Paint();
+        //线
+        Paint paintDashLine = new Paint();
+        paintDashLine.setStyle(Paint.Style.STROKE);
+        paintDashLine.setColor(Color.BLACK);
+        for (ModleDTO.ComponentsBean componentsBean : list0) {
+            if (componentsBean.getComponentTypeId().equals("5")) {
+
+
+                Log.e("222listdata===", componentsBean.getComponentContent());
+                //把数据拿出来
+                LabelBoard lb = new Gson().fromJson(componentsBean.getComponentContent(), LabelBoard.class);
+                //保存到集合并给列表元素完善数据
+//                List<ModleDTO.ComponentsBean> list = LabelBoardAnalysisUtil.setDataToModle(lb, componentsBean);
+                List<ModleDTO.ComponentsBean> list=componentsBean.getChlieComponentList();
+
+                for (ModleDTO.ComponentsBean componentsBean1 : list) {
+                    Log.e("3caha===", componentsBean1.getComponentTypeId() + componentsBean1.getComponentContent());
+                    if (componentsBean1.getComponentTypeId().equals("5")) {
+                        LabelBoard lb2 = new Gson().fromJson(componentsBean1.getComponentContent(), LabelBoard.class);
+                        Log.e("4caha===", componentsBean1.getComponentContent());
+                        ModleDTO.ComponentsBean.ElementsBean elementsBean = new ModleDTO.ComponentsBean.ElementsBean();//这两行代码 是因为模板的element存不上 我存在了LabelBoard中
+                        elementsBean.setElementCode(lb2.getElementCode());
+                        componentsBean1.setElement(elementsBean);
+                    }
+                }
+
+
+                ModleDTO.ComponentsBean.ElementsBean elementsBean = new ModleDTO.ComponentsBean.ElementsBean(); //这两行代码 是因为模板的element存不上 我存在了LabelBoard中
+                elementsBean.setElementCode(lb.getElementCode());
+                componentsBean.setElement(elementsBean);
+                Log.e("1收到=getElementCode==", componentsBean.getElement().getElementCode());
+                Log.e("2收到=getElementCode==", new Gson().toJson(map));
+                List<Map<String, Object>> listmap = (List<Map<String, Object>>) map.get(componentsBean.getElement().getElementCode());
+                if (listmap != null) {
+                    Log.e("收到===", new Gson().toJson(list));
+                    Log.e("收到==listmap2=", new Gson().toJson(listmap));
+
+                    int position2 = 0;
+                    for (Map<String, Object> map2 : listmap) {
+                        printAnalysisBitmap(canvas, list, componentsBean, map2, position2, componentsBean.getComponentHeight());
+                    }
+                }
+
+            } else if (componentsBean.getComponentTypeId().equals("1")) {
+                Log.e("3componentsBean=ttt===", new Gson().toJson(map));
+                componentsBean.setComponentContent(getShowContent(componentsBean, map, position));
+                //画笔
+                paint.setColor(Color.BLACK);
+                paint.setTextSize(Integer.valueOf(componentsBean.getSize()));
+                DebugLog.e("2getCoordY=====" + "==getCoordY=" + componentsBean.getCoordY());
+                Log.e("3componentsBean=tt===", componentsBean.getComponentContent() + "==x==" + componentsBean.getCoordX() + "==y==" + componentsBean.getCoordY() + "==elememtcode==" + componentsBean.getElement().getElementCode());
+                printTextBitmap(canvas, paint, componentsBean, bili, pulsHeight);
+            } else if (componentsBean.getComponentTypeId().equals("2")) {
+                componentsBean.setComponentContent(getShowContent(componentsBean, map, position));
+                printBarBitmap(canvas, componentsBean, bili, pulsHeight);
+            } else if (componentsBean.getComponentTypeId().equals("3")) {
+                componentsBean.setComponentContent(getShowContent(componentsBean, map, position));
+                printQRBitmap(canvas, componentsBean, bili, pulsHeight);
+            } else if (componentsBean.getComponentTypeId().equals("4")) {
+                printShapeBitmap(canvas, paintDashLine, componentsBean, bili, pulsHeight);
+            }
+        }
+    }
 
     /**
      * XY打印机
@@ -744,10 +606,84 @@ public class PrintUtil {
     /**
      * 根据嵌套关系重新给组件Y轴赋值
      *
-     * @param l      组件集合
-     * @param map_in 业务数据用于 根据实际数量计算高度
+     * @param l           组件集合
+     * @param map_in      业务数据用于 根据实际数量计算高度
+     * @param base_height 层级 最外层的Y轴往往很大 不能直接用于惩罚计算 只能作为基础高度最后加上
+     * @param layer       层级 用来做判断
      * @return
      */
+    private int calculationHeight1(List<ModleDTO.ComponentsBean> l, Map<String, Object> map_in, int base_height, int layer) {
+        layer = layer + 1;
+        int leijiaH = 0;
+        int itemh = 0;
+//        for (ModleDTO.ComponentsBean componentsBean : l) {
+//            if (!componentsBean.getComponentTypeId().equals("5")) {
+//                leijiaH = leijiaH + componentsBean.getComponentHeight();
+//
+//            }
+//        }
+
+        for (ModleDTO.ComponentsBean componentsBean : l) {
+            if (componentsBean.getComponentTypeId().equals("5")) {
+                //获取列表中item的集合
+                LabelBoard lb = new Gson().fromJson(componentsBean.getComponentContent(), LabelBoard.class);
+                List<ModleDTO.ComponentsBean> list = LabelBoardAnalysisUtil.setDataToModle(lb, componentsBean);
+
+                componentsBean.setChlieComponentList(list);
+
+                ModleDTO.ComponentsBean.ElementsBean elementsBean = new ModleDTO.ComponentsBean.ElementsBean();//这两行代码 是因为模板的element存不上 我存在了LabelBoard中
+                elementsBean.setElementCode(lb.getElementCode());
+                componentsBean.setElement(elementsBean);
+
+                //获取列表中item集合对应的数据  listmap根据 componentsBean的 elementCode 从getMap里取真实数据出来
+                List<Map<String, Object>> listmap = (List<Map<String, Object>>) map_in.get(componentsBean.getElement().getElementCode());
+                if (listmap != null) {
+
+                    //循环数据
+                    for (int i = 0; i < listmap.size(); i++) {//循环中的每一项都是一个仓库
+                        Map<String, Object> map = listmap.get(i);
+
+                        if (layer == 0 && i == 0) {
+                            base_height = componentsBean.getCoordY();
+                        }
+                        itemh = itemh + (i * componentsBean.getComponentHeight());
+//                        if (layer == 0) {
+//                            leijiaY = 0;
+//                        } else {
+//                            leijiaY = leijiaY + ((i + 1) * componentsBean.getCoordY());
+//                        }
+//                        leijiaH = leijiaH + (i * componentsBean.getComponentHeight());
+                        leijiaH = leijiaH + calculationHeight1(list, map, base_height, layer);
+                        Log.e("1checha==Y=", componentsBean.getCoordY() + "");
+                        Log.e("1checha==H=", componentsBean.getComponentHeight() + "");
+                    }
+                    componentsBean.setCoordY(base_height + componentsBean.getCoordY() + itemh);
+                }
+
+            }else {
+                componentsBean.setCoordY(base_height + componentsBean.getCoordY() + itemh);
+            }
+
+            if (layer == 4) {
+                Log.e("44dsjkfjsdk===", componentsBean.getComponentContent() + "==y==" + componentsBean.getCoordY());
+            } else if (layer == 3) {
+                Log.e("33dsjkfjsdk===", componentsBean.getComponentContent() + "==y==" + componentsBean.getCoordY());
+            } else if (layer == 2) {
+                Log.e("22dsjkfjsdk===", componentsBean.getComponentContent() + "==y==" + componentsBean.getCoordY());
+            }
+        }
+
+//        for(ModleDTO.ComponentsBean componentsBean : l){
+//            if(layer==4){
+//                Log.e("44dsjkfjsdk===",componentsBean.getComponentContent()+"==y=="+componentsBean.getCoordY());
+//            } if(layer==3){
+//                Log.e("33dsjkfjsdk===",componentsBean.getComponentContent()+"==y=="+componentsBean.getCoordY());
+//            }if(layer==2){
+//                Log.e("22dsjkfjsdk===",componentsBean.getComponentContent()+"==y=="+componentsBean.getCoordY());
+//            }
+//        }
+        return leijiaH;
+    }
 //    private int calculationHeight1(List<ModleDTO.ComponentsBean> l, Map<String, Object> map_in, int base_height, int layer) {
 //        layer = layer + 1;
 //        int leijiaH = 0;
@@ -820,6 +756,8 @@ public class PrintUtil {
 ////        }
 //        return leijiaH;
 //    }
+
+
     private int calculationHeight2(List<ModleDTO.ComponentsBean> l, int y, int h, Map<String, Object> map_in) {
         int list_h = 0;
         for (ModleDTO.ComponentsBean componentsBean : l) {

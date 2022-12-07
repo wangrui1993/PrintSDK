@@ -87,12 +87,12 @@ public class PrintDataUtil {
             printPaperRelationshipDTOList.add(printPaperRelationshipDTO);
         }
 
-        if (SharedPreferenceUtil.get(context, Config.RELATIONSHIPPP, "").toString().length() == 0) {
+//        if (SharedPreferenceUtil.get(context, Config.RELATIONSHIPPP, "").toString().length() == 0) {
             String businessdata = new Gson().toJson(businessElementBeanList);
             SharedPreferenceUtil.put(context, Config.RELATIONSHIPPP, businessdata);
 
             addPrinter();
-        }
+//        }
 
 
     }

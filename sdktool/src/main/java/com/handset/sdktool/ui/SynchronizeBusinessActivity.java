@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,7 +32,7 @@ import kotlin.jvm.internal.Intrinsics;
 public class SynchronizeBusinessActivity extends AppCompatActivity {
     private RecyclerView recycle_view;
     private RecyclerView list_menu;
-    private TextView tv_nodata;
+    private ImageView tv_nodata;
     private BusinessSelectAdapter mBusinessSelectAdapter;
     private SelectElementAdapter mSelectElementAdapter;
     private List<BusinessDTO> mListBusiness = new ArrayList<>();
@@ -43,7 +44,7 @@ public class SynchronizeBusinessActivity extends AppCompatActivity {
         setContentView(R.layout.activity_set_business);
         recycle_view = (RecyclerView) findViewById(R.id.recycle_view);
         list_menu = (RecyclerView) findViewById(R.id.list_menu);
-        tv_nodata = (TextView) findViewById(R.id.tv_nodata);
+        tv_nodata = (ImageView) findViewById(R.id.tv_nodata);
 
         mBusinessSelectAdapter = new BusinessSelectAdapter(this, mListBusiness);
         list_menu.setLayoutManager(new LinearLayoutManager(this));
