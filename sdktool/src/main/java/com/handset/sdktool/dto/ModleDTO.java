@@ -179,6 +179,7 @@ public class ModleDTO implements Serializable {
         private String alignType;
         private int coordX;
         private int coordY;
+        private int ini_coordY=-1;//原始的Y（模板接口拿到的初始），由于Y是动态计算的是不固定的，由于我后期希望知道他的原始值所以要存
         private String fontBold;
         private int componentWidth;
         private int componentHeight;
@@ -192,7 +193,16 @@ public class ModleDTO implements Serializable {
         private ElementsBean element;
         private List<ModleDTO.ComponentsBean> chlieComponentList;//单个的模板列表 (模板存放的是各组件信息)
         private List<ModleDTO.ComponentsBean> chlieComponentLists=new ArrayList<>();//这个是子模板的实体 存放的是一个个子模板
-//        private List<ModleDTO.ComponentsBean> componentList=new ArrayList<>();;//这里是一个模板中的除列表外的所有组件
+
+        public int getIni_coordY() {
+            return ini_coordY;
+        }
+
+        public void setIni_coordY(int ini_coordY) {
+            this.ini_coordY = ini_coordY;
+        }
+
+        //        private List<ModleDTO.ComponentsBean> componentList=new ArrayList<>();;//这里是一个模板中的除列表外的所有组件
 
 
 //        public List<ComponentsBean> getComponentList() {

@@ -176,7 +176,7 @@ public class ConnectBlueToothActivity extends AppCompatActivity {
         print.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showLoadingDialog("请求打印数据..");
+                showLoadingDialog("获取启用模板..");
                 DataUtil.getInstance().getTemplateByBusinessCode(getIntent().getStringExtra("id"), new GetTemplateByBusinessCode() {
                     @Override
                     public void onSuccess(ModleDTO listBaseBean) {

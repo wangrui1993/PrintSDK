@@ -14,6 +14,7 @@ import com.handset.sdktool.net.NetUtil;
 import com.handset.sdktool.net.OnResponse;
 import com.handset.sdktool.net.base.BaseBean;
 import com.handset.sdktool.net.base.Bean;
+import com.handset.sdktool.net.base.NetConfig;
 import com.handset.sdktool.util.DebugLog;
 import com.handset.sdktool.util.GetJsonDataUtil;
 import com.handset.sdktool.util.SharedPreferenceUtil;
@@ -108,7 +109,7 @@ public class PrintDataUtil {
         DebugLog.e("jsonss===" + strEntity);
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json;charset=UTF-8"), strEntity);
 
-        NetUtil.getInstance().api().addPrinter(body)
+        NetUtil.getInstance().api().addPrinter(NetConfig.IP,body)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new OnResponse<BaseBean<Bean>>() {
@@ -145,7 +146,7 @@ public class PrintDataUtil {
         DebugLog.e("jsonsssss===" + strEntity);
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json;charset=UTF-8"), strEntity);
 
-        NetUtil.getInstance().api().addPaper(body)
+        NetUtil.getInstance().api().addPaper(NetConfig.IP,body)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new OnResponse<BaseBean<Bean>>() {
@@ -183,7 +184,7 @@ public class PrintDataUtil {
         DebugLog.e("1json===" + strEntity);
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json;charset=UTF-8"), strEntity);
 
-        NetUtil.getInstance().api().addPrinterPaperRelInBatches(body)
+        NetUtil.getInstance().api().addPrinterPaperRelInBatches(NetConfig.IP,body)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new OnResponse<BaseBean<Bean>>() {

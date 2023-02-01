@@ -10,6 +10,7 @@ import com.handset.sdktool.businessdatautil.BusinessDataUtil;
 import com.handset.sdktool.businessdatautil.PrintDataUtil;
 import com.handset.sdktool.dto.BusinessDTO;
 import com.handset.sdktool.dto.ElementDTO;
+import com.handset.sdktool.net.base.NetConfig;
 import com.handset.sdktool.ui.SynchronizeBusinessActivity;
 import com.handset.sdktool.ui.SynchronizePrintActivity;
 
@@ -33,11 +34,13 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public void initView(Bundle savedInstanceState) {
+        NetConfig.init("192.168.31.82:8090");
+
         //初始化业务和元素数据
         List<BusinessElementBean> businessElementBeanList = new ArrayList<>();
         BusinessDTO addProfessionalWorkDTO = new BusinessDTO();
         addProfessionalWorkDTO.setServicetype("装车单");
-        addProfessionalWorkDTO.setServicetypeNo("jz00");
+        addProfessionalWorkDTO.setServicetypeNo("jz05");
 
         List<ElementDTO> elementDTOList = new ArrayList<>();
         ElementDTO elementDTO1 = new ElementDTO();

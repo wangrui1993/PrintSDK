@@ -17,6 +17,7 @@ import com.handset.sdktool.net.NetUtil;
 import com.handset.sdktool.net.OnResponse;
 import com.handset.sdktool.net.base.BaseBean;
 import com.handset.sdktool.net.base.Bean;
+import com.handset.sdktool.net.base.NetConfig;
 import com.handset.sdktool.util.DebugLog;
 import com.handset.sdktool.util.SharedPreferenceUtil;
 
@@ -99,7 +100,7 @@ public class BusinessDataUtil {
         String strEntity = gson.toJson(businessDTOList);
         DebugLog.e("json===" + strEntity);
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json;charset=UTF-8"), strEntity);
-        NetUtil.getInstance().api().addServiceInBatches(body)
+        NetUtil.getInstance().api().addServiceInBatches(NetConfig.IP,body)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new OnResponse<BaseBean<Bean>>() {
@@ -137,7 +138,7 @@ public class BusinessDataUtil {
         DebugLog.e("1json===" + strEntity);
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json;charset=UTF-8"), strEntity);
 
-        NetUtil.getInstance().api().addElementInBatches(body)
+        NetUtil.getInstance().api().addElementInBatches(NetConfig.IP,body)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new OnResponse<BaseBean<Bean>>() {
@@ -172,7 +173,7 @@ public class BusinessDataUtil {
         String strEntity = gson.toJson(businessElementRelationshipDTOList);
         DebugLog.e("1json===" + strEntity);
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json;charset=UTF-8"), strEntity);
-        NetUtil.getInstance().api().addBusinessElementRelInBatches(body)
+        NetUtil.getInstance().api().addBusinessElementRelInBatches(NetConfig.IP,body)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new OnResponse<BaseBean<Bean>>() {
@@ -227,7 +228,7 @@ public class BusinessDataUtil {
         DebugLog.e("json===" + strEntity);
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json;charset=UTF-8"), strEntity);
 
-        NetUtil.getInstance().api().addPrinter(body)
+        NetUtil.getInstance().api().addPrinter(NetConfig.IP,body)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new OnResponse<BaseBean<Bean>>() {
@@ -287,7 +288,7 @@ public class BusinessDataUtil {
         DebugLog.e("json===" + strEntity);
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json;charset=UTF-8"), strEntity);
 
-        NetUtil.getInstance().api().addPaper(body)
+        NetUtil.getInstance().api().addPaper(NetConfig.IP,body)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new OnResponse<BaseBean<Bean>>() {
@@ -342,7 +343,7 @@ public class BusinessDataUtil {
         DebugLog.e("1json===" + strEntity);
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json;charset=UTF-8"), strEntity);
 
-        NetUtil.getInstance().api().addPrinterPaperRelInBatches(body)
+        NetUtil.getInstance().api().addPrinterPaperRelInBatches(NetConfig.IP,body)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new OnResponse<BaseBean<Bean>>() {

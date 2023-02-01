@@ -1,67 +1,35 @@
 package com.handset.sdktool.printutil;
 
-import android.Manifest;
-import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.app.ProgressDialog;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.text.TextUtils;
+import android.os.Build;
 import android.util.Log;
 import android.widget.ImageView;
-import android.widget.Toast;
-
-import androidx.core.app.ActivityCompat;
 
 import com.blankj.utilcode.util.ImageUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.handset.sdktool.Config;
-import com.handset.sdktool.R;
-import com.handset.sdktool.bean.PrintPaperBean;
 import com.handset.sdktool.data.BusinessData;
-import com.handset.sdktool.dto.ElementDTO;
 import com.handset.sdktool.dto.ModleDTO;
-import com.handset.sdktool.dto.PaperDTO;
-import com.handset.sdktool.dto.PrintPaperRelationshipDTO;
-import com.handset.sdktool.dto.PrinterDTO;
 import com.handset.sdktool.event.Label;
 import com.handset.sdktool.event.LabelBoard;
-import com.handset.sdktool.net.NetUtil;
-import com.handset.sdktool.net.OnResponse;
-import com.handset.sdktool.net.base.BaseBean;
-import com.handset.sdktool.net.base.Bean;
 import com.handset.sdktool.printer.sunmi.SunmiPrintHelper;
-import com.handset.sdktool.util.Bluetooth;
 import com.handset.sdktool.util.CalculationUtil;
 import com.handset.sdktool.util.DebugLog;
 import com.handset.sdktool.util.DeviceUtil;
-import com.handset.sdktool.util.GetJsonDataUtil;
 import com.handset.sdktool.util.LabelBoardAnalysisUtil;
-import com.handset.sdktool.util.SharedPreferenceUtil;
-import com.tbruyelle.rxpermissions.RxPermissions;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
 import cpcl.PrinterHelper;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
-import okhttp3.RequestBody;
-import rx.functions.Action1;
 
 /**
  * @ClassName: DataUtil
@@ -82,19 +50,401 @@ public class PrintUtil {
         if (modleDTO == null || modleDTO.getTemplate() == null) {
             return;
         }
-        aaa aaa = new aaa();
         //200dpi 8 dot = 1mm dot-墨点  汉印1mm 8墨点
         int pagew = (int) modleDTO.getTemplate().getWidth() * 8;
-//        int pageh = (int) modleDTO.getTemplate().getHeight() * 8;
-        int pageh = 2462;
+//        int pageh = aaa.getPaperHight(modleDTO.getComponents(), BusinessData.getInstance().getMap());
+        int pageh = 4000;
 //        calculationHeight1(modleDTO.getComponents(),   BusinessData.getInstance().getMap(), 0, 0);
 //        pageh = calculationHeight(modleDTO.getComponents(), pageh, 0, BusinessData.getInstance().getMap());
 //        setBelowComponentY();
-
-//        Log.e("dfdcccsds===", aaa.calculationHeight1(modleDTO.getComponents(), BusinessData.getInstance().getMap(), 0) + "");
 //        imageView.setImageBitmap(printByBitmap1(pagew, pageh));
-        imageView.setImageBitmap(sfasf(modleDTO.getComponents(), BusinessData.getInstance().getMap(),pagew, pageh));
+        imageView.setImageBitmap(calculationHeight1(modleDTO.getComponents(), BusinessData.getInstance().getMap(), pagew, pageh));
     }
+
+
+    public Bitmap calculationHeight1(List<ModleDTO.ComponentsBean> l, Map<String, Object> map_in, int pagew, int pageh) {
+
+        if (l.size() > 0) {
+            double bili = l.get(0).getPaperCoordProportion().doubleValue();
+            pageh = (int) CalculationUtil.multiplication(Double.valueOf(pageh), bili);
+        }
+
+        Bitmap finalBitmap = Bitmap.createBitmap(pagew, pageh, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(finalBitmap);
+        canvas.drawColor(Color.WHITE);
+
+        Paint paint = new Paint();
+        //线
+        Paint paintDashLine = new Paint();
+        paintDashLine.setStyle(Paint.Style.STROKE);
+        paintDashLine.setColor(Color.BLACK);
+
+
+        paixu(l);
+        setElement(l);
+
+//        int ku_Y = -1;
+        int yiji_item_leiji_h_inmodle = 0;
+        int yiji_list_leiji_height = 0;//一级列表累计高
+        int yiji_jian = 0;//如果有两个 或多个列表 需要减去的高度
+        //循环中累计的库item的高，就是当前库上面的 库的总高
+        //整体组件（其中的一项 是一个component   如：天应泰发货通知单   时间   库列表）
+        for (int j = 0; j < l.size(); j++) {
+
+            int ku_Y = -1;
+            int ku_item_h_inmodle = 0;
+            int ku_list_height = 0;//库列表高
+
+            ModleDTO.ComponentsBean componentsBean = l.get(j);
+
+            double bili = componentsBean.getPaperCoordProportion().doubleValue();
+            DebugLog.e("bili=====" + "==bili=" + bili);
+            if (componentsBean.getComponentTypeId().equals("5")) {
+                ku_Y = componentsBean.getIni_coordY() == -1 ? componentsBean.getCoordY() : componentsBean.getIni_coordY();
+                ku_item_h_inmodle = componentsBean.getComponentHeight();
+                yiji_item_leiji_h_inmodle = yiji_item_leiji_h_inmodle + componentsBean.getComponentHeight();
+                //模板（其中的一项 是一个component   如：仓库名   规格   合同列表）
+                List<ModleDTO.ComponentsBean> list = componentsBean.getChlieComponentList();
+                //模板列表的数据列表
+                List<Map<String, Object>> list_map_ku = (List<Map<String, Object>>) map_in.get(componentsBean.getElement().getElementCode());
+                if (list_map_ku != null) {
+                    componentsBean.getChlieComponentLists().clear();
+                    for (int i = 0; i < list_map_ku.size(); i++) {
+                        Map<String, Object> map = list_map_ku.get(i);//代表其中的一个仓库
+                        ModleDTO.ComponentsBean componentsBean_ku_item = new ModleDTO.ComponentsBean();
+                        componentsBean_ku_item.setComponentHeight(componentsBean.getComponentHeight());
+                        componentsBean_ku_item.setElement(componentsBean.getElement());
+                        componentsBean_ku_item.setId(componentsBean.getId());
+                        //设置数据
+                        creatNenData(componentsBean, componentsBean_ku_item, list);
+
+                        //=====================================================================================================合同
+
+                        setElement(list);
+                        paixu(list);
+                        int erji_item_leiji_h_inmodle = 0;
+                        int erji_list_leiji_height = 0;//二级列表累计高
+
+                        for (int j2 = 0; j2 < list.size(); j2++) {
+                            //合同模板Y
+                            int hetong_Y = -1;
+                            //合同列表的高
+                            int hetong_list_h = 0;
+                            //合同列表在模板中的高
+                            int hetong_item_h_inmodle = 0;
+
+                            ModleDTO.ComponentsBean componentsBean2 = list.get(j2);
+                            if (componentsBean2.getComponentTypeId().equals("5")) {
+                                hetong_item_h_inmodle = componentsBean2.getComponentHeight();
+                                erji_item_leiji_h_inmodle = erji_item_leiji_h_inmodle + componentsBean2.getComponentHeight();
+                                hetong_Y = componentsBean2.getIni_coordY() == -1 ? componentsBean2.getCoordY() : componentsBean2.getIni_coordY();
+                                List<ModleDTO.ComponentsBean> list_hetong = componentsBean2.getChlieComponentList();
+                                List<Map<String, Object>> listmap_hetong = (List<Map<String, Object>>) map.get(componentsBean2.getElement().getElementCode());
+                                if (listmap_hetong != null) {
+                                    componentsBean2.getChlieComponentLists().clear();
+                                    for (int i2 = 0; i2 < listmap_hetong.size(); i2++) {
+                                        Map<String, Object> map_hetong = listmap_hetong.get(i2);//代表其中的一个合同
+                                        ModleDTO.ComponentsBean componentsBean_hetong_item = new ModleDTO.ComponentsBean();
+                                        componentsBean_hetong_item.setComponentHeight(componentsBean2.getComponentHeight());
+                                        componentsBean_hetong_item.setElement(componentsBean2.getElement());
+                                        componentsBean_hetong_item.setId(componentsBean2.getId());
+                                        //设置数据
+                                        creatNenData(componentsBean2, componentsBean_hetong_item, list_hetong);
+                                        componentsBean_hetong_item.setCoordY(hetong_Y);
+
+                                        //=====================================================================================================物料
+                                        setElement(list_hetong);
+                                        paixu(list_hetong);
+                                        //物料模板的Y
+                                        int wuliao_Y = -1;
+                                        //物料列表高
+                                        int wuliao_list_h = 0;
+                                        //物料列表在模板中的高
+                                        int wuliao_item_h_inmodle = 0;
+                                        Log.e("00wuliao_list_hkk=", wuliao_list_h + "===" + map_hetong.get("batchno"));
+                                        for (int j3 = 0; j3 < list_hetong.size(); j3++) {
+                                            ModleDTO.ComponentsBean componentsBean3 = list_hetong.get(j3);
+                                            if (componentsBean3.getComponentTypeId().equals("5")) {//物料 (模板)
+                                                wuliao_Y = componentsBean3.getIni_coordY() == -1 ? componentsBean3.getCoordY() : componentsBean3.getIni_coordY();
+                                                wuliao_item_h_inmodle = componentsBean3.getComponentHeight();
+                                                List<ModleDTO.ComponentsBean> list_wuliao = componentsBean3.getChlieComponentList();
+                                                List<Map<String, Object>> listmap_wuliao = (List<Map<String, Object>>) map_hetong.get(componentsBean3.getElement().getElementCode());
+
+                                                if (listmap_wuliao != null) {
+                                                    componentsBean3.getChlieComponentLists().clear();
+                                                    for (int i3 = 0; i3 < listmap_wuliao.size(); i3++) {
+                                                        Map<String, Object> map_wuliao = listmap_wuliao.get(i3);//代表其中的一个合同
+                                                        ModleDTO.ComponentsBean componentsBean_wuliao_item = new ModleDTO.ComponentsBean();
+                                                        componentsBean_wuliao_item.setComponentHeight(componentsBean3.getComponentHeight());
+                                                        componentsBean_wuliao_item.setElement(componentsBean3.getElement());
+                                                        componentsBean_wuliao_item.setId(componentsBean3.getId());
+                                                        //设置数据
+                                                        creatNenData(componentsBean3, componentsBean_wuliao_item, list_wuliao);
+                                                        componentsBean_wuliao_item.setCoordY(wuliao_Y);
+
+                                                        //=====================================================================================================下级
+                                                        setElement(list_wuliao);
+                                                        paixu(list_wuliao);
+                                                        //物料模板的Y
+                                                        int four_Y = -1;
+                                                        //物料列表高
+                                                        int four_h = 0;
+                                                        //物料列表在模板中的高
+                                                        int four_item_h_inmodle = 0;
+
+                                                        for (int j4 = 0; j4 < list_wuliao.size(); j4++) {
+                                                            ModleDTO.ComponentsBean componentsBean4 = list_wuliao.get(j4);
+                                                            if (componentsBean4.getComponentTypeId().equals("5")) {//物料 (模板)
+
+                                                            } else {
+                                                                componentsBean4.setComponentContent(getShowContent(componentsBean4, map_wuliao, i3));
+                                                                componentsBean_wuliao_item.getChlieComponentLists().add(componentsBean4);
+
+                                                                if (componentsBean4.getIni_coordY() == -1) {
+                                                                    componentsBean4.setIni_coordY(componentsBean4.getCoordY());
+                                                                }
+
+                                                                //是组件下面的 就把列表的高加上
+//                                                                if (componentsBean4.getCoordY() > wuliao_Y && wuliao_Y > 0) {
+                                                                int k_h = ku_list_height - ku_item_h_inmodle >= 0 ? ku_list_height : 0;
+                                                                int h_h = hetong_list_h - hetong_item_h_inmodle >= 0 ? hetong_list_h : 0;
+                                                                int w_h = wuliao_list_h - wuliao_item_h_inmodle >= 0 ? wuliao_list_h : 0;
+                                                                componentsBean4.setCoordY(componentsBean4.getIni_coordY() + k_h + h_h + w_h);
+//                                                                }
+                                                                DebugLog.e("4--Y=后====" + componentsBean4.getCoordY());
+
+
+                                                                if (componentsBean4.getComponentTypeId().equals("1")) {
+                                                                    //画笔
+                                                                    paint.setColor(Color.BLACK);
+                                                                    paint.setTextSize(Integer.valueOf(componentsBean4.getSize()));
+                                                                    Log.e("componentsBean=tt===", componentsBean4.getComponentContent());
+                                                                    DebugLog.e("4getCoordY=====" + componentsBean4.getCoordY() + "=====" + componentsBean4.getComponentContent());
+                                                                    printTextBitmap(canvas, paint, componentsBean4, bili, 0);
+                                                                } else if (componentsBean4.getComponentTypeId().equals("2")) {
+                                                                    printBarBitmap(canvas, componentsBean4, bili, 0);
+                                                                } else if (componentsBean4.getComponentTypeId().equals("3")) {
+                                                                    printQRBitmap(canvas, componentsBean4, bili, 0);
+                                                                } else if (componentsBean4.getComponentTypeId().equals("4")) {
+                                                                    printShapeBitmap(canvas, paintDashLine, componentsBean4, bili, 0);
+                                                                }
+
+                                                            }
+                                                        }
+
+
+                                                        if (i3 == 0) {
+                                                            //coordY+外层item上方的item累计的高
+                                                            componentsBean_wuliao_item.setCoordY(componentsBean_wuliao_item.getCoordY() + wuliao_list_h + hetong_list_h + ku_list_height);
+                                                            //本高+列表高-一项列表的高 //TODO 这里只考虑了一个列表，没考虑多个同级别列表 需要优化
+                                                            componentsBean_wuliao_item.setComponentHeight(componentsBean_wuliao_item.getComponentHeight());
+                                                        } else {
+                                                            //上一个的Y+上一个的高+外层item上方的item累计的高
+                                                            componentsBean_wuliao_item.setCoordY(componentsBean_wuliao_item.getCoordY() + wuliao_list_h + hetong_list_h + ku_list_height);
+                                                            //本高+列表高-一项列表的高 //TODO 这里只考虑了一个列表，没考虑多个同级别列表 需要优化
+                                                            componentsBean_wuliao_item.setComponentHeight(componentsBean_wuliao_item.getComponentHeight());
+                                                        }
+                                                        Log.e("3级检验-H=", "===" + componentsBean_wuliao_item.getComponentHeight());
+                                                        Log.e("3级检验-Y=", "===" + componentsBean_wuliao_item.getCoordY());
+                                                        //设置物料列表的高度
+                                                        wuliao_list_h = wuliao_list_h + componentsBean_wuliao_item.getComponentHeight();
+                                                        //TODO 这里应该给仓库bean完善组件信息
+                                                        componentsBean_hetong_item.getChlieComponentLists().add(componentsBean_wuliao_item);
+                                                        componentsBean3.getChlieComponentLists().add(componentsBean_wuliao_item);
+                                                        Log.e("3whatpp=", componentsBean3.getChlieComponentLists().size() + "");
+                                                    }
+                                                }
+                                            } else {
+                                                componentsBean3.setComponentContent(getShowContent(componentsBean3, map_hetong, 0));
+                                                componentsBean_hetong_item.getChlieComponentLists().add(componentsBean3);
+                                                if (componentsBean3.getIni_coordY() == -1) {
+                                                    componentsBean3.setIni_coordY(componentsBean3.getCoordY());
+                                                }
+                                                DebugLog.e("3----------------------Y=前====" + componentsBean3.getComponentContent() + "=CoordY=" + componentsBean3.getIni_coordY() + "===wuliao_Y===" + wuliao_Y);
+
+                                                DebugLog.e("3--Y=外层ku===ku_list_height=" + ku_list_height + "===ku_item_h_inmodle===" + ku_item_h_inmodle);
+                                                DebugLog.e("3--Y=外层hetong===hetong_list_h=" + hetong_list_h + "===hetong_item_h_inmodle===" + hetong_item_h_inmodle);
+                                                DebugLog.e("3--Y=外层wuliao===wuliao_list_h=" + wuliao_list_h + "===wuliao_item_h_inmodle===" + wuliao_item_h_inmodle);
+                                                int k_h = ku_list_height - ku_item_h_inmodle >= 0 ? ku_list_height : 0;
+                                                int h_h = hetong_list_h - hetong_item_h_inmodle >= 0 ? hetong_list_h : 0;
+                                                int w_h = wuliao_list_h - wuliao_item_h_inmodle >= 0 ? wuliao_list_h : 0;
+                                                int addH = k_h + h_h;
+
+                                                //是组件下面的 就把列表的高加上
+                                                if (componentsBean3.getIni_coordY() > wuliao_Y && wuliao_Y > 0) {
+                                                    addH = addH + wuliao_list_h - wuliao_item_h_inmodle;
+                                                }
+                                                componentsBean3.setCoordY(componentsBean3.getIni_coordY() + addH);
+                                                DebugLog.e("3--Y=后====" + componentsBean3.getCoordY());
+
+
+                                                if (componentsBean3.getComponentTypeId().equals("1")) {
+                                                    //画笔
+                                                    paint.setColor(Color.BLACK);
+                                                    paint.setTextSize(Integer.valueOf(componentsBean3.getSize()));
+                                                    Log.e("componentsBean=tt===", componentsBean3.getComponentContent());
+                                                    DebugLog.e("3getCoordY=====" + "==getCoordY=" + componentsBean3.getCoordY() + "=====" + componentsBean3.getComponentContent());
+                                                    printTextBitmap(canvas, paint, componentsBean3, bili, 0);
+                                                } else if (componentsBean3.getComponentTypeId().equals("2")) {
+                                                    printBarBitmap(canvas, componentsBean3, bili, 0);
+                                                } else if (componentsBean3.getComponentTypeId().equals("3")) {
+                                                    printQRBitmap(canvas, componentsBean3, bili, 0);
+                                                } else if (componentsBean3.getComponentTypeId().equals("4")) {
+                                                    printShapeBitmap(canvas, paintDashLine, componentsBean3, bili, 0);
+                                                }
+
+                                            }
+                                        }
+
+                                        if (i2 == 0) {
+                                            //coordY+外层item上方的item累计的高
+                                            componentsBean_hetong_item.setCoordY(componentsBean_hetong_item.getCoordY() + ku_list_height);
+                                            //本高+列表高-一项列表的高 //TODO 这里只考虑了一个列表，没考虑多个同级别列表 需要优化
+                                            componentsBean_hetong_item.setComponentHeight(componentsBean_hetong_item.getComponentHeight() + wuliao_list_h - wuliao_item_h_inmodle);
+                                        } else {
+                                            //上一个的Y+上一个的高+外层item上方的item累计的高
+                                            componentsBean_hetong_item.setCoordY(componentsBean_hetong_item.getCoordY() + ku_list_height + hetong_list_h);
+                                            //本高+列表高-一项列表的高 //TODO 这里只考虑了一个列表，没考虑多个同级别列表 需要优化
+                                            componentsBean_hetong_item.setComponentHeight(componentsBean_hetong_item.getComponentHeight() + wuliao_list_h - wuliao_item_h_inmodle);
+
+                                        }
+                                        Log.e("2级检验-H=", "===" + componentsBean_hetong_item.getComponentHeight());
+                                        Log.e("2级检验-Y=", "===" + componentsBean_hetong_item.getCoordY());
+                                        hetong_list_h = hetong_list_h + componentsBean_hetong_item.getComponentHeight();
+                                        erji_list_leiji_height = erji_list_leiji_height + componentsBean_hetong_item.getComponentHeight();
+                                        //TODO 这里应该给仓库bean完善组件信息
+                                        componentsBean_ku_item.getChlieComponentLists().add(componentsBean_hetong_item);
+                                        componentsBean2.getChlieComponentLists().add(componentsBean_hetong_item);
+                                        Log.e("2whatpp=", componentsBean2.getChlieComponentLists().size() + "");
+                                    }
+                                }
+                            } else {
+                                componentsBean2.setComponentContent(getShowContent(componentsBean2, map, i));
+                                Log.e("1whatpp=", componentsBean.getChlieComponentLists().size() + "");
+                                componentsBean_ku_item.getChlieComponentLists().add(componentsBean2);
+
+
+                                if (componentsBean2.getIni_coordY() == -1) {
+                                    componentsBean2.setIni_coordY(componentsBean2.getCoordY());
+                                }
+                                DebugLog.e("2---------------------Y=前====" + componentsBean2.getComponentContent() + "=CoordY=" + componentsBean2.getIni_coordY() + "===hetong_Y===" + hetong_Y);
+
+                                DebugLog.e("2--Y=外层ku===ku_list_height=" + ku_list_height + "===ku_item_h_inmodle===" + ku_item_h_inmodle);
+                                DebugLog.e("2--Y=外层hetong===hetong_list_h=" + hetong_list_h + "===hetong_item_h_inmodle===" + hetong_item_h_inmodle);
+
+                                int k_h = yiji_list_leiji_height - yiji_item_leiji_h_inmodle >= 0 ? yiji_list_leiji_height : 0;
+                                DebugLog.e("k_h=k_h====" + k_h);
+                                int h_h = hetong_list_h - hetong_item_h_inmodle >= 0 ? hetong_list_h : 0;
+                                int addH = k_h;
+                                //是组件下面的 就把列表的高加上
+//                                if (componentsBean2.getIni_coordY() > hetong_Y && hetong_Y > 0) {
+                                addH = addH + erji_list_leiji_height - erji_item_leiji_h_inmodle- yiji_jian;
+//                                }
+                                componentsBean2.setCoordY(componentsBean2.getIni_coordY() + addH);//+ h_h   //TODO 加不加合同高取决于Y轴了  ，这里一定比较iniY
+                                DebugLog.e("2--Y=后====" + componentsBean2.getCoordY());
+
+                                componentsBean2.setComponentContent(PrintDataUtil.getShowContent(componentsBean2, map, 0));
+
+                                if (componentsBean2.getComponentTypeId().equals("1")) {
+                                    //画笔
+                                    paint.setColor(Color.BLACK);
+                                    paint.setTextSize(Integer.valueOf(componentsBean2.getSize()));
+                                    Log.e("componentsBean=tt===", componentsBean2.getComponentContent());
+                                    DebugLog.e("3getCoordY=====" + "==getCoordY=" + componentsBean2.getCoordY());
+                                    printTextBitmap(canvas, paint, componentsBean2, bili, 0);
+                                } else if (componentsBean2.getComponentTypeId().equals("2")) {
+                                    printBarBitmap(canvas, componentsBean2, bili, 0);
+                                } else if (componentsBean2.getComponentTypeId().equals("3")) {
+                                    printQRBitmap(canvas, componentsBean2, bili, 0);
+                                } else if (componentsBean2.getComponentTypeId().equals("4")) {
+                                    printShapeBitmap(canvas, paintDashLine, componentsBean2, bili, 0);
+                                }
+
+                            }
+                        }
+
+                        if (i == 0) {
+                            //coordY+外层item上方的item累计的高
+                            componentsBean_ku_item.setCoordY(componentsBean_ku_item.getCoordY());
+                            //本高+列表高-一项列表的高 //TODO 这里只考虑了一个列表，没考虑多个同级别列表 需要优化
+                            componentsBean_ku_item.setComponentHeight(componentsBean_ku_item.getComponentHeight() + erji_list_leiji_height - erji_item_leiji_h_inmodle);//第一个仓库组件的高 =本高+列表高-一项列表的高
+                        } else {
+                            //上一个的Y+上一个的高
+                            componentsBean_ku_item.setCoordY(componentsBean.getChlieComponentLists().get(i - 1).getCoordY() + componentsBean.getChlieComponentLists().get(i - 1).getComponentHeight());
+                            //本高+列表高-一项列表的高 //TODO 这里只考虑了一个列表，没考虑多个同级别列表 需要优化
+                            componentsBean_ku_item.setComponentHeight(componentsBean_ku_item.getComponentHeight() + erji_list_leiji_height - erji_item_leiji_h_inmodle);//第二个仓库组件的高 =本高+列表高-一项列表的高
+                        }
+                        //此列表总高 最后一个item的高加最后一个item 的Y轴
+//                        if (i == listmap_ku.size() - 1) {
+//                            ku_list_height = componentsBean_ku_item.getCoordY() + componentsBean_ku_item.getComponentHeight();
+//                        }
+                        ku_list_height = ku_list_height + componentsBean_ku_item.getComponentHeight();
+                        yiji_list_leiji_height = yiji_list_leiji_height + componentsBean_ku_item.getComponentHeight();
+                        Log.e("1级检验-H=", "===" + componentsBean_ku_item.getComponentHeight());
+                        Log.e("1级检验-Y=", "===" + componentsBean_ku_item.getCoordY());
+
+                        //TODO 这里应该给仓库bean完善组件信息
+                        componentsBean.getChlieComponentLists().add(componentsBean_ku_item);
+                        Log.e("1whatpp=", componentsBean.getChlieComponentLists().size() + "");
+                    }
+
+                }
+                if (componentsBean.getIni_coordY() == -1) {
+                    componentsBean.setIni_coordY(componentsBean.getCoordY());
+                }
+                int addH = 0;
+                addH = addH + yiji_list_leiji_height - yiji_item_leiji_h_inmodle;
+                componentsBean.setCoordY(componentsBean.getIni_coordY() + addH);
+                yiji_jian = yiji_jian + componentsBean.getComponentHeight();
+            } else {
+                if (componentsBean.getIni_coordY() == -1) {
+                    componentsBean.setIni_coordY(componentsBean.getCoordY());
+                }
+                int addH = 0;
+
+                //是组件下面的 就把列表的高加上
+//                if (componentsBean.getIni_coordY() > ku_Y && ku_Y > 0) {
+                addH = addH + yiji_list_leiji_height - yiji_item_leiji_h_inmodle;
+//                }
+                componentsBean.setCoordY(componentsBean.getIni_coordY() + addH);
+                if (componentsBean.getId().equals("1670471746084118")||componentsBean.getId().equals("167227999187212865")) {//联系人
+                    DebugLog.e("componentsBean_getId4===="+addH +"=="+ yiji_item_leiji_h_inmodle+"=="+componentsBean.getIni_coordY()+"==" +componentsBean.getCoordY());
+//                    componentsBean.setCoordY(yiji_item_leiji_h_inmodle+componentsBean.getIni_coordY());
+                }
+                componentsBean.setComponentContent(getShowContent(componentsBean, map_in, 0));
+                componentsBean.setComponentContent(getShowContent(componentsBean, map_in, 0));
+                if (componentsBean.getComponentTypeId().equals("1")) {
+                    componentsBean.setComponentContent(getShowContent(componentsBean, map_in, 0));
+                    //画笔
+                    paint.setColor(Color.BLACK);
+                    paint.setTextSize(Integer.valueOf(componentsBean.getSize()));
+                    printTextBitmap(canvas, paint, componentsBean, bili, 0);
+                } else if (componentsBean.getComponentTypeId().equals("2")) {
+                    componentsBean.setComponentContent(getShowContent(componentsBean, map_in, 0));
+                    printBarBitmap(canvas, componentsBean, bili, 0);
+                } else if (componentsBean.getComponentTypeId().equals("3")) {
+                    componentsBean.setComponentContent(getShowContent(componentsBean, map_in, 0));
+                    printQRBitmap(canvas, componentsBean, bili, 0);
+                } else if (componentsBean.getComponentTypeId().equals("4")) {
+                    printShapeBitmap(canvas, paintDashLine, componentsBean, bili, 0);
+                }
+
+
+                if (componentsBean.getId().equals("167227999187212865")) {//底部
+                    DebugLog.e("componentsBean_getId2====" + componentsBean.getIni_coordY() + "===getCoordY===" + componentsBean.getCoordY());
+                }
+                if (componentsBean.getId().equals("1670471746084118")) {//联系人
+                    DebugLog.e("componentsBean_getId3====" + componentsBean.getIni_coordY() + "===getCoordY===" + componentsBean.getCoordY());
+                }
+            }
+
+        }
+        canvas.save();
+        canvas.restore();
+        finalBitmap = compressQuality(finalBitmap, 100);
+        return finalBitmap;
+    }
+
 
     public void print() {
         if (modleDTO == null || modleDTO.getTemplate() == null) {
@@ -120,116 +470,8 @@ public class PrintUtil {
     }
 
 
-    /**
-     * 根据嵌套关系重新给组件Y轴赋值
-     *
-     * @param l      组件集合
-     * @param map_in 业务数据用于 根据实际数量计算高度
-     * @return 返回的是item这一项有多高
-     */
-    public Bitmap sfasf(List<ModleDTO.ComponentsBean> l, Map<String, Object> map_in, int pagew, int pageh) {
 
-        Bitmap finalBitmap = Bitmap.createBitmap(pagew, pageh, Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(finalBitmap);
-        canvas.drawColor(Color.WHITE);
-
-        Paint paint = new Paint();
-        //线
-        Paint paintDashLine = new Paint();
-        paintDashLine.setStyle(Paint.Style.STROKE);
-        paintDashLine.setColor(Color.BLACK);
-
-
-        aaa.paixu(l);
-        aaa.setElement(l);
-        int ku_Y = -1;
-        int item_totle_h = 0;
-        int ku_item_h_inmodle = 0;
-        int ku_list_height = 0;//库列表高
-        //循环中累计的库item的高，就是当前库上面的 库的总高
-        //整体组件（其中的一项 是一个component   如：天应泰发货通知单   时间   库列表）
-        for (int j = 0; j < l.size(); j++) {
-            ModleDTO.ComponentsBean componentsBean = l.get(j);
-            ku_Y = componentsBean.getCoordY();
-            if (componentsBean.getComponentTypeId().equals("5")) {
-                ku_item_h_inmodle = componentsBean.getComponentHeight();
-                //模板（其中的一项 是一个component   如：仓库名   规格   合同列表）
-                List<ModleDTO.ComponentsBean> list = componentsBean.getChlieComponentList();
-                //模板列表的数据列表
-                List<Map<String, Object>> list_map_ku = (List<Map<String, Object>>) map_in.get(componentsBean.getElement().getElementCode());
-                if (list_map_ku != null) {
-                    componentsBean.getChlieComponentLists().clear();
-                    for (int i = 0; i < list_map_ku.size(); i++) {
-                        Map<String, Object> map = list_map_ku.get(i);//代表其中的一个仓库
-                        ModleDTO.ComponentsBean componentsBean_ku_item = new ModleDTO.ComponentsBean();
-                        componentsBean_ku_item.setComponentHeight(componentsBean.getComponentHeight());
-                        componentsBean_ku_item.setElement(componentsBean.getElement());
-                        componentsBean_ku_item.setId(componentsBean.getId());
-                        //设置数据
-                        aaa.creatNenData(componentsBean, componentsBean_ku_item, list);
-
-                        //=====================================================================================================合同
-
-
-                        if (i == 0) {
-                            //coordY+外层item上方的item累计的高
-                            componentsBean_ku_item.setCoordY(componentsBean_ku_item.getCoordY());
-                            //本高+列表高-一项列表的高 //TODO 这里只考虑了一个列表，没考虑多个同级别列表 需要优化
-                            componentsBean_ku_item.setComponentHeight(componentsBean_ku_item.getComponentHeight() + setYH1(canvas,list, map, ku_list_height, componentsBean_ku_item));
-                        } else {
-                            //上一个的Y+上一个的高
-                            componentsBean_ku_item.setCoordY(componentsBean.getChlieComponentLists().get(i - 1).getCoordY() + componentsBean.getChlieComponentLists().get(i - 1).getComponentHeight());
-                            //本高+列表高-一项列表的高 //TODO 这里只考虑了一个列表，没考虑多个同级别列表 需要优化
-                            componentsBean_ku_item.setComponentHeight(componentsBean_ku_item.getComponentHeight() + setYH1(canvas,list, map, ku_list_height, componentsBean_ku_item));
-                        }
-                        //此列表总高 最后一个item的高加最后一个item 的Y轴
-                        ku_list_height = ku_list_height + componentsBean_ku_item.getComponentHeight();
-                        Log.e("1级检验-H=", "===" + componentsBean_ku_item.getComponentHeight());
-                        Log.e("1级检验-Y=", "===" + componentsBean_ku_item.getCoordY());
-
-                        //TODO 这里应该给仓库bean完善组件信息
-                        componentsBean.getChlieComponentLists().add(componentsBean_ku_item);
-                        Log.e("1whatpp=", componentsBean.getChlieComponentLists().size() + "");
-                    }
-
-                }
-            } else {
-                //是组件下面的 就把列表的高加上
-                if (componentsBean.getCoordY() > ku_Y && ku_Y > 0) {
-                    componentsBean.setCoordY(componentsBean.getCoordY() + ku_list_height - ku_item_h_inmodle);
-                }
-                componentsBean.setComponentContent(getShowContent(componentsBean, map_in, 0));
-                if (componentsBean.getComponentTypeId().equals("1")) {
-                    double bili = componentsBean.getPaperCoordProportion().doubleValue();
-                    componentsBean.setComponentContent(getShowContent(componentsBean, map_in, 0));
-                    //画笔
-                    paint.setColor(Color.BLACK);
-                    paint.setTextSize(Integer.valueOf(componentsBean.getSize()));
-                    DebugLog.e("6getCoordY=====" + "==getCoordY=" + componentsBean.getCoordY());
-                    printTextBitmap(canvas, paint, componentsBean, bili, 0);
-                } else if (componentsBean.getComponentTypeId().equals("2")) {
-                    componentsBean.setComponentContent(getShowContent(componentsBean, map_in, 0));
-                    double bili = componentsBean.getPaperCoordProportion().doubleValue();
-                    printBarBitmap(canvas, componentsBean, bili, 0);
-                } else if (componentsBean.getComponentTypeId().equals("3")) {
-                    componentsBean.setComponentContent(getShowContent(componentsBean, map_in, 0));
-                    double bili = componentsBean.getPaperCoordProportion().doubleValue();
-                    printQRBitmap(canvas, componentsBean, bili, 0);
-                } else if (componentsBean.getComponentTypeId().equals("4")) {
-                    double bili = componentsBean.getPaperCoordProportion().doubleValue();
-                    printShapeBitmap(canvas, paintDashLine, componentsBean, bili, 0);
-                }
-
-            }
-        }
-        canvas.save();
-        canvas.restore();
-        finalBitmap = compressQuality(finalBitmap, 100);
-        return finalBitmap;
-
-    }
-
-    private int setYH1(Canvas canvas,List<ModleDTO.ComponentsBean> list, Map<String, Object> map, int above_list_h, ModleDTO.ComponentsBean componentsBean_ku_item) {
+    private int setYH1(Canvas canvas, List<ModleDTO.ComponentsBean> list, Map<String, Object> map, int above_list_h, ModleDTO.ComponentsBean componentsBean_ku_item) {
         double bili = 0.445;
         int pulsHeight = 0;
         Paint paint = new Paint();
@@ -239,8 +481,8 @@ public class PrintUtil {
         paintDashLine.setColor(Color.BLACK);
 
 
-        aaa.setElement(list);
-        aaa.paixu(list);
+        PrintDataUtil.setElement(list);
+        PrintDataUtil.paixu(list);
         //合同模板Y
         int hetong_Y = -1;
         //合同列表的高
@@ -250,16 +492,18 @@ public class PrintUtil {
         int hetong_item_h_inmodle = 0;
         for (int j2 = 0; j2 < list.size(); j2++) {
             ModleDTO.ComponentsBean componentsBean2 = list.get(j2);
-            if (componentsBean2.getComponentTypeId().equals("5")) {
-                componentsBean2.setComponentHeight(600);//TODO 这里模板传入的数据有问题，需要改高
-                componentsBean2.setCoordY(140);//TODO 这里模板传入的数据有问题，需要改Y
-            } else {
-                if (componentsBean2.getElement() == null || componentsBean2.getElement().getElementCode() == null) {
-                    Log.e("kanjieguoba===", "===" + componentsBean2.getCoordY() + "===" + componentsBean2.getComponentContent());
-                } else {
-                    Log.e("kanjieguoba===", "===" + componentsBean2.getCoordY() + "===" + componentsBean2.getElement().getElementCode() + "===" + componentsBean2.getComponentContent());
-                }
-            }
+//            if (componentsBean2.getComponentTypeId().equals("5")) {
+//                Log.e("aiai==y=", "===" + componentsBean2.getCoordY());
+//                Log.e("aiai==h=", "===" + componentsBean2.getComponentHeight());
+//                componentsBean2.setComponentHeight(600);//TODO 这里模板传入的数据有问题，需要改高
+//                componentsBean2.setCoordY(140);//TODO 这里模板传入的数据有问题，需要改Y
+//            } else {
+//                if (componentsBean2.getElement() == null || componentsBean2.getElement().getElementCode() == null) {
+//                    Log.e("kanjieguoba===", "===" + componentsBean2.getCoordY() + "===" + componentsBean2.getComponentContent());
+//                } else {
+//                    Log.e("kanjieguoba===", "===" + componentsBean2.getCoordY() + "===" + componentsBean2.getElement().getElementCode() + "===" + componentsBean2.getComponentContent());
+//                }
+//            }
 
             if (componentsBean2.getComponentTypeId().equals("5")) {
                 hetong_item_h_inmodle = componentsBean2.getComponentHeight();
@@ -275,19 +519,19 @@ public class PrintUtil {
                         componentsBean_hetong_item.setElement(componentsBean2.getElement());
                         componentsBean_hetong_item.setId(componentsBean2.getId());
                         //设置数据
-                        aaa.creatNenData2(componentsBean2, componentsBean_hetong_item, list_hetong);
+                        PrintDataUtil.creatNenData2(componentsBean2, componentsBean_hetong_item, list_hetong);
                         componentsBean_hetong_item.setCoordY(hetong_Y);
 
                         if (i2 == 0) {
                             //coordY+外层item上方的item累计的高
                             componentsBean_hetong_item.setCoordY(componentsBean_hetong_item.getCoordY() + above_list_h);
                             //本高+列表高-一项列表的高 //TODO 这里只考虑了一个列表，没考虑多个同级别列表 需要优化
-                            componentsBean_hetong_item.setComponentHeight(componentsBean_hetong_item.getComponentHeight() + setYH1(canvas,list_hetong, map_hetong, hetong_list_h + above_list_h, componentsBean_hetong_item));
+                            componentsBean_hetong_item.setComponentHeight(componentsBean_hetong_item.getComponentHeight() + setYH1(canvas, list_hetong, map_hetong, hetong_list_h + above_list_h, componentsBean_hetong_item));
                         } else {
                             //上一个的Y+上一个的高+外层item上方的item累计的高
                             componentsBean_hetong_item.setCoordY(componentsBean_hetong_item.getCoordY() + above_list_h + hetong_list_h);
                             //本高+列表高-一项列表的高 //TODO 这里只考虑了一个列表，没考虑多个同级别列表 需要优化
-                            componentsBean_hetong_item.setComponentHeight(componentsBean_hetong_item.getComponentHeight() + setYH1(canvas,list_hetong, map_hetong, hetong_list_h + above_list_h, componentsBean_hetong_item));
+                            componentsBean_hetong_item.setComponentHeight(componentsBean_hetong_item.getComponentHeight() + setYH1(canvas, list_hetong, map_hetong, hetong_list_h + above_list_h, componentsBean_hetong_item));
 
                         }
                         Log.e("2级检验-H=", "===" + componentsBean_hetong_item.getComponentHeight());
@@ -301,19 +545,21 @@ public class PrintUtil {
                     }
                 }
             } else {
-
+                if (!componentsBean2.getComponentTypeId().equals("4")) {
+                    componentsBean2.setComponentContent(getShowContent(componentsBean2, map, 0));
+                }
+                Log.e("11scxxxc===", "==Y轴=" + componentsBean2.getCoordY() + "==高度=" + componentsBean2.getComponentHeight() + "==内容=" + componentsBean2.getComponentContent() + "---shanggao--" + above_list_h + "---biaogao--" + hetong_list_h);
                 //是组件下面的 就把列表的高加上
 //                if (componentsBean2.getCoordY() > hetong_Y && hetong_Y > 0) {
                 componentsBean2.setCoordY(componentsBean2.getCoordY() + above_list_h + hetong_list_h);
 //                }
-                Log.e("scxxxc===", componentsBean2.getCoordY() + "===" + above_list_h + "===" + hetong_list_h);
+                Log.e("2scxxxc===", componentsBean2.getCoordY() + "===" + above_list_h + "===" + hetong_list_h);
 
 
-                componentsBean2.setComponentContent(aaa.getShowContent(componentsBean2, map, 0));
+                componentsBean2.setComponentContent(PrintDataUtil.getShowContent(componentsBean2, map, 0));
                 componentsBean_ku_item.getChlieComponentLists().add(componentsBean2);
 
                 if (componentsBean2.getComponentTypeId().equals("1")) {
-                    componentsBean2.setComponentContent(getShowContent(componentsBean2, map, 0));
                     //画笔
                     paint.setColor(Color.BLACK);
                     paint.setTextSize(Integer.valueOf(componentsBean2.getSize()));
@@ -321,10 +567,8 @@ public class PrintUtil {
                     DebugLog.e("3getCoordY=====" + "==getCoordY=" + componentsBean2.getCoordY());
                     printTextBitmap(canvas, paint, componentsBean2, bili, pulsHeight);
                 } else if (componentsBean2.getComponentTypeId().equals("2")) {
-                    componentsBean2.setComponentContent(getShowContent(componentsBean2, map, 0));
                     printBarBitmap(canvas, componentsBean2, bili, pulsHeight);
                 } else if (componentsBean2.getComponentTypeId().equals("3")) {
-                    componentsBean2.setComponentContent(getShowContent(componentsBean2, map, 0));
                     printQRBitmap(canvas, componentsBean2, bili, pulsHeight);
                 } else if (componentsBean2.getComponentTypeId().equals("4")) {
                     printShapeBitmap(canvas, paintDashLine, componentsBean2, bili, pulsHeight);
@@ -1124,8 +1368,10 @@ public class PrintUtil {
         DebugLog.e("PrinterHelper===PrintQR==" + data + "==width==" + width + "==height==" + height +
                 "===Height()=" + componentsBean.getComponentHeight() + "==Width()==" + componentsBean.getComponentWidth() + "==bili==" + bili);
         Bitmap htmlBitmap = ZxingUtil.createQRImage(data, width, height);
-        DebugLog.e("PrinterHelper===PrintQR==" + "==width==" + htmlBitmap.getWidth() + "==height==" + htmlBitmap.getHeight());
-        canvas.drawBitmap(htmlBitmap, x, y, null);
+        DebugLog.e("PrinterHelper===PrintQR==" + data + "==y==" + y + "==getCoordY==" + componentsBean.getCoordY() + "==width==" + htmlBitmap.getWidth() + "==height==" + htmlBitmap.getHeight());
+
+
+        canvas.drawBitmap(htmlBitmap, x, y, null);//TODO 这个y轴会不准  貌似大，总之显示的bitmap靠下
     }
 
     /**
@@ -1163,6 +1409,9 @@ public class PrintUtil {
         int y = (int) CalculationUtil.multiplication(Double.valueOf(componentsBean.getCoordY() + plusHeight + DeviceUtil.TOPPADING), bili);
         String data = componentsBean.getPrefix() + componentsBean.getComponentContent() + componentsBean.getSuffix();
         DebugLog.e("PrinterHelper===printText==" + data + "=y=" + y + "==getCoordY=" + componentsBean.getCoordY() + "====" + componentsBean.getAboveComponentId() + "===" + x + "==bili=" + bili);
+        if (data.equals("3.335")) {
+            DebugLog.e("printTextBitmap3335====" + componentsBean.getIni_coordY() + "===getCoordY===" + componentsBean.getCoordY());
+        }
         canvas.drawText(data == null ? "" : data, x, y, paint);
 
     }
@@ -1412,6 +1661,9 @@ public class PrintUtil {
      * @throws Exception
      */
     public String getShowContent(ModleDTO.ComponentsBean componentsBean, Map<String, Object> map, int position) {
+        if (componentsBean.getComponentTypeId().equals("4")) {
+            return "";
+        }
         String result = componentsBean.getComponentContent();
         Log.e("===sdfsd===2", componentsBean.getComponentContent());
         if (componentsBean.getComponentTypeId().equals("1") || componentsBean.getComponentTypeId().equals("2") || componentsBean.getComponentTypeId().equals("3")) {
@@ -1455,5 +1707,42 @@ public class PrintUtil {
             }
         }
         return true;
+    }
+
+    public static void paixu(List<ModleDTO.ComponentsBean> l) {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            l.sort(Comparator.comparing(ModleDTO.ComponentsBean::getCoordY));
+        }
+
+    }
+
+    private static Gson gson = new Gson();
+
+    public static void setElement(List<ModleDTO.ComponentsBean> l) {
+        for (ModleDTO.ComponentsBean componentsBean : l) {
+            if (componentsBean.getComponentTypeId().equals("5")) {
+                LabelBoard lb = new Gson().fromJson(componentsBean.getComponentContent(), LabelBoard.class);
+                List<ModleDTO.ComponentsBean> list = LabelBoardAnalysisUtil.setDataToModle(lb, componentsBean);
+                componentsBean.setChlieComponentList(list);
+                ModleDTO.ComponentsBean.ElementsBean elementsBean = new ModleDTO.ComponentsBean.ElementsBean();//这两行代码 是因为模板的element存不上 我存在了LabelBoard中
+                elementsBean.setElementCode(lb.getElementCode());
+                componentsBean.setElement(elementsBean);
+
+            }
+        }
+    }
+
+    public static void creatNenData(ModleDTO.ComponentsBean componentsBean, ModleDTO.ComponentsBean componentsBean_ku_item, List<ModleDTO.ComponentsBean> list) {
+        List<ModleDTO.ComponentsBean> businessElementBeanList = gson.fromJson(gson.toJson(list),
+                new TypeToken<List<ModleDTO.ComponentsBean>>() {
+                }.getType());
+        Log.e("1sssccc===", businessElementBeanList.size() + "");
+        componentsBean_ku_item.setId(componentsBean.getId());
+        componentsBean_ku_item.setComponentContent(componentsBean.getComponentContent());
+        componentsBean_ku_item.setComponentTypeId(componentsBean.getComponentTypeId());
+        componentsBean_ku_item.setCoordX(componentsBean.getCoordX());
+        componentsBean_ku_item.setAlignType(componentsBean.getAlignType());
+        componentsBean_ku_item.setAboveComponentId(componentsBean.getAboveComponentId());
     }
 }

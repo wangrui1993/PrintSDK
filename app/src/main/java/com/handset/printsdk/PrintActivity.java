@@ -149,7 +149,16 @@ public class PrintActivity extends BaseActivity {
 
     private Map<String, Object> jishuju2() {
 
-        String s = "{\n" +
+        Map<String, Object> map = new Gson().fromJson(jishujuData(), new TypeToken<TreeMap<String, Object>>() {
+        }.getType());
+        Log.e("mapmap==", new Gson().toJson(map));
+        return map;
+    }
+
+    private String jishujuData() {
+        String s = "";
+
+        String s2 = "{\n" +
                 "    \"deptName\":\"销售一部\",\n" +
                 "    \"carno\":\"辽B22221\",\n" +
                 "    \"warehouse\":[\n" +
@@ -202,10 +211,317 @@ public class PrintActivity extends BaseActivity {
                 "    \"remark\":\"无\"\n" +
                 "}";
 
-        Map<String, Object> map = new Gson().fromJson(s, new TypeToken<TreeMap<String, Object>>() {
-        }.getType());
-        Log.e("mapmap==",new Gson().toJson(map));
-        return map;
+        String s1 = "{\n" +
+                "    \"carno\":\"辽B22221\",\n" +
+                "    \"deptName\":\"销售一部\",\n" +
+                "    \"remark\":\"无\",\n" +
+                "    \"warehouse\":[\n" +
+                "        {\n" +
+                "            \"contractForm\":[\n" +
+                "                {\n" +
+                "                    \"material\":[\n" +
+                "                        {\n" +
+                "                            \"qty\":\"0.9243\",\n" +
+                "                            \"wholepiece\":\"2\",\n" +
+                "                            \"materialName\":\"镀锌圆管\"\n" +
+                "                        }\n" +
+                "                    ],\n" +
+                "                    \"batchno\":\"333\"\n" +
+                "                }\n" +
+                "            ],\n" +
+                "            \"stockName\":\"北院成品自销库圆管\"\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"contractForm\":[\n" +
+                "                {\n" +
+                "                    \"material\":[\n" +
+                "                        {\n" +
+                "                            \"qty\":\"0.4978\",\n" +
+                "                            \"wholepiece\":\"1\",\n" +
+                "                            \"materialName\":\"镀锌方管\"\n" +
+                "                        },\n" +
+                "                        {\n" +
+                "                            \"qty\":\"1.1133\",\n" +
+                "                            \"wholepiece\":\"2\",\n" +
+                "                            \"materialName\":\"镀锌方管\"\n" +
+                "                        },\n" +
+                "                        {\n" +
+                "                            \"qty\":\"6.1133\",\n" +
+                "                            \"wholepiece\":\"5\",\n" +
+                "                            \"materialName\":\"镀锌方管\"\n" +
+                "                        },\n" +
+                "                        {\n" +
+                "                            \"qty\":\"6.1133\",\n" +
+                "                            \"wholepiece\":\"5\",\n" +
+                "                            \"materialName\":\"镀锌方管\"\n" +
+                "                        },\n" +
+                "                        {\n" +
+                "                            \"qty\":\"6.1133\",\n" +
+                "                            \"wholepiece\":\"5\",\n" +
+                "                            \"materialName\":\"镀锌方管\"\n" +
+                "                        }\n" +
+                "                    ],\n" +
+                "                    \"batchno\":\"111111\"\n" +
+                "                },\n" +
+                "                {\n" +
+                "                    \"material\":[\n" +
+                "                        {\n" +
+                "                            \"qty\":\"5.8745\",\n" +
+                "                            \"wholepiece\":\"2\",\n" +
+                "                            \"materialName\":\"镀锌方管\"\n" +
+                "                        }\n" +
+                "                    ],\n" +
+                "                    \"batchno\":\"222\"\n" +
+                "                }\n" +
+                "            ],\n" +
+                "            \"stockName\":\"北院成品自销库方管\"\n" +
+                "        },{\n" +
+                "            \"contractForm\":[\n" +
+                "                {\n" +
+                "                    \"material\":[\n" +
+                "                        {\n" +
+                "                            \"qty\":\"2.9243\",\n" +
+                "                            \"wholepiece\":\"22\",\n" +
+                "                            \"materialName\":\"镀锌三角管\"\n" +
+                "                        }\n" +
+                "                    ],\n" +
+                "                    \"batchno\":\"444\"\n" +
+                "                }, {\n" +
+                "                    \"material\":[\n" +
+                "                        {\n" +
+                "                            \"qty\":\"3.9243\",\n" +
+                "                            \"wholepiece\":\"33\",\n" +
+                "                            \"materialName\":\"镀锌三角管\"\n" +
+                "                        }\n" +
+                "                    ],\n" +
+                "                    \"batchno\":\"555\"\n" +
+                "                }, {\n" +
+                "                    \"material\":[\n" +
+                "                        {\n" +
+                "                            \"qty\":\"4.9243\",\n" +
+                "                            \"wholepiece\":\"44\",\n" +
+                "                            \"materialName\":\"镀锌三角管\"\n" +
+                "                        }\n" +
+                "                    ],\n" +
+                "                    \"batchno\":\"666\"\n" +
+                "                }\n" +
+                "            ],\n" +
+                "            \"stockName\":\"北院成品自销库三角管\"\n" +
+                "        }\n" +
+                "    ]\n" +
+                "}";
+
+        String s3 = "{\n" +
+                "    \"carno\":\"辽B22221\",\n" +
+                "    \"deptName\":\"销售一部\",\n" +
+                "    \"remark\":\"无\",\n" +
+                "    \"warehouse\":[\n" +
+                "        {\n" +
+                "            \"contractForm\":[\n" +
+                "                {\n" +
+                "                    \"material\":[\n" +
+                "                        {\n" +
+                "                            \"qty\":\"0.9243\",\n" +
+                "                            \"wholepiece\":\"2\",\n" +
+                "                            \"materialName\":\"镀锌圆管\"\n" +
+                "                        }\n" +
+                "                    ],\n" +
+                "                    \"batchno\":\"333\"\n" +
+                "                }\n" +
+                "            ],\n" +
+                "            \"stockName\":\"北院成品自销库圆管\"\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"contractForm\":[\n" +
+                "                {\n" +
+                "                    \"material\":[\n" +
+                "                        {\n" +
+                "                            \"qty\":\"0.4978\",\n" +
+                "                            \"wholepiece\":\"1\",\n" +
+                "                            \"materialName\":\"镀锌方管\"\n" +
+                "                        }\n" +
+                "                    ],\n" +
+                "                    \"batchno\":\"111111\"\n" +
+                "                },\n" +
+                "                {\n" +
+                "                    \"material\":[\n" +
+                "                        {\n" +
+                "                            \"qty\":\"4.4444\",\n" +
+                "                            \"wholepiece\":\"2\",\n" +
+                "                            \"materialName\":\"镀锌方管\"\n" +
+                "                        }\n" +
+                "                    ],\n" +
+                "                    \"batchno\":\"222\"\n" +
+                "                }\n" +
+                "            ],\n" +
+                "            \"stockName\":\"北院成品自销库方管\"\n" +
+                "        }\n" +
+                "    ]\n" +
+                "}";
+        String s4="{\n" +
+                "    \"deptName\":\"销售一部\",\n" +
+                "    \"carno\":\"辽B22221\",\n" +
+                "    \"warehouse\":[\n" +
+                "        {\n" +
+                "            \"contractForm\":[\n" +
+                "                {\n" +
+                "                    \"material\":[\n" +
+                "                        {\n" +
+                "                            \"qty\":\"0.9243\",\n" +
+                "                            \"wholepiece\":\"2\",\n" +
+                "                            \"materialName\":\"镀锌圆管0\"\n" +
+                "                        },\n" +
+                "                        {\n" +
+                "                            \"qty\":\"0.9243\",\n" +
+                "                            \"wholepiece\":\"2\",\n" +
+                "                            \"materialName\":\"镀锌圆管1\"\n" +
+                "                        }\n" +
+                "                    ],\n" +
+                "                    \"batchno\":\"合同333\"\n" +
+                "                }\n" +
+                "            ],\n" +
+                "            \"stockName\":\"北院成品自销库圆管\"\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"contractForm\":[\n" +
+                "                {\n" +
+                "                    \"material\":[\n" +
+                "                        {\n" +
+                "                            \"qty\":\"0.4978\",\n" +
+                "                            \"wholepiece\":\"1\",\n" +
+                "                            \"materialName\":\"镀锌方管2\"\n" +
+                "                        },\n" +
+                "                        {\n" +
+                "                            \"qty\":\"1.1133\",\n" +
+                "                            \"wholepiece\":\"2\",\n" +
+                "                            \"materialName\":\"镀锌方管3\"\n" +
+                "                        }\n" +
+                "                    ],\n" +
+                "                    \"batchno\":\"合同111111\"\n" +
+                "                },\n" +
+                "                {\n" +
+                "                    \"material\":[\n" +
+                "                        {\n" +
+                "                            \"qty\":\"5.8745\",\n" +
+                "                            \"wholepiece\":\"2\",\n" +
+                "                            \"materialName\":\"镀锌方管4\"\n" +
+                "                        }\n" +
+                "                    ],\n" +
+                "                    \"batchno\":\"合同222\"\n" +
+                "                }\n" +
+                "            ],\n" +
+                "            \"stockName\":\"北院成品自销库方管\"\n" +
+                "        }\n" +
+                "    ],\n" +
+                "    \"material\":[\n" +
+                "        {\n" +
+                "            \"qty\":\"4.4444\",\n" +
+                "            \"wholepiece\":\"2\",\n" +
+                "            \"materialName\":\"镀锌方管5\"\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"qty\":\"3.335\",\n" +
+                "            \"wholepiece\":\"3\",\n" +
+                "            \"materialName\":\"镀锌方管6\"\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"qty\":\"7.7777\",\n" +
+                "            \"wholepiece\":\"3\",\n" +
+                "            \"materialName\":\"镀锌方管7\"\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"qty\":\"8.8888\",\n" +
+                "            \"wholepiece\":\"3\",\n" +
+                "            \"materialName\":\"镀锌方管8\"\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"qty\":\"9.9999\",\n" +
+                "            \"wholepiece\":\"3\",\n" +
+                "            \"materialName\":\"镀锌方管9\"\n" +
+                "        }\n" +
+                "    ],\n" +
+                "    \"remark\":\"无\"\n" +
+                "}";
+        String s5="{\n" +
+                "    \"deptName\":\"销售一部\",\n" +
+                "    \"carno\":\"辽B22221\",\n" +
+                "    \"warehouse\":[\n" +
+                "        {\n" +
+                "            \"contractForm\":[\n" +
+                "                {\n" +
+                "                    \"material\":[\n" +
+                "                        {\n" +
+                "                            \"qty\":\"0.9243\",\n" +
+                "                            \"wholepiece\":\"2\",\n" +
+                "                            \"materialName\":\"镀锌圆管11111\"\n" +
+                "                        }\n" +
+                "                    ],\n" +
+                "                    \"batchno\":\"合同——--333\"\n" +
+                "                }\n" +
+                "            ],\n" +
+                "            \"stockName\":\"北院成品自销库圆管\"\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"contractForm\":[\n" +
+                "                {\n" +
+                "                    \"material\":[\n" +
+                "                        {\n" +
+                "                            \"qty\":\"0.4978\",\n" +
+                "                            \"wholepiece\":\"1\",\n" +
+                "                            \"materialName\":\"镀锌方管\"\n" +
+                "                        },\n" +
+                "                        {\n" +
+                "                            \"qty\":\"1.1133\",\n" +
+                "                            \"wholepiece\":\"2\",\n" +
+                "                            \"materialName\":\"镀锌方管\"\n" +
+                "                        }\n" +
+                "                    ],\n" +
+                "                    \"batchno\":\"合同——--111111\"\n" +
+                "                },\n" +
+                "                {\n" +
+                "                    \"material\":[\n" +
+                "                        {\n" +
+                "                            \"qty\":\"5.8745\",\n" +
+                "                            \"wholepiece\":\"2\",\n" +
+                "                            \"materialName\":\"镀锌方管777777\"\n" +
+                "                        }, {\n" +
+                "                            \"qty\":\"5.8745\",\n" +
+                "                            \"wholepiece\":\"2\",\n" +
+                "                            \"materialName\":\"镀锌方管88888\"\n" +
+                "                        }                    ],\n" +
+                "                    \"batchno\":\"合同——--222\"\n" +
+                "                }\n" +
+                "            ],\n" +
+                "                  \"material\":[\n" +
+                "                        {\n" +
+                "                            \"qty\":\"0.9243\",\n" +
+                "                            \"wholepiece\":\"2\",\n" +
+                "                            \"materialName\":\"镀锌圆管2222\"\n" +
+                "                        }\n" +
+                "                    ],\n" +
+                "            \"stockName\":\"北院成品自销库方管\"\n" +
+                "        }\n" +
+                "    ],\n" +
+                "    \"material\":[\n" +
+                "        {\n" +
+                "            \"qty\":\"5.8745\",\n" +
+                "            \"wholepiece\":\"2\",\n" +
+                "            \"materialName\":\"镀锌方管\"\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"qty\":\"3.335\",\n" +
+                "            \"wholepiece\":\"3\",\n" +
+                "            \"materialName\":\"镀锌方管333\"\n" +
+                "        }\n" +
+                "    ],\n" +
+                "    \"remark\":\"无\"\n" +
+                "}";
+//        s=s1;
+//        s=s2;
+//        s = s3;
+//        s=s4;
+        s=s5;
+        return s;
     }
 
     @Override

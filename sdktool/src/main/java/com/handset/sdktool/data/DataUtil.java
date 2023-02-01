@@ -23,6 +23,7 @@ import com.handset.sdktool.net.OnResponse;
 import com.handset.sdktool.net.base.BaseBean;
 import com.handset.sdktool.net.base.Bean;
 import com.handset.sdktool.net.base.ModleListBean;
+import com.handset.sdktool.net.base.NetConfig;
 import com.handset.sdktool.printutil.PrintUtil;
 import com.handset.sdktool.util.DebugLog;
 import com.handset.sdktool.util.GetJsonDataUtil;
@@ -56,7 +57,7 @@ public class DataUtil {
      * 获取业务
      */
     public void getProfessionalWork(GetAllBusinessListener getAllBusinessListener) {
-        NetUtil.getInstance().api().addServiceInBatches()
+        NetUtil.getInstance().api().addServiceInBatches(NetConfig.IP)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new OnResponse<List<BusinessDTO>>() {
@@ -83,7 +84,7 @@ public class DataUtil {
      * @param code
      */
     public void getElementByBusiness(String code, GetElementByBusiness getElementByBusiness) {
-        NetUtil.getInstance().api().getElementByBusiness(code)
+        NetUtil.getInstance().api().getElementByBusiness(NetConfig.IP,code)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new OnResponse<List<ElementDTO>>() {
@@ -108,7 +109,7 @@ public class DataUtil {
      * 2.13.获取所有模板
      */
     public void getAllTemplate(GetAllTemplateListener getAllTemplateListener) {
-        NetUtil.getInstance().api().getAllTemplate()
+        NetUtil.getInstance().api().getAllTemplate(NetConfig.IP)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new OnResponse<List<ModleListBean>>() {
@@ -133,7 +134,7 @@ public class DataUtil {
      * 获取所有打印机
      */
     public void getPrits(GetAllPrintListener getAllPrintListener) {
-        NetUtil.getInstance().api().getAllPrinter()
+        NetUtil.getInstance().api().getAllPrinter(NetConfig.IP)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new OnResponse<List<PrinterDTO>>() {
@@ -158,7 +159,7 @@ public class DataUtil {
      * 根据打印機获取纸张
      */
     public void getPaper(String printerId, GetPaperByPrint getPaperByPrint) {
-        NetUtil.getInstance().api().getPaperByPrinter(printerId)
+        NetUtil.getInstance().api().getPaperByPrinter(NetConfig.IP,printerId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new OnResponse<List<PaperDTO>>() {
@@ -185,7 +186,7 @@ public class DataUtil {
      * @param code
      */
     public void getTemplateByBusinessCode(String code, GetTemplateByBusinessCode getTemplateByBusinessCode) {
-        NetUtil.getInstance().api().getTemplateByBusinessCode(code)
+        NetUtil.getInstance().api().getTemplateByBusinessCode(NetConfig.IP,code)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new OnResponse<ModleDTO>() {
