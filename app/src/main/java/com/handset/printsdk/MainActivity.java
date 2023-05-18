@@ -38,10 +38,38 @@ public class MainActivity extends BaseActivity {
 
         //初始化业务和元素数据
         List<BusinessElementBean> businessElementBeanList = new ArrayList<>();
+
+        businessElementBeanList.add(addBusiness_caigouruku_bar());
+        businessElementBeanList.add(addBusiness_zhuangcedan());
+
+
+//        BusinessDataUtil.getInstance().initBusinessData(this, businessElementBeanList);
+        PrintDataUtil.getInstance().initPrintData(this);
+
+        tv_business_data.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                goActivity(SynchronizeBusinessActivity.class);
+            }
+        });
+        tv_print.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                goActivity(SynchronizePrintActivity.class);
+            }
+        });
+        tv_print_test.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                goActivity(PrintActivity.class);
+            }
+        });
+    }
+
+    private BusinessElementBean addBusiness_zhuangcedan() {
         BusinessDTO addProfessionalWorkDTO = new BusinessDTO();
         addProfessionalWorkDTO.setServicetype("装车单");
         addProfessionalWorkDTO.setServicetypeNo("jz05");
-
         List<ElementDTO> elementDTOList = new ArrayList<>();
         ElementDTO elementDTO1 = new ElementDTO();
         elementDTO1.setId(addProfessionalWorkDTO.getServicetypeNo() + "-eid01");
@@ -98,13 +126,6 @@ public class MainActivity extends BaseActivity {
         elementDTO9.setElementName("规格");
         elementDTO9.setElementType("1");
         elementDTO9.setElementCode("specification");
-
-//        ElementDTO elementDTO10 = new ElementDTO();
-//        elementDTO10.setId(addProfessionalWorkDTO.getServicetypeNo() + "-eid010");
-//        elementDTO10.setElementDesc("如：销售一部");
-//        elementDTO10.setElementName("销售部门");
-//        elementDTO10.setElementType("1");
-//        elementDTO10.setElementCode("deptName");
 
         //
         ElementDTO elementDTO11 = new ElementDTO();
@@ -232,58 +253,94 @@ public class MainActivity extends BaseActivity {
 
         elementDTOList.add(elementDTO22);
         elementDTOList.add(elementDTO23);
+        BusinessElementBean businessElementBean = new BusinessElementBean(addProfessionalWorkDTO, elementDTOList);
+        return businessElementBean;
+    }
+
+    private BusinessElementBean addBusiness_caigouruku_bar() {
+        BusinessDTO addProfessionalWorkDTO = new BusinessDTO();
+        addProfessionalWorkDTO.setServicetype("采购入库条码");
+        addProfessionalWorkDTO.setServicetypeNo("cgrk_bar");
+
+        ElementDTO elementDTO1 = new ElementDTO();
+        elementDTO1.setId(addProfessionalWorkDTO.getServicetypeNo() + "-eid01");
+        elementDTO1.setElementDesc("如：天应泰钢管");
+        elementDTO1.setElementName("厂家");
+        elementDTO1.setElementType("1");
+        elementDTO1.setElementCode("manufactor");
+
+        ElementDTO elementDTO2 = new ElementDTO();
+        elementDTO2.setId(addProfessionalWorkDTO.getServicetypeNo() + "-eid02");
+        elementDTO2.setElementDesc("如：123");
+        elementDTO2.setElementName("件数");
+        elementDTO2.setElementType("1");
+        elementDTO2.setElementCode("wholepiece");
+
+        ElementDTO elementDTO3 = new ElementDTO();
+        elementDTO3.setId(addProfessionalWorkDTO.getServicetypeNo() + "-eid03");
+        elementDTO3.setElementDesc("如：0.4978");
+        elementDTO3.setElementName("重量");
+        elementDTO3.setElementType("1");
+        elementDTO3.setElementCode("qty");
+
+
+        ElementDTO elementDTO9 = new ElementDTO();
+        elementDTO9.setId(addProfessionalWorkDTO.getServicetypeNo() + "-eid09");
+        elementDTO9.setElementDesc("如：40*30*20");
+        elementDTO9.setElementName("规格");
+        elementDTO9.setElementType("1");
+        elementDTO9.setElementCode("specification");
+
+        //
+        ElementDTO elementDTO11 = new ElementDTO();
+        elementDTO11.setId(addProfessionalWorkDTO.getServicetypeNo() + "-eid011");
+        elementDTO11.setElementDesc("如：XXX");
+        elementDTO11.setElementName("备注");
+        elementDTO11.setElementType("1");
+        elementDTO11.setElementCode("remark");
+
+        ElementDTO elementDTO12 = new ElementDTO();
+        elementDTO12.setId(addProfessionalWorkDTO.getServicetypeNo() + "-eid012");
+        elementDTO12.setElementDesc("如：自华金销50*50");
+        elementDTO12.setElementName("批号");
+        elementDTO12.setElementType("1");
+        elementDTO12.setElementCode("batchno");
+
+        ElementDTO elementDTO16 = new ElementDTO();
+        elementDTO16.setId(addProfessionalWorkDTO.getServicetypeNo() + "-eid016");
+        elementDTO16.setElementDesc("如：2022/10/31");
+        elementDTO16.setElementName("日期");
+        elementDTO16.setElementType("1");
+        elementDTO16.setElementCode("date");
+
+        ElementDTO elementDTO17 = new ElementDTO();
+        elementDTO17.setId(addProfessionalWorkDTO.getServicetypeNo() + "-eid017");
+        elementDTO17.setElementDesc("如：[补]");
+        elementDTO17.setElementName("是否补打");
+        elementDTO17.setElementType("1");
+        elementDTO17.setElementCode("repair");
+
+
+        ElementDTO elementDTO21 = new ElementDTO();
+        elementDTO21.setId(addProfessionalWorkDTO.getServicetypeNo() + "-eid021");
+        elementDTO21.setElementDesc("如：xxx");
+        elementDTO21.setElementName("条码");
+        elementDTO21.setElementType("1");
+        elementDTO21.setElementCode("brCode");
+
+        List<ElementDTO> elementDTOList = new ArrayList<>();
+        elementDTOList.add(elementDTO1);
+        elementDTOList.add(elementDTO2);
+        elementDTOList.add(elementDTO3);
+        elementDTOList.add(elementDTO9);
+        elementDTOList.add(elementDTO11);
+        elementDTOList.add(elementDTO12);
+        elementDTOList.add(elementDTO16);
+        elementDTOList.add(elementDTO17);
+        elementDTOList.add(elementDTO21);
 
         BusinessElementBean businessElementBean = new BusinessElementBean(addProfessionalWorkDTO, elementDTOList);
-        businessElementBeanList.add(businessElementBean);
-
-//        for (int i = 10; i < 13; i++) {
-//            BusinessDTO addProfessionalWorkDTO = new BusinessDTO();
-//            addProfessionalWorkDTO.setServicetype("SDK测试业务" + i);
-//            addProfessionalWorkDTO.setServicetypeNo("90" + i);
-//            List<ElementDTO> elementDTOList = new ArrayList<>();
-//            for (int j = 0; j < 5; j++) {
-//                ElementDTO elementDTO4 = new ElementDTO();
-//                elementDTO4.setId(String.valueOf(j));
-//                elementDTO4.setElementDesc("采购物料名称");
-//                elementDTO4.setElementName("名称" + j + i);
-//                elementDTO4.setElementType("1");
-//                elementDTO4.setElementCode(100+i+j+"");
-//
-//                ElementDTO elementDTO5 = new ElementDTO();
-//                elementDTO5.setId(String.valueOf(j+10));
-//                elementDTO5.setElementDesc("表");
-//                elementDTO5.setElementName("列表" + j + i);
-//                elementDTO5.setElementType("2");
-//                elementDTO5.setElementCode(200+i+j+"");
-//                elementDTOList.add(elementDTO5);
-//                elementDTOList.add(elementDTO4);
-//            }
-//            BusinessElementBean businessElementBean = new BusinessElementBean(addProfessionalWorkDTO, elementDTOList);
-//            businessElementBeanList.add(businessElementBean);
-//        }
-
-
-        BusinessDataUtil.getInstance().initBusinessData(this, businessElementBeanList);
-        PrintDataUtil.getInstance().initPrintData(this);
-
-        tv_business_data.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                goActivity(SynchronizeBusinessActivity.class);
-            }
-        });
-        tv_print.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                goActivity(SynchronizePrintActivity.class);
-            }
-        });
-        tv_print_test.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                goActivity(PrintActivity.class);
-            }
-        });
+        return businessElementBean;
     }
 
     @Override

@@ -64,7 +64,12 @@ public class PrintActivity extends BaseActivity {
         rv.addOnItemTouchListener(new OnRecycleViewItemClickListener(this, rv) {
             @Override
             public void onItemClick(RecyclerView.ViewHolder viewHolder, int i) {
-                ControllerUtil.getInstance().openPrintPage(PrintActivity.this, mListBusiness.get(i).getServicetypeNo(), jishuju2());
+                //携带业务数据打开连接蓝牙打印页
+                Log.e("pageh==sss=", new Gson().toJson(mListBusiness.get(i).getServicetypeNo()));
+                List<Map<String, Object>> map = new ArrayList<>();
+                map.add(jishuju2(0)); map.add(jishuju2(1));
+//                ControllerUtil.getInstance().openPrintPage(PrintActivity.this, mListBusiness.get(i).getServicetypeNo(), map);
+                ControllerUtil.getInstance().printBitmapById(PrintActivity.this, mListBusiness.get(i).getServicetypeNo(), 2, map, "192.168.31.3", 9100, "ZT410");
             }
 
             @Override
@@ -147,15 +152,15 @@ public class PrintActivity extends BaseActivity {
         return map;
     }
 
-    private Map<String, Object> jishuju2() {
+    private Map<String, Object> jishuju2(int i) {
 
-        Map<String, Object> map = new Gson().fromJson(jishujuData(), new TypeToken<TreeMap<String, Object>>() {
+        Map<String, Object> map = new Gson().fromJson(jishujuData(i), new TypeToken<TreeMap<String, Object>>() {
         }.getType());
         Log.e("mapmap==", new Gson().toJson(map));
         return map;
     }
 
-    private String jishujuData() {
+    private String jishujuData(int i) {
         String s = "";
 
         String s2 = "{\n" +
@@ -358,7 +363,7 @@ public class PrintActivity extends BaseActivity {
                 "        }\n" +
                 "    ]\n" +
                 "}";
-        String s4="{\n" +
+        String s4 = "{\n" +
                 "    \"deptName\":\"销售一部\",\n" +
                 "    \"carno\":\"辽B22221\",\n" +
                 "    \"warehouse\":[\n" +
@@ -442,7 +447,46 @@ public class PrintActivity extends BaseActivity {
                 "    ],\n" +
                 "    \"remark\":\"无\"\n" +
                 "}";
-        String s5="{\n" +
+//        String s5 = "{\n" +
+//                "    \"manufactor\":\"天应泰钢管\",\n" +
+//                "    \"wholepiece\":\"444\",\n" +
+//                "    \"qty\":\"123\",\n" +
+//                "    \"specification\":\"40*30*20\",\n" +
+//                "    \"batchno\":\"自华金销50*50\",\n" +
+//                "    \"date\":\"2022/10/31\",\n" +
+//                "    \"repair\":\"补\",\n" +
+//                "    \"brCode\":\"123123123222\"" +
+//                "}";
+
+//        String s5="{\n" +
+//                "    \"manufactor\":\"天应泰钢管\",\n" +
+//                "    \"wholepiece\":123,\n" +
+//                "    \"qty\":\"123\",\n" +
+//                "    \"specification\":\"40*30*20\",\n" +
+//                "    \"batchno\":\"自华金销50*50\",\n" +
+//                "    \"date\":\"2022/10/31\",\n" +
+//                "    \"repair\":\"补\",\n" +
+//                "    \"brCode\":\"123123123222\"\n" +
+//                "}";
+
+
+        String s5 = "{\n" +
+                "    \"tiaoma\":\"1234567811\",\n" +
+                "    \"guige\":\"40*30*20\",\n" +
+                "    \"jianyanyua\":\"1312\",\n" +
+                "    \"pihao\":\"批号：132456\",\n" +
+                "    \"xinghao\":\"999\",\n" +
+                "    \"banzu\":\"新厂三车二组\"\n" +
+                "}";
+        String s55 = "{\n" +
+                "    \"tiaoma\":\"1234567811\",\n" +
+                "    \"guige\":\"40*30*20\",\n" +
+                "    \"jianyanyua\":\"1312\",\n" +
+                "    \"pihao\":\"批号：132456\",\n" +
+                "    \"xinghao\":\"111\",\n" +
+                "    \"banzu\":\"新厂三车二组\"\n" +
+                "}";
+        String s6 = "{\n" +
                 "    \"deptName\":\"销售一部\",\n" +
                 "    \"carno\":\"辽B22221\",\n" +
                 "    \"warehouse\":[\n" +
@@ -516,12 +560,19 @@ public class PrintActivity extends BaseActivity {
                 "    ],\n" +
                 "    \"remark\":\"无\"\n" +
                 "}";
+
 //        s=s1;
 //        s=s2;
 //        s = s3;
 //        s=s4;
-        s=s5;
-        return s;
+        s = s5;
+//        s = s6;
+        List<String> list = new ArrayList<>();
+        list.add(s5);
+        list.add(s55);
+        list.add(s6);
+
+        return list.get(i);
     }
 
     @Override

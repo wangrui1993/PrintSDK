@@ -28,18 +28,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.gson.Gson;
 import com.handset.sdktool.R;
+import com.handset.sdktool.data.BusinessData;
 import com.handset.sdktool.data.DataUtil;
 import com.handset.sdktool.dto.ModleDTO;
 import com.handset.sdktool.event.LabelBoard;
 import com.handset.sdktool.event.LabelItem;
-import com.handset.sdktool.listener.GetAllTemplateListener;
 import com.handset.sdktool.listener.GetTemplateByBusinessCode;
 import com.handset.sdktool.listener.OnRecycleViewItemClickListener;
-import com.handset.sdktool.net.base.ModleListBean;
 import com.handset.sdktool.printer.sunmi.SunmiPrintHelper;
-import com.handset.sdktool.printutil.PrintUtil;
+import com.handset.sdktool.printutil.MyPrintUtil;
 import com.handset.sdktool.util.Bluetooth;
-import com.handset.sdktool.util.DebugLog;
 import com.handset.sdktool.util.DeviceUtil;
 import com.lxj.xpopup.XPopup;
 import com.lxj.xpopup.core.BasePopupView;
@@ -160,7 +158,8 @@ public class ConnectBlueToothActivity extends AppCompatActivity {
                             }
                         }
                         dismissLoadingDialog();
-                        PrintUtil printUtil = new PrintUtil(listBaseBean);
+                        Log.e("MyPrintUtil---","2");
+                        MyPrintUtil printUtil = new MyPrintUtil(listBaseBean,getResources().getDisplayMetrics());
                         rl_pre.setVisibility(View.VISIBLE);
                         printUtil.preview(iv_image);
                     }
@@ -181,8 +180,9 @@ public class ConnectBlueToothActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(ModleDTO listBaseBean) {
                         dismissLoadingDialog();
-                        PrintUtil printUtil = new PrintUtil(listBaseBean);
-                        printUtil.print();
+                        Log.e("MyPrintUtil---","3");
+                        MyPrintUtil printUtil = new MyPrintUtil(listBaseBean,getResources().getDisplayMetrics());
+//                        printUtil.printTag(1, BusinessData.getInstance().getMaps());
                     }
 
                     @Override

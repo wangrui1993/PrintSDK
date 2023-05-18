@@ -1,12 +1,5 @@
 package com.handset.sdktool.data;
 
-import android.content.Context;
-import android.util.Log;
-import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.Toast;
-
-import com.google.gson.Gson;
 import com.handset.sdktool.dto.BusinessDTO;
 import com.handset.sdktool.dto.ElementDTO;
 import com.handset.sdktool.dto.ModleDTO;
@@ -20,21 +13,13 @@ import com.handset.sdktool.listener.GetPaperByPrint;
 import com.handset.sdktool.listener.GetTemplateByBusinessCode;
 import com.handset.sdktool.net.NetUtil;
 import com.handset.sdktool.net.OnResponse;
-import com.handset.sdktool.net.base.BaseBean;
-import com.handset.sdktool.net.base.Bean;
 import com.handset.sdktool.net.base.ModleListBean;
 import com.handset.sdktool.net.base.NetConfig;
-import com.handset.sdktool.printutil.PrintUtil;
-import com.handset.sdktool.util.DebugLog;
-import com.handset.sdktool.util.GetJsonDataUtil;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import cpcl.PrinterHelper;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
-import okhttp3.RequestBody;
 
 /**
  * @ClassName: DataUtil
@@ -57,7 +42,7 @@ public class DataUtil {
      * 获取业务
      */
     public void getProfessionalWork(GetAllBusinessListener getAllBusinessListener) {
-        NetUtil.getInstance().api().addServiceInBatches(NetConfig.IP)
+        NetUtil.getInstance().api().getAllService(NetConfig.IP)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new OnResponse<List<BusinessDTO>>() {

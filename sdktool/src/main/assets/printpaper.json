@@ -1,10 +1,10 @@
 [
   {
     "printerDTO": {
-      "connectionType": "蓝牙",
+      "connectionType": "socket",
       "id": "1",
-      "printerName": "打印机1",
-      "printerType": "激光",
+      "printerName": "ZT410",
+      "printerType": "热转印",
       "supportWidth": 80.8
     },
     "paperDTOList": [
@@ -30,10 +30,33 @@
   },
   {
     "printerDTO": {
-      "connectionType": "蓝牙",
+      "connectionType": "socket",
       "id": "2",
-      "printerName": "打印机2",
-      "printerType": "熱敏",
+      "printerName": "ZT411",
+      "printerType": "热转印",
+      "supportWidth": 60.8
+    },
+    "paperDTOList": [
+      {
+        "id": "1",
+        "paperHeight": 21.0,
+        "paperType": "A4",
+        "paperWidth": 29.7
+      },
+      {
+        "id": "4",
+        "paperHeight": 20.0,
+        "paperType": "A1",
+        "paperWidth": 30.0
+      }
+    ]
+  },
+  {
+    "printerDTO": {
+      "connectionType": "socket",
+      "id": "2",
+      "printerName": "ZT510",
+      "printerType": "热转印",
       "supportWidth": 60.8
     },
     "paperDTOList": [

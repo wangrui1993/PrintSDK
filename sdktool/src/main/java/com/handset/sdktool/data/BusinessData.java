@@ -31,7 +31,7 @@ import io.reactivex.schedulers.Schedulers;
  * @Description:获取各类数据
  */
 public class BusinessData {
-    private static Map<String, Object> map=new HashMap<>();
+    private static Map<String, Object> map = new HashMap<>();
 
     private BusinessData() {
 
@@ -51,6 +51,15 @@ public class BusinessData {
         BusinessData.map = map;
     }
 
+    private static List<Map<String, Object>> listmap = new ArrayList<>();
 
+
+    public static List<Map<String, Object>> getMaps() {
+        return listmap;
+    }
+
+    public static void setMaps(List<Map<String, Object>> map) {
+        BusinessData.listmap = map;
+    }
 
 }

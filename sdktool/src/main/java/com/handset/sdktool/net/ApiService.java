@@ -42,7 +42,7 @@ public interface ApiService {
      */
     @Headers({"Content-type:application/json;charset=UTF-8"})
     @GET("http://{domain}/printtemplate/config/getAllService")
-    Observable<List<BusinessDTO>> addServiceInBatches(@Path("domain") String domain);
+    Observable<List<BusinessDTO>> getAllService(@Path("domain") String domain);
 
     /**
      * 2.6.批量添加打印机

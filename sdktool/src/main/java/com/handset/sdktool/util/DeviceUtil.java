@@ -9,10 +9,8 @@ import java.math.BigDecimal;
 
 public class DeviceUtil {
 
-    public static String SUNMI = "SUNMI";//商米
-    public static String HM = "HM";//汉印
     public static String LOCATIONDEVICE = "";//
-    public static int TOPPADING = 0;//上边距
+    public static int TOPPADING = 60;//上边距
     public static int LEFTPADING = 0;//左边距
     public static String CURRENTDEVICE = "";//当前连接的设备
 
@@ -22,10 +20,16 @@ public class DeviceUtil {
     public static void setDevive(String device) {
 
         CURRENTDEVICE = device;
-        if (device.contains(SUNMI)) {
+        if (device.contains(Device.SUNMI)) {
             TOPPADING = 50;
             LEFTPADING = 30;
-        } else if (device.contains(HM)) {
+        } else if (device.contains(Device.HM)) {
+            TOPPADING = 0;
+            LEFTPADING = 0;
+        } else if (device.contains(Device.NF)) {
+            TOPPADING = 20;
+            LEFTPADING = 0;
+        } else {
             TOPPADING = 0;
             LEFTPADING = 0;
         }
@@ -47,8 +51,8 @@ public class DeviceUtil {
         Log.e("Device===Device", getDeviceDevice());
         Log.e("Device===Fubgerprint", getDeviceFubgerprint());
 
-        if (getDeviceManufacturer().equals(SUNMI)) {
-            deviceName = SUNMI + getDeviceProduct();
+        if (getDeviceManufacturer().equals(Device.SUNMI)) {
+            deviceName = Device.SUNMI + getDeviceProduct();
             LOCATIONDEVICE = getDeviceProduct();
             CURRENTDEVICE = deviceName;
             TOPPADING = 50;

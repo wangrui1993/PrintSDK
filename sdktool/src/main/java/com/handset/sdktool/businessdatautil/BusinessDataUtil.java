@@ -83,7 +83,7 @@ public class BusinessDataUtil {
 
 //        if (SharedPreferenceUtil.get(context, Config.RELATIONSHIPMAPDATA, "").toString().length() == 0) {
         String businessdata = new Gson().toJson(businessElementBeanList);
-        Log.e("dddd===",businessdata+"");
+        Log.e("dddd===", businessdata + "");
         SharedPreferenceUtil.put(context, Config.RELATIONSHIPMAPDATA, businessdata);
 
         addProfessionalWork(context, businessDTOList);
@@ -100,7 +100,7 @@ public class BusinessDataUtil {
         String strEntity = gson.toJson(businessDTOList);
         DebugLog.e("json===" + strEntity);
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json;charset=UTF-8"), strEntity);
-        NetUtil.getInstance().api().addServiceInBatches(NetConfig.IP,body)
+        NetUtil.getInstance().api().addServiceInBatches(NetConfig.IP, body)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new OnResponse<BaseBean<Bean>>() {
@@ -138,7 +138,7 @@ public class BusinessDataUtil {
         DebugLog.e("1json===" + strEntity);
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json;charset=UTF-8"), strEntity);
 
-        NetUtil.getInstance().api().addElementInBatches(NetConfig.IP,body)
+        NetUtil.getInstance().api().addElementInBatches(NetConfig.IP, body)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new OnResponse<BaseBean<Bean>>() {
@@ -173,14 +173,14 @@ public class BusinessDataUtil {
         String strEntity = gson.toJson(businessElementRelationshipDTOList);
         DebugLog.e("1json===" + strEntity);
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json;charset=UTF-8"), strEntity);
-        NetUtil.getInstance().api().addBusinessElementRelInBatches(NetConfig.IP,body)
+        NetUtil.getInstance().api().addBusinessElementRelInBatches(NetConfig.IP, body)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new OnResponse<BaseBean<Bean>>() {
                     @Override
                     public void onNext(BaseBean<Bean> listBaseBean) {
                         if (listBaseBean.isCodeSuccess()) {
-                            DebugLog.e("json===ddd");
+                            Toast.makeText(context, "添加业务元素关系成功", Toast.LENGTH_SHORT).show();
                         } else {
                             Toast.makeText(context, listBaseBean.getResultMessage(), Toast.LENGTH_SHORT).show();
                         }
@@ -228,7 +228,7 @@ public class BusinessDataUtil {
         DebugLog.e("json===" + strEntity);
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json;charset=UTF-8"), strEntity);
 
-        NetUtil.getInstance().api().addPrinter(NetConfig.IP,body)
+        NetUtil.getInstance().api().addPrinter(NetConfig.IP, body)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new OnResponse<BaseBean<Bean>>() {
@@ -288,7 +288,7 @@ public class BusinessDataUtil {
         DebugLog.e("json===" + strEntity);
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json;charset=UTF-8"), strEntity);
 
-        NetUtil.getInstance().api().addPaper(NetConfig.IP,body)
+        NetUtil.getInstance().api().addPaper(NetConfig.IP, body)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new OnResponse<BaseBean<Bean>>() {
@@ -343,7 +343,7 @@ public class BusinessDataUtil {
         DebugLog.e("1json===" + strEntity);
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json;charset=UTF-8"), strEntity);
 
-        NetUtil.getInstance().api().addPrinterPaperRelInBatches(NetConfig.IP,body)
+        NetUtil.getInstance().api().addPrinterPaperRelInBatches(NetConfig.IP, body)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new OnResponse<BaseBean<Bean>>() {

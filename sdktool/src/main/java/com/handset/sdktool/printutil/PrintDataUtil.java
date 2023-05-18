@@ -8,6 +8,7 @@ import com.google.gson.reflect.TypeToken;
 import com.handset.sdktool.dto.ModleDTO;
 import com.handset.sdktool.event.Label;
 import com.handset.sdktool.event.LabelBoard;
+import com.handset.sdktool.util.CalculationUtil;
 import com.handset.sdktool.util.DebugLog;
 import com.handset.sdktool.util.LabelBoardAnalysisUtil;
 
@@ -91,7 +92,7 @@ public class PrintDataUtil {
     static int leiji = 0;
 
 
-    public static int getPaperHight(List<ModleDTO.ComponentsBean> l, Map<String, Object> map_in) {
+    public static int getPaperHight(List<ModleDTO.ComponentsBean> l, Map<String, Object> map_in,int mixHeight) {
         int pageh = 0;
 
         paixu(l);
@@ -363,10 +364,13 @@ public class PrintDataUtil {
             if (j == l.size() - 1) {
                 DebugLog.e("1ddd后====" + componentsBean.getCoordY());
                 DebugLog.e("2ddd后====" + componentsBean.getComponentHeight());
+                DebugLog.e("3ddd=====" + pageh);
                 pageh = componentsBean.getCoordY() + componentsBean.getComponentHeight();
+                DebugLog.e("4ddd=====" + pageh);
+
             }
         }
-        return pageh;
+        return pageh>mixHeight?pageh:mixHeight ;
     }
 
 
@@ -836,7 +840,13 @@ public class PrintDataUtil {
             }
             if (componentsBean.getContentSource().equals(Label.CONTENTSOURCE_E)) {
                 if (componentsBean.getElement() != null && componentsBean.getElement().getElementCode() != null) {
-                    result = (String) map.get(componentsBean.getElement().getElementCode());
+                    if (map.get(componentsBean.getElement().getElementCode()) instanceof Integer ||
+                            map.get(componentsBean.getElement().getElementCode()) instanceof Double ||
+                            map.get(componentsBean.getElement().getElementCode()) instanceof Float) {
+                        result = map.get(componentsBean.getElement().getElementCode()).toString();
+                    } else {
+                        result = (String) map.get(componentsBean.getElement().getElementCode());
+                    }
                     if (result == null) {
                         result = componentsBean.getComponentContent() == null ? "" : componentsBean.getComponentContent();
                     }

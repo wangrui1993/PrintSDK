@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.handset.sdktool.R;
 import com.handset.sdktool.data.DataUtil;
 import com.handset.sdktool.dto.BusinessDTO;
@@ -37,6 +39,7 @@ public class SynchronizeBusinessActivity extends AppCompatActivity {
     private SelectElementAdapter mSelectElementAdapter;
     private List<BusinessDTO> mListBusiness = new ArrayList<>();
     private List<ElementDTO> mListElement = new ArrayList<>();
+    private TextView add;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +48,7 @@ public class SynchronizeBusinessActivity extends AppCompatActivity {
         recycle_view = (RecyclerView) findViewById(R.id.recycle_view);
         list_menu = (RecyclerView) findViewById(R.id.list_menu);
         tv_nodata = (ImageView) findViewById(R.id.tv_nodata);
+        add= (TextView) findViewById(R.id.add);
 
         mBusinessSelectAdapter = new BusinessSelectAdapter(this, mListBusiness);
         list_menu.setLayoutManager(new LinearLayoutManager(this));
@@ -59,12 +63,30 @@ public class SynchronizeBusinessActivity extends AppCompatActivity {
 
             @Override
             public void onItemLongClick(RecyclerView.ViewHolder viewHolder, int i) {
+                Intent intent=new Intent(SynchronizeBusinessActivity.this, AddBusinessActivity.class);
+                intent.putExtra("list",new Gson().toJson(mListElement));
+                intent.putExtra("title",mListBusiness.get(i).getServicetype());
+                startActivity(intent);
             }
         });
         mSelectElementAdapter = new SelectElementAdapter(this, mListElement);
         recycle_view.setLayoutManager(new GridLayoutManager(this, 3));
         recycle_view.setAdapter(mSelectElementAdapter);
 
+
+        add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(SynchronizeBusinessActivity.this, AddBusinessActivity.class));
+            }
+        });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mListBusiness.clear();
+        mBusinessSelectAdapter.notifyDataSetChanged();
         DataUtil.getInstance().getProfessionalWork(new GetAllBusinessListener() {
             @Override
             public void onSuccess(List<BusinessDTO> listBaseBean) {
