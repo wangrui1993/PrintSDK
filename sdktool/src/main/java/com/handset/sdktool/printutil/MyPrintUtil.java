@@ -89,7 +89,7 @@ public class MyPrintUtil {
         imageView.setImageBitmap(bitmap);
         if (modleDTO.getTemplate().getPrinterId().equals("1")) {//ZT410
             Log.e("getPrinterId", "");
-            PrinterControllerBitmap2 printerControllerBitmap = new PrinterControllerBitmap2("打印机2", "192.168.31.3", 9100, "ZT410", new PrinterControllerBitmap2.OnConnectStateChanged() {
+            PrinterControllerBitmap2 printerControllerBitmap = new PrinterControllerBitmap2("打印机2", "192.168.31.19", 9100, "ZT410", new PrinterControllerBitmap2.OnConnectStateChanged() {
                 @Override
                 public void invoke(@NonNull ConnectState connectState, @NonNull String s) {
                     Log.e("getPrinterId", "s--" + s);

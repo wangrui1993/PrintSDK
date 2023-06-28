@@ -11,8 +11,8 @@ public class NetConfig {
         IP = ip;
     }
 
-    public static String IP = "http://192.168.31.82:8090/";
-    public static final String BASE_IP = "http://192.168.31.82:8090/";
+    public static String IP = "http://192.168.30.49:8090/";
+    public static final String BASE_IP = "http://192.168.30.49:8090/";
     public static final String BASE_IP_PLUS = BASE_IP + "";
 
     public static String TOKEN;

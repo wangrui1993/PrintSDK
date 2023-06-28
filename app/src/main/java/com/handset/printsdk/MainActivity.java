@@ -34,7 +34,7 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public void initView(Bundle savedInstanceState) {
-        NetConfig.init("192.168.31.82:8090");
+        NetConfig.init("192.168.30.49:8090");
 
         //初始化业务和元素数据
         List<BusinessElementBean> businessElementBeanList = new ArrayList<>();

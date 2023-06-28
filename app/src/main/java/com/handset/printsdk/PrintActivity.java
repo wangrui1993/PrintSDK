@@ -68,8 +68,9 @@ public class PrintActivity extends BaseActivity {
                 Log.e("pageh==sss=", new Gson().toJson(mListBusiness.get(i).getServicetypeNo()));
                 List<Map<String, Object>> map = new ArrayList<>();
                 map.add(jishuju2(0));
-//                ControllerUtil.getInstance().openPrintPage(PrintActivity.this, mListBusiness.get(i).getServicetypeNo(), map);
-                ControllerUtil.getInstance().printBitmapById(PrintActivity.this, mListBusiness.get(i).getServicetypeNo(), 1, map, "192.168.31.3", 9100, "ZT410");
+//                ControllerUtil.getInstance().printBitmapById(PrintActivity.this, mListBusiness.get(i).getServicetypeNo(), 1, map, "192.168.31.19", 9100, "ZT410");
+                ControllerUtil.getInstance().openPrintPage(PrintActivity.this, mListBusiness.get(i).getServicetypeNo(), map);
+
             }
 
             @Override

@@ -167,7 +167,7 @@ public class ConnectBlueToothActivity extends AppCompatActivity {
                     @Override
                     public void onError(Throwable e) {
                         dismissLoadingDialog();
-                        Toast.makeText(ConnectBlueToothActivity.this, "业务对应有多个启用模板或为设置启用模板,请调整模板启用状态", Toast.LENGTH_LONG).show();
+                        Toast.makeText(ConnectBlueToothActivity.this, "打印模板获取失败!", Toast.LENGTH_LONG).show();
                     }
                 });
             }
