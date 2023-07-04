@@ -1,28 +1,9 @@
 package com.handset.sdktool.data;
 
-import com.handset.sdktool.dto.BusinessDTO;
-import com.handset.sdktool.dto.ElementDTO;
-import com.handset.sdktool.dto.ModleDTO;
-import com.handset.sdktool.dto.PaperDTO;
-import com.handset.sdktool.dto.PrinterDTO;
-import com.handset.sdktool.listener.GetAllBusinessListener;
-import com.handset.sdktool.listener.GetAllPrintListener;
-import com.handset.sdktool.listener.GetAllTemplateListener;
-import com.handset.sdktool.listener.GetElementByBusiness;
-import com.handset.sdktool.listener.GetPaperByPrint;
-import com.handset.sdktool.listener.GetTemplateByBusinessCode;
-import com.handset.sdktool.modle.ModleData;
-import com.handset.sdktool.net.NetUtil;
-import com.handset.sdktool.net.OnResponse;
-import com.handset.sdktool.net.base.ModleListBean;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
 
 /**
  * @ClassName: DataUtil

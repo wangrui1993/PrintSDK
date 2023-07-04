@@ -17,7 +17,6 @@ import androidx.annotation.NonNull;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.handset.sdktool.R;
 import com.handset.sdktool.data.BusinessData;
 import com.handset.sdktool.dto.ModleDTO;
 import com.handset.sdktool.event.Label;
@@ -28,11 +27,8 @@ import com.handset.sdktool.util.DebugLog;
 import com.handset.sdktool.util.Device;
 import com.handset.sdktool.util.DeviceUtil;
 import com.handset.sdktool.util.LabelBoardAnalysisUtil;
-import com.jz.zabersdk.bean.SteelPipeBarInfoBean;
 import com.jz.zabersdk.util.ConnectState;
-import com.jz.zabersdk.util.PrinterControllerBitmap;
 import com.jz.zabersdk.util.PrinterControllerBitmap2;
-import com.jz.zabersdk.util.SocketPrintBitmapController;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
@@ -69,7 +65,6 @@ public class MyPrintUtil {
         if (modleDTO.getTemplate().getPrinterId().equals("1")) {//斑马打印机
             DeviceUtil.setDevive(Device.ZEBAR);
         }
-
 
         //200dpi 8 dot = 1mm dot-墨点  汉印1mm 8墨点
         int pagew = (int) modleDTO.getTemplate().getWidth() * 8;

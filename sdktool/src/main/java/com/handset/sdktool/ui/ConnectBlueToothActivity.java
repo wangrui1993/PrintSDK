@@ -139,6 +139,8 @@ public class ConnectBlueToothActivity extends AppCompatActivity {
                 DataUtil.getInstance().getTemplateByBusinessCode(getIntent().getStringExtra("id"), new GetTemplateByBusinessCode() {
                     @Override
                     public void onSuccess(ModleDTO listBaseBean) {
+                        Log.e("mapmap==",getIntent().getStringExtra("id"));
+                        Log.e("mapmap==",new Gson().toJson(listBaseBean));
                         for (ModleDTO.ComponentsBean componentsBean : listBaseBean.getComponents()) {
                             if (componentsBean.getComponentTypeId().equals("5")) {
                                 LabelBoard labelBoard=new Gson().fromJson(componentsBean.getComponentContent(),LabelBoard.class);
