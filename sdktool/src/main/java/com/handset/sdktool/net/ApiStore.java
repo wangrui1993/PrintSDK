@@ -88,7 +88,6 @@ public class ApiStore {
             public Response intercept(Chain chain) throws IOException {
                 // 设置 Cookie
                 String cookieStr = NetConfig.COOKIE;
-                DebugLog.e("222cookieStr===" + cookieStr);
                 if (cookieStr != null && cookieStr.length() > 0) {
                     return chain.proceed(chain.request().newBuilder().header("Cookie", cookieStr).build());
                 }

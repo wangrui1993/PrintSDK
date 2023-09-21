@@ -61,7 +61,6 @@ dependencies {
     //DT40S
     implementation files('libs/platform_sdk_v3.1.0326.jar')
     implementation files('libs/printsdk.jar')
-
     //rxjava
     implementation 'io.reactivex.rxjava2:rxjava:2.1.17' //RxJava
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.2' //RxAndroid

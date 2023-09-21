@@ -27,6 +27,7 @@ import com.handset.sdktool.util.DebugLog;
 import com.handset.sdktool.util.Device;
 import com.handset.sdktool.util.DeviceUtil;
 import com.handset.sdktool.util.LabelBoardAnalysisUtil;
+import com.handset.sdktool.util.UtilGetObtainInkPoints;
 import com.jz.zabersdk.util.ConnectState;
 import com.jz.zabersdk.util.PrinterControllerBitmap2;
 
@@ -48,27 +49,89 @@ public class MyPrintUtil {
 
     private ModleDTO modleDTO;
     private DisplayMetrics displayMetrics;
+    private String deviceModel;
+    private int bitmapW;
+    private Bitmap logoBitmap;
 
-    //    public MyPrintUtil(ModleDTO modleDTO) {
-//        this.modleDTO = modleDTO;
-//    }
+    public void setModleDTO(ModleDTO modleDTO) {
+        this.modleDTO = modleDTO;
+    }
+
     public MyPrintUtil(ModleDTO modleDTO, DisplayMetrics displayMetrics) {
         this.modleDTO = modleDTO;
         this.displayMetrics = displayMetrics;
     }
 
-    public void preview(ImageView imageView) {
+    public MyPrintUtil(ModleDTO modleDTO, DisplayMetrics displayMetrics, Bitmap logoBitmap) {
+        this.modleDTO = modleDTO;
+        this.displayMetrics = displayMetrics;
+        this.logoBitmap = logoBitmap;
+    }
 
+    /**
+     * 用于内部无列表数据 如：报工标签
+     *
+     * @param datalist
+     * @param deviceModel
+     * @return
+     */
+    public List<Bitmap> dataGenerationImage(List<Map<String, Object>> datalist, String deviceModel) {
+        if (modleDTO == null || modleDTO.getTemplate() == null) {
+            return null;
+        }
+        if (modleDTO.getTemplate().getPrinterId().equals("1")) {//斑马打印机
+            DeviceUtil.setDevive(Device.ZEBAR);
+        }
+        //200dpi 8 dot = 1mm dot-墨点  汉印1mm 8墨点
+        int pagew = (int) modleDTO.getTemplate().getWidth() * UtilGetObtainInkPoints.getObtainInkPoints(deviceModel);
+        int pageh = (int) modleDTO.getTemplate().getHeight() * UtilGetObtainInkPoints.getObtainInkPoints(deviceModel);
+        List<Bitmap> list = new ArrayList<>();
+        for (Map<String, Object> bean : datalist) {
+            Bitmap bitmap = calculationHeight1(modleDTO.getComponents(), bean, pagew, pageh, deviceModel);
+            list.add(bitmap);
+        }
+        return list;
+    }
+
+    /**
+     * 用于内部有列表数据 如：采购单
+     *
+     * @param datalist
+     * @param deviceModel
+     * @return
+     */
+    public List<Bitmap> dataListGenerationImage(List<Map<String, Object>> datalist, String deviceModel) {
+        if (modleDTO == null || modleDTO.getTemplate() == null) {
+            return null;
+        }
+        if (modleDTO.getTemplate().getPrinterId().equals("1")) {//斑马打印机
+            DeviceUtil.setDevive(Device.ZEBAR);
+        }
+        //200dpi 8 dot = 1mm dot-墨点  汉印1mm 8墨点
+        int pagew = (int) modleDTO.getTemplate().getWidth() * UtilGetObtainInkPoints.getObtainInkPoints(deviceModel);
+        int pageh = (int) modleDTO.getTemplate().getHeight() * UtilGetObtainInkPoints.getObtainInkPoints(deviceModel);
+        List<Bitmap> list = new ArrayList<>();
+        for (Map<String, Object> bean : datalist) {
+            Bitmap bitmap = calculationHeight1(modleDTO.getComponents(), bean, pagew, pageh, deviceModel);
+            list.add(bitmap);
+        }
+        return list;
+    }
+
+    public void preview(ImageView imageView, String deviceModel) {
+        this.deviceModel = deviceModel;
         if (modleDTO == null || modleDTO.getTemplate() == null) {
             return;
         }
         if (modleDTO.getTemplate().getPrinterId().equals("1")) {//斑马打印机
             DeviceUtil.setDevive(Device.ZEBAR);
         }
+        Log.e("getMap===", BusinessData.getInstance().getMap().toString());
 
         //200dpi 8 dot = 1mm dot-墨点  汉印1mm 8墨点
-        int pagew = (int) modleDTO.getTemplate().getWidth() * 8;
-        int pageh = PrintDataUtil.getPaperHight(modleDTO.getComponents(), BusinessData.getInstance().getMap(), (int) modleDTO.getTemplate().getHeight() * 8);
+        int pagew = (int) modleDTO.getTemplate().getWidth() * UtilGetObtainInkPoints.getObtainInkPoints(deviceModel);
+        int pageh = PrintDataUtil.calculationHeight1(modleDTO.getComponents(), BusinessData.getInstance().getMap(), pagew,
+                (int) modleDTO.getTemplate().getHeight() * UtilGetObtainInkPoints.getObtainInkPoints(deviceModel), deviceModel, modleDTO);
 
 //        int pageh = 1000;
 //        calculationHeight1(modleDTO.getComponents(),   BusinessData.getInstance().getMap(), 0, 0);
@@ -77,42 +140,41 @@ public class MyPrintUtil {
 //        imageView.setImageBitmap(printByBitmap1(pagew, pageh));
 
         Log.e("pageh===", pageh + "===pagew===" + pagew);
-        Bitmap bitmap = calculationHeight1(modleDTO.getComponents(), BusinessData.getInstance().getMap(), pagew, pageh);
+        Bitmap bitmap = calculationHeight1(modleDTO.getComponents(), BusinessData.getInstance().getMap(), pagew, pageh, deviceModel);
         List<Bitmap> list = new ArrayList<>();
         list.add(bitmap);
         Log.e("pageh==ss=", new Gson().toJson(BusinessData.getInstance().getMap()));
         imageView.setImageBitmap(bitmap);
-        if (modleDTO.getTemplate().getPrinterId().equals("1")) {//ZT410
-            Log.e("getPrinterId", "");
-            PrinterControllerBitmap2 printerControllerBitmap = new PrinterControllerBitmap2("打印机2", "192.168.31.19", 9100, "ZT410", new PrinterControllerBitmap2.OnConnectStateChanged() {
-                @Override
-                public void invoke(@NonNull ConnectState connectState, @NonNull String s) {
-                    Log.e("getPrinterId", "s--" + s);
-                }
-            });
-            printerControllerBitmap.print(bitmap,
-                    1,
-                    0,
-                    0,
-                    new PrinterControllerBitmap2.PrintStatus() {
-                        @Override
-                        public void onPrintSuccess(int i) {
-                            Log.e("onPrintSuccess", "s--" + i);
-                        }
-
-                        @Override
-                        public void onPrintComplete() {
-
-                        }
-
-                        @Override
-                        public void onPrintError(int i, @NonNull String s) {
-                            Log.e("onPrintError", "s--" + i);
-                        }
-                    });
-        }
     }
 
+    public void preTest(ImageView imageView, String ip, int port, String deviceModel) {
+        this.deviceModel = deviceModel;
+        if (modleDTO == null || modleDTO.getTemplate() == null) {
+            return;
+        }
+        if (modleDTO.getTemplate().getPrinterId().equals("1")) {//斑马打印机
+            DeviceUtil.setDevive(Device.ZEBAR);
+        }
+
+
+        //200dpi 8 dot = 1mm dot-墨点  汉印1mm 8墨点
+        int pagew = (int) modleDTO.getTemplate().getWidth() * UtilGetObtainInkPoints.getObtainInkPoints(deviceModel);
+        int pageh = PrintDataUtil.getPaperHight(modleDTO.getComponents(), BusinessData.getInstance().getMap(), (int) modleDTO.getTemplate().getHeight() * UtilGetObtainInkPoints.getObtainInkPoints(deviceModel));
+
+//        int pageh = 1000;
+//        calculationHeight1(modleDTO.getComponents(),   BusinessData.getInstance().getMap(), 0, 0);
+//        pageh = calculationHeight(modleDTO.getComponents(), pageh, 0, BusinessData.getInstance().getMap());
+//        setBelowComponentY();
+//        imageView.setImageBitmap(printByBitmap1(pagew, pageh));
+
+        Log.e("pageh===", pageh + "===pagew===" + pagew);
+        Bitmap bitmap = calculationHeight1(modleDTO.getComponents(), BusinessData.getInstance().getMap(), pagew, pageh, deviceModel);
+        List<Bitmap> list = new ArrayList<>();
+        list.add(bitmap);
+        Log.e("pageh==ss=", new Gson().toJson(BusinessData.getInstance().getMap()));
+        imageView.setImageBitmap(bitmap);
+        toPrint(list, pagew, pageh, ip, port, deviceModel);
+    }
 
     /**
      * 打印生产报工的标签
@@ -130,51 +192,24 @@ public class MyPrintUtil {
         if (modleDTO.getTemplate().getPrinterId().equals("1")) {//斑马打印机
             DeviceUtil.setDevive(Device.ZEBAR);
         }
-
+        this.deviceModel = deviceModel;
         //200dpi 8 dot = 1mm dot-墨点  汉印1mm 8墨点
-        int pagew = (int) modleDTO.getTemplate().getWidth() * 8;
-        int pageh = (int) modleDTO.getTemplate().getHeight() * 8;
+        int pagew = (int) modleDTO.getTemplate().getWidth() * UtilGetObtainInkPoints.getObtainInkPoints(deviceModel);
+        int pageh = (int) modleDTO.getTemplate().getHeight() * UtilGetObtainInkPoints.getObtainInkPoints(deviceModel);
         List<Bitmap> list = new ArrayList<>();
         for (Map<String, Object> bean : datalist) {
             for (int i = 0; i < printTime; i++) {
-                Bitmap bitmap = calculationHeight1(modleDTO.getComponents(), bean, pagew, pageh);
+                Bitmap bitmap = calculationHeight1(modleDTO.getComponents(), bean, pagew, pageh, deviceModel);
                 list.add(bitmap);
             }
         }
-//        Log.e("pageh==ss=", new Gson().toJson(BusinessData.getInstance().getMap()));
-//        Log.e("pageh==ss=", new Gson().toJson(BusinessData.getInstance().getMap()));
         toPrint(list, pagew, pageh, ip, port, deviceModel);
 
     }
 
     private void toPrint(List<Bitmap> list, int pagew, int pageh, String ip, int port, String deviceModel) {
+        this.deviceModel = deviceModel;
         if (modleDTO.getTemplate().getPrinterId().equals("1")) {//ZT410
-            Log.e("getPrinterId", "");
-            PrinterControllerBitmap2 printerControllerBitmap = new PrinterControllerBitmap2("打印机", ip, port, deviceModel, new PrinterControllerBitmap2.OnConnectStateChanged() {
-                @Override
-                public void invoke(@NonNull ConnectState connectState, @NonNull String s) {
-                    Log.e("getPrinterId", "s--" + s);
-                }
-            });
-            printerControllerBitmap.print(list,
-                    0,
-                    0,
-                    new PrinterControllerBitmap2.PrintStatus() {
-                        @Override
-                        public void onPrintSuccess(int i) {
-                            Log.e("onPrintSuccess", "s--" + i);
-                        }
-
-                        @Override
-                        public void onPrintComplete() {
-
-                        }
-
-                        @Override
-                        public void onPrintError(int i, @NonNull String s) {
-                            Log.e("onPrintError", "s--" + i);
-                        }
-                    });
         } else {
             if (DeviceUtil.CURRENTDEVICE.length() > 0) {
                 if (DeviceUtil.CURRENTDEVICE.contains(Device.SUNMI)) {
@@ -187,69 +222,34 @@ public class MyPrintUtil {
         }
     }
 
-//    public void print() {
-//        if (modleDTO == null || modleDTO.getTemplate() == null) {
-//            return;
-//        }
-//        if (modleDTO.getTemplate().getPrinterId().equals("1")) {//斑马打印机
-//            DeviceUtil.setDevive(Device.ZEBAR);
-//        }
-//        //200dpi 8 dot = 1mm dot-墨点  汉印1mm 8墨点
-//        int pagew = (int) modleDTO.getTemplate().getWidth() * 8;
-//        int pageh = (int) modleDTO.getTemplate().getHeight() * 8;
-//        pageh = calculationHeight(modleDTO.getComponents(), pageh, 0, BusinessData.getInstance().getMap());
-//        setBelowComponentY();
-//
-//        Log.e("dfdcccsds===", DeviceUtil.CURRENTDEVICE);
-//
-//        if (DeviceUtil.CURRENTDEVICE.length() > 0) {
-//            if (DeviceUtil.CURRENTDEVICE.contains(Device.SUNMI)) {
-//                SunmiPrintHelper.getInstance().printBitmap(printByBitmap(pagew, pageh));
-//                SunmiPrintHelper.getInstance().feedPaper();
-//            } else if (DeviceUtil.CURRENTDEVICE.contains(Device.HM)) {
-//                printXY(pagew, pageh);
-//            }
-//        }
-//
-//    }
 
-
-    public Bitmap getPreBitmap() {
+    public Bitmap getPreBitmap(String deviceModel) {
         //200dpi 8 dot = 1mm dot-墨点  汉印1mm 8墨点
-        int pagew = (int) modleDTO.getTemplate().getWidth() * 8;
-        int pageh = PrintDataUtil.getPaperHight(modleDTO.getComponents(), BusinessData.getInstance().getMap(), (int) modleDTO.getTemplate().getHeight() * 8);
+        int pagew = (int) modleDTO.getTemplate().getWidth() * UtilGetObtainInkPoints.getObtainInkPoints(deviceModel);
+        int pageh = PrintDataUtil.getPaperHight(modleDTO.getComponents(), BusinessData.getInstance().getMap(), (int) modleDTO.getTemplate().getHeight() * UtilGetObtainInkPoints.getObtainInkPoints(deviceModel));
         Log.e("pageh===", pageh + "");
-        return calculationHeight1(modleDTO.getComponents(), BusinessData.getInstance().getMap(), pagew, pageh);
+        return calculationHeight1(modleDTO.getComponents(), BusinessData.getInstance().getMap(), pagew, pageh, deviceModel);
     }
 
-    public Bitmap getBitmap() {
+    public Bitmap getBitmap(String deviceModel) {
         //200dpi 8 dot = 1mm dot-墨点  汉印1mm 8墨点
-        int pagew = (int) modleDTO.getTemplate().getWidth() * 8;
-        int pageh = PrintDataUtil.getPaperHight(modleDTO.getComponents(), BusinessData.getInstance().getMap(), (int) modleDTO.getTemplate().getHeight() * 8);
+        int pagew = (int) modleDTO.getTemplate().getWidth() * UtilGetObtainInkPoints.getObtainInkPoints(deviceModel);
+        int pageh = PrintDataUtil.getPaperHight(modleDTO.getComponents(), BusinessData.getInstance().getMap(), (int) modleDTO.getTemplate().getHeight() * UtilGetObtainInkPoints.getObtainInkPoints(deviceModel));
         Log.e("pageh===", pageh + "===pagew===" + pagew);
-        return calculationHeight1(modleDTO.getComponents(), BusinessData.getInstance().getMap(), pagew, pageh);
+        return calculationHeight1(modleDTO.getComponents(), BusinessData.getInstance().getMap(), pagew, pageh, deviceModel);
     }
 
-    public Bitmap calculationHeight1(List<ModleDTO.ComponentsBean> l, Map<String, Object> map_in, int pagew, int pageh) {
-
-        if (l.size() > 0) {
+    public Bitmap calculationHeight1(List<ModleDTO.ComponentsBean> l, Map<String, Object> map_in, int pagew, int pageh, String deviceModel) {
+        bitmapW = pagew;
+        if (l.size() > 0 && !PrintDataUtil.isContentList(l)) {
             double bili = l.get(0).getPaperCoordProportion().doubleValue();
-            Log.e("11pageh===", pageh + "===11pageh===" + modleDTO.getTemplate().getHeight() * 8);
-            pageh = Math.max((int) CalculationUtil.multiplication(Double.valueOf(pageh), bili), (int) (modleDTO.getTemplate().getHeight() * 8));
+            pageh = Math.max((int)
+                    CalculationUtil.multiplication(Double.valueOf(pageh), bili), (int) (modleDTO.getTemplate().getHeight() * UtilGetObtainInkPoints.getObtainInkPoints(deviceModel)));
         }
-
+        Log.e("pageh===", pageh + "===pagew===" + pagew);
         Bitmap finalBitmap = Bitmap.createBitmap(pagew, pageh, Bitmap.Config.RGB_565);
         Canvas canvas = new Canvas(finalBitmap);
         canvas.drawColor(Color.WHITE);
-
-//        Paint textPaint2 = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.DITHER_FLAG);
-//        textPaint2.setColor(Color.GREEN);
-//        textPaint2.setTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 20, displayMetrics));
-//        textPaint2.setTextAlign(Paint.Align.LEFT);
-//        Paint.FontMetrics metric = textPaint2.getFontMetrics();
-//        int textHeight = (int) Math.ceil(metric.descent - metric.ascent);
-//        int y = (int)(textHeight - metric.descent);
-//        canvas.drawText("微軟", 0, y, textPaint2);
 
 
         Paint paint = new Paint();
@@ -278,7 +278,8 @@ public class MyPrintUtil {
 
             ModleDTO.ComponentsBean componentsBean = l.get(j);
 
-            double bili = componentsBean.getPaperCoordProportion().doubleValue();
+//            double bili = componentsBean.getPaperCoordProportion().doubleValue();
+            double bili = 1;
             DebugLog.e("bili=====" + "==bili=" + bili);
             if (componentsBean.getComponentTypeId().equals("5")) {
                 ku_Y = componentsBean.getIni_coordY() == -1 ? componentsBean.getCoordY() : componentsBean.getIni_coordY();
@@ -436,7 +437,6 @@ public class MyPrintUtil {
                                                     componentsBean3.setIni_coordY(componentsBean3.getCoordY());
                                                 }
                                                 DebugLog.e("3----------------------Y=前====" + componentsBean3.getComponentContent() + "=CoordY=" + componentsBean3.getIni_coordY() + "===wuliao_Y===" + wuliao_Y);
-
                                                 DebugLog.e("3--Y=外层ku===ku_list_height=" + ku_list_height + "===ku_item_h_inmodle===" + ku_item_h_inmodle);
                                                 DebugLog.e("3--Y=外层hetong===hetong_list_h=" + hetong_list_h + "===hetong_item_h_inmodle===" + hetong_item_h_inmodle);
                                                 DebugLog.e("3--Y=外层wuliao===wuliao_list_h=" + wuliao_list_h + "===wuliao_item_h_inmodle===" + wuliao_item_h_inmodle);
@@ -601,9 +601,21 @@ public class MyPrintUtil {
             }
 
         }
+
+//        Bitmap bitmaplogo= BitmapFactory.decodeResource(getRe, R.mipmap.tyt);
+        if (logoBitmap != null) {
+            Log.e("5bitmapisnull=", (logoBitmap == null ? "null" : "notnull"));
+            canvas.drawBitmap(logoBitmap, 0, 0, null);
+        }
+        DebugLog.e("0PrinterHelper===PrintQR==" + canvas.getHeight());
+        DebugLog.e("1PrinterHelper===PrintQR==" + yiji_item_leiji_h_inmodle);
+        DebugLog.e("2PrinterHelper===PrintQR==" + yiji_list_leiji_height);
+        DebugLog.e("3PrinterHelper===PrintQR==" + yiji_jian);
         canvas.save();
         canvas.restore();
+        DebugLog.e("4PrinterHelper===PrintQR==" + "=宽=" + finalBitmap.getWidth() + "=高=" + finalBitmap.getHeight());
         finalBitmap = compressQuality(finalBitmap, 100);
+        DebugLog.e("5PrinterHelper===PrintQR==" + "=宽=" + finalBitmap.getWidth() + "=高=" + finalBitmap.getHeight());
         return finalBitmap;
     }
 
@@ -1468,6 +1480,13 @@ public class MyPrintUtil {
         }
     }
 
+
+    private int getBili(double d) {
+        double y = CalculationUtil.multiplication(bitmapW, d);
+        int yBili = (int) CalculationUtil.div(y, modleDTO.getTemplate().getScreenWidth(), 2);
+        return yBili;
+    }
+
     /**
      * 根据数据打印二维码
      *
@@ -1475,18 +1494,32 @@ public class MyPrintUtil {
      * @throws Exception
      */
     private void printQRBitmap(Canvas canvas, ModleDTO.ComponentsBean componentsBean, double bili, int plusHeight) {
-        int height = (int) CalculationUtil.multiplication(Double.valueOf(componentsBean.getComponentHeight()), bili);//
-        int width = (int) CalculationUtil.multiplication(Double.valueOf(componentsBean.getComponentWidth()), bili);//
-        int x = (int) CalculationUtil.multiplication(Double.valueOf(componentsBean.getCoordX() + DeviceUtil.LEFTPADING), bili);///
-        int y = (int) CalculationUtil.multiplication(Double.valueOf(componentsBean.getCoordY() + plusHeight + DeviceUtil.TOPPADING), bili);///
-        String data = componentsBean.getComponentContent();//二维码数据  TransformationDataUtil.getInstance().getShowContent(componentsBean)
-        DebugLog.e("PrinterHelper===PrintQR==" + data + "==width==" + width + "==height==" + height +
-                "===Height()=" + componentsBean.getComponentHeight() + "==Width()==" + componentsBean.getComponentWidth() + "==bili==" + bili);
-        Bitmap htmlBitmap = ZxingUtil.generateBitmap(data, width, height, false);
-        DebugLog.e("PrinterHelper===PrintQR==" + data + "==y==" + y + "==getCoordY==" + componentsBean.getCoordY() + "==width==" + htmlBitmap.getWidth() + "==height==" + htmlBitmap.getHeight());
-        DebugLog.e("3==PrintQR==DeviceUtil.LEFTPADING==" + DeviceUtil.LEFTPADING + "== DeviceUtil.TOPPADING==" + DeviceUtil.TOPPADING
-                + "==plusHeight==" + plusHeight);
+        bili = 1;
 
+        int x = getBili(componentsBean.getCoordX() + DeviceUtil.LEFTPADING);
+        int y = getBili(componentsBean.getCoordY() + plusHeight + DeviceUtil.TOPPADING);
+        int height = getBili(componentsBean.getComponentHeight());//
+        int width = getBili(componentsBean.getComponentWidth());
+//        int height = (int) CalculationUtil.multiplication(Double.valueOf(componentsBean.getComponentHeight()), bili);//
+//        int width = (int) CalculationUtil.multiplication(Double.valueOf(componentsBean.getComponentWidth()), bili);//
+//        int x = (int) CalculationUtil.multiplication(Double.valueOf(componentsBean.getCoordX() + DeviceUtil.LEFTPADING), bili);///
+//        int y = (int) CalculationUtil.multiplication(Double.valueOf(componentsBean.getCoordY() + plusHeight + DeviceUtil.TOPPADING), bili);///
+        String data = componentsBean.getComponentContent();//二维码数据  TransformationDataUtil.getInstance().getShowContent(componentsBean)
+        Bitmap htmlBitmap = ZxingUtil.generateBitmap(data, width, height, false);
+        if (htmlBitmap == null) {
+            DebugLog.e("PrinterHelper===PrintQR==\nhtmlBitmap=null");
+            return;
+        }
+        DebugLog.e("PrinterHelper===PrintQR==" + data +
+                "\n==比例==" + bili +
+                "\n==比例后的Y==" + y +
+                "\n==比例后的X==" + x +
+                "\n==原Y==" + componentsBean.getCoordY() +
+                "\n==原X==" + componentsBean.getCoordX() +
+//                "\n==图片宽（比例后）==" + htmlBitmap == null ? "null" : htmlBitmap.getWidth() == null ? "null" : htmlBitmap.getWidth()  +
+//                "\n==图片高（比例后）==" + htmlBitmap == null ? "null" : htmlBitmap.getHeight() +
+                "\n==组件宽==" + componentsBean.getComponentWidth() +
+                "\n==组件高==" + componentsBean.getComponentHeight());
         canvas.drawBitmap(htmlBitmap, x, y, null);//TODO 这个y轴会不准  貌似大，总之显示的bitmap靠下
     }
 
@@ -1500,16 +1533,20 @@ public class MyPrintUtil {
         if (!isNumeric(componentsBean.getComponentContent())) {
             return;
         }
-        int barTextSize = 9;
-        int barTextSizeh = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, barTextSize, displayMetrics);
-        int height = (int) CalculationUtil.multiplication(Double.valueOf(componentsBean.getComponentHeight()) - (barTextSizeh * 2), bili);//
-        int width = (int) CalculationUtil.multiplication(Double.valueOf(componentsBean.getComponentWidth()), bili);//
-        int x = (int) CalculationUtil.multiplication(Double.valueOf(componentsBean.getCoordX() + DeviceUtil.LEFTPADING), bili);///
-        int y = (int) CalculationUtil.multiplication(Double.valueOf(componentsBean.getCoordY() + plusHeight), bili);///
+        int barTextSize = 14;
+        int x = getBili(componentsBean.getCoordX() + DeviceUtil.LEFTPADING);
+        int y = getBili(componentsBean.getCoordY() + plusHeight);
+        int height = getBili(componentsBean.getComponentHeight() - (barTextSize * 2));//
+        int width = getBili(componentsBean.getComponentWidth());
+//        int barTextSizeh = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, barTextSize, displayMetrics);
+//        int height = (int) CalculationUtil.multiplication(Double.valueOf(componentsBean.getComponentHeight()) - (barTextSize * 2), bili);//
+//        int width = (int) CalculationUtil.multiplication(Double.valueOf(componentsBean.getComponentWidth()), bili);//
+//        int x = (int) CalculationUtil.multiplication(Double.valueOf(componentsBean.getCoordX() + DeviceUtil.LEFTPADING), bili);///
+//        int y = (int) CalculationUtil.multiplication(Double.valueOf(componentsBean.getCoordY() + plusHeight), bili);///
         String data = componentsBean.getComponentContent();//条码数据   TransformationDataUtil.getInstance().getShowContent(componentsBean)
         DebugLog.e("1PrinterHelper===Barcode==" + componentsBean.getComponentWidth() + "====" + componentsBean.getComponentHeight());
         DebugLog.e("2PrinterHelper===Barcode==" + data + "==" + x + "===" + y + "===" + componentsBean.getId());
-        DebugLog.e("3PrinterHelper===Barcode==" + width + "====" + height);
+        DebugLog.e("3PrinterHelper===Barcode==" + width + "====" + height + "====" + plusHeight);
         Bitmap codeBitmap = ZxingUtil.getBarCodeWithoutPadding(width, width, height, data);
 //        codeBitmap = ImageUtils.scale(codeBitmap, width, height);
         canvas.drawBitmap(codeBitmap, x, y, null);
@@ -1518,7 +1555,9 @@ public class MyPrintUtil {
         componentsBean.setSuffix("");
         componentsBean.setPrefix("");
         componentsBean.setAlignType("center");
-        printTextBitmap(canvas, paint, componentsBean, bili, plusHeight + height + 10);
+        componentsBean.setCoordY(componentsBean.getCoordY() + componentsBean.getComponentHeight() - (barTextSize * 2));
+//        componentsBean.set
+        printTextBitmap(canvas, paint, componentsBean, bili, plusHeight);
     }
 
     /**
@@ -1528,10 +1567,14 @@ public class MyPrintUtil {
      * @throws Exception
      */
     private void printTextBitmap(Canvas canvas, Paint textPaint3, ModleDTO.ComponentsBean componentsBean, double bili, int plusHeight) {
-        Log.e("cddcdzz==", new Gson().toJson(componentsBean));
+        Log.e("11cddcdzz==", getBili(Double.valueOf(componentsBean.getSize()) * 2) + "==" + componentsBean.getSize());
         Paint textPaint2 = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.DITHER_FLAG);
         textPaint2.setColor(Color.BLACK);
-        textPaint2.setTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, Integer.valueOf(componentsBean.getSize()), displayMetrics));
+
+//        double size = CalculationUtil.multiplication(Double.valueOf(componentsBean.getSize()), bili);//
+//        float floatValue=new Double(size).floatValue();
+//        textPaint2.setTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, floatValue, displayMetrics));
+        textPaint2.setTextSize(getBili(Double.valueOf(componentsBean.getSize())) * 2);
         textPaint2.setTextAlign(Paint.Align.LEFT);
         Paint.FontMetrics metric = textPaint2.getFontMetrics();
         int textHeight = (int) Math.ceil(metric.descent - metric.ascent);
@@ -1552,11 +1595,12 @@ public class MyPrintUtil {
 //        } else if (componentsBean.getAlignType()!=null&&componentsBean.getAlignType().equals("left")) {
 //            paint.setTextAlign(Paint.Align.LEFT);
 //        }
-        int x = (int) CalculationUtil.multiplication(Double.valueOf(componentsBean.getCoordX() + DeviceUtil.LEFTPADING), bili);
-        int y = (int) CalculationUtil.multiplication(Double.valueOf(componentsBean.getCoordY() + plusHeight + DeviceUtil.TOPPADING), bili);
+
+        int x = getBili(componentsBean.getCoordX() + DeviceUtil.LEFTPADING);
+        int y = getBili(componentsBean.getCoordY() + plusHeight + DeviceUtil.TOPPADING);
         String data = componentsBean.getPrefix() + componentsBean.getComponentContent() + componentsBean.getSuffix();
-        DebugLog.e("PrinterHelper===printText==" + data + "=y=" + y + "==getCoordY=" + componentsBean.getCoordY() + "====" + componentsBean.getAboveComponentId() + "===" + x + "==bili=" + bili);
-        DebugLog.e("PrinterHelper===printText==" + data + "=y=" + y + "==x=" + x + "==plusHeight=" + plusHeight + "=== TOPPADING=" + DeviceUtil.TOPPADING + "==bili=" + bili);
+//        DebugLog.e("PrinterHelper===printText==" + data + "=y=" + y + "==getCoordY=" + componentsBean.getCoordY() + "====" + componentsBean.getAboveComponentId() + "===" + x + "==bili=" + bili);
+        DebugLog.e("PrinterHelper===printText==" + data + "=y=" + y + "==x=" + x + "==plusHeight=" + plusHeight + "=== TOPPADING=" + DeviceUtil.TOPPADING + "==bili=" + bili + "==Size=" + componentsBean.getSize());
         canvas.drawText(data == null ? "" : data, x, y + y2, textPaint2);
     }
 
@@ -1568,10 +1612,13 @@ public class MyPrintUtil {
      * @throws Exception
      */
     private void printShapeBitmap(Canvas canvas, Paint paintDashLine, ModleDTO.ComponentsBean componentsBean, double bili, int plusHeight) {
-        int X0 = (int) CalculationUtil.multiplication(Double.valueOf(componentsBean.getCoordX() + DeviceUtil.LEFTPADING), bili);///起始的X坐标。（单位：dot）
-        int Y0 = (int) CalculationUtil.multiplication(Double.valueOf(componentsBean.getCoordY() + plusHeight), bili);///起始的Y坐标。（单位：dot）
+//        int X0 = (int) CalculationUtil.multiplication(Double.valueOf(componentsBean.getCoordX() + DeviceUtil.LEFTPADING), bili);///起始的X坐标。（单位：dot）
+//        int Y0 = (int) CalculationUtil.multiplication(Double.valueOf(componentsBean.getCoordY() + plusHeight), bili);///起始的Y坐标。（单位：dot）
+//        int X1lineTo = (int) (CalculationUtil.multiplication(Double.valueOf(componentsBean.getComponentWidth()), bili));///终结的X坐标。（单位：dot）
 
-        int X1lineTo = (int) (CalculationUtil.multiplication(Double.valueOf(componentsBean.getComponentWidth()), bili));///终结的X坐标。（单位：dot）
+        int X0 = componentsBean.getCoordX() + DeviceUtil.LEFTPADING;///起始的X坐标。（单位：dot）
+        int Y0 = componentsBean.getCoordY() + plusHeight;///起始的Y坐标。（单位：dot）
+        int X1lineTo = componentsBean.getComponentWidth();///终结的X坐标。（单位：dot）
 
         paintDashLine.setStrokeWidth(componentsBean.getComponentHeight() == 0 ? 1 : componentsBean.getComponentHeight());
 
@@ -1580,8 +1627,8 @@ public class MyPrintUtil {
 //        linePath.moveTo(X0, Y0);
 //        linePath.lineTo(X1, Y1);
         DebugLog.e("printShapeBitmap===printShape==" + "==Y0=" + Y0 + "==X0=" + X0 + "==X1lineTo=" + X1lineTo + "==plusHeight=" + plusHeight);
-        linePath.moveTo(X0, Y0 + componentsBean.getComponentHeight() / 2);
-        linePath.lineTo(X1lineTo, Y0 + componentsBean.getComponentHeight() / 2);
+        linePath.moveTo(getBili(X0), getBili(Y0));
+        linePath.lineTo(getBili(X0 + X1lineTo), getBili(Y0));
         DebugLog.e("printShapeBitmap===printShape==" + componentsBean.toString());
         DebugLog.e("printShapeBitmap===printShape=x=" + componentsBean.getCoordX() + "==y=" + componentsBean.getCoordY() +
                 "==Width=" + componentsBean.getComponentWidth() + "===Height=" + componentsBean.getComponentHeight() + "==" + paintDashLine.getStrokeWidth());
@@ -1809,11 +1856,8 @@ public class MyPrintUtil {
             return "";
         }
         String result = componentsBean.getComponentContent();
-        Log.e("===sdfsd===2", componentsBean.getComponentContent());
         if (componentsBean.getComponentTypeId().equals("1") || componentsBean.getComponentTypeId().equals("2") || componentsBean.getComponentTypeId().equals("3")) {
-            Log.e("===sdfsd===3", componentsBean.getComponentTypeId());
             if (componentsBean.getContentSource().equals(Label.CONTENTSOURCE_TEXT)) {
-                Log.e("===sdfsd===4", componentsBean.getComponentContent());
                 result = componentsBean.getComponentContent();
                 return result;
             }
@@ -1835,7 +1879,6 @@ public class MyPrintUtil {
                     }
                     return result;
                 } else {
-                    Log.e("===sdfsd=null==4", componentsBean.getComponentContent());
                 }
                 result = componentsBean.getComponentContent();
                 return result;
@@ -1888,7 +1931,6 @@ public class MyPrintUtil {
         List<ModleDTO.ComponentsBean> businessElementBeanList = gson.fromJson(gson.toJson(list),
                 new TypeToken<List<ModleDTO.ComponentsBean>>() {
                 }.getType());
-        Log.e("1sssccc===", businessElementBeanList.size() + "");
         componentsBean_ku_item.setId(componentsBean.getId());
         componentsBean_ku_item.setComponentContent(componentsBean.getComponentContent());
         componentsBean_ku_item.setComponentTypeId(componentsBean.getComponentTypeId());

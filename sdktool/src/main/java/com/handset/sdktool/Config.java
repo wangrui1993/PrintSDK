@@ -7,6 +7,7 @@ package com.handset.sdktool;
  * @Description:作用描述
  */
 public class Config {
+    public final static String COMPANYID = "COMPANYID";
     public final static String RELATIONSHIPMAPDATA = "RELATIONSHIPMAPDATA";
     public final static String RELATIONSHIPPP = "RELATIONSHIPPP";
 }

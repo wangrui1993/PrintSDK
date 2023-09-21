@@ -44,8 +44,9 @@ public class ControllerUtil {
      * @param businessId 根据业务id来获取启用模板
      * @param map
      */
-    public void openPrintPage(Context context, String businessId, List<Map<String, Object>> map) {
-        BusinessData.getInstance().setMaps(map);
+    public void openPrintPage(Context context, String businessId, List<Map<String, Object>> maps, Map<String, Object> map) {
+        BusinessData.getInstance().setMaps(maps);
+        BusinessData.getInstance().setMap(map);
         Intent intent = new Intent(context, ConnectBlueToothActivity.class);
         intent.putExtra("id", businessId);
         context.startActivity(intent);

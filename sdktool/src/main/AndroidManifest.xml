@@ -49,6 +49,12 @@
         <activity
             android:name=".ui.AddBusinessActivity"
             android:exported="true"></activity>
+        <activity
+            android:name=".ui.AddCompanyActivity"
+            android:exported="true"></activity>
+        <activity
+            android:name=".ui.CompanyAssociationBusinessActivity"
+            android:exported="true"></activity>
     </application>
 
 </manifest>

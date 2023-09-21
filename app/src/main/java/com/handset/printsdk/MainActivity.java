@@ -1,18 +1,25 @@
 package com.handset.printsdk;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
 import com.handset.printsdk.base.BaseActivity;
+import com.handset.printsdk.base.SPConfig;
 import com.handset.sdktool.bean.BusinessElementBean;
 import com.handset.sdktool.businessdatautil.BusinessDataUtil;
 import com.handset.sdktool.businessdatautil.PrintDataUtil;
+import com.handset.sdktool.data.DataUtil;
 import com.handset.sdktool.dto.BusinessDTO;
 import com.handset.sdktool.dto.ElementDTO;
+import com.handset.sdktool.listener.GetBusinessServiceByCompanyIdListener;
+import com.handset.sdktool.listener.InitCompanyListener;
 import com.handset.sdktool.net.base.NetConfig;
+import com.handset.sdktool.ui.AddCompanyActivity;
 import com.handset.sdktool.ui.SynchronizeBusinessActivity;
 import com.handset.sdktool.ui.SynchronizePrintActivity;
+import com.handset.sdktool.util.SharedPreferenceUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +33,8 @@ public class MainActivity extends BaseActivity {
     TextView tv_print;
     @BindView(R.id.tv_print_test)
     TextView tv_print_test;
+    @BindView(R.id.tv_business)
+    TextView tv_business;
 
     @Override
     public int getLayoutId() {
@@ -34,8 +43,19 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public void initView(Bundle savedInstanceState) {
-        NetConfig.init("192.168.30.49:8090");
-
+        String ip = (String) SharedPreferenceUtil.get(mContext, SPConfig.IP, "");
+        NetConfig.init(ip );
+//        NetConfig.init(ip,"192.168.31.78","ces");
+//        BusinessDataUtil.getInstance().initCompany(new InitCompanyListener() {
+//            @Override
+//            public void onSuccess(String companyId) {
+//            }
+//
+//            @Override
+//            public void onError(Throwable e) {
+//
+//            }
+//        });
         //初始化业务和元素数据
         List<BusinessElementBean> businessElementBeanList = new ArrayList<>();
 
@@ -45,7 +65,12 @@ public class MainActivity extends BaseActivity {
 
 //        BusinessDataUtil.getInstance().initBusinessData(this, businessElementBeanList);
         PrintDataUtil.getInstance().initPrintData(this);
-
+        tv_business.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                goActivity(AddCompanyActivity.class);
+            }
+        });
         tv_business_data.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

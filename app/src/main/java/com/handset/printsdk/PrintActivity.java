@@ -57,6 +57,9 @@ public class PrintActivity extends BaseActivity {
 
     @Override
     public void initView(Bundle savedInstanceState) {
+
+
+
         mBusinessSelectAdapter = new BusinessSelectAdapter(this, mListBusiness);
         rv.setLayoutManager(new LinearLayoutManager(this));
         rv.setAdapter(mBusinessSelectAdapter);
@@ -66,10 +69,10 @@ public class PrintActivity extends BaseActivity {
             public void onItemClick(RecyclerView.ViewHolder viewHolder, int i) {
                 //携带业务数据打开连接蓝牙打印页
                 Log.e("pageh==sss=", new Gson().toJson(mListBusiness.get(i).getServicetypeNo()));
-                List<Map<String, Object>> map = new ArrayList<>();
-                map.add(jishuju2(0));
-//                ControllerUtil.getInstance().printBitmapById(PrintActivity.this, mListBusiness.get(i).getServicetypeNo(), 1, map, "192.168.31.19", 9100, "ZT410");
-                ControllerUtil.getInstance().openPrintPage(PrintActivity.this, mListBusiness.get(i).getServicetypeNo(), map);
+                List<Map<String, Object>> maps = new ArrayList<>();
+                maps.add(jishuju2(3));
+//                ControllerUtil.getInstance().printBitmapById(PrintActivity.this, mListBusiness.get(i).getServicetypeNo(), 1, map, "192.168.31.68", 9100, "TSC");
+                ControllerUtil.getInstance().openPrintPage(PrintActivity.this, mListBusiness.get(i).getServicetypeNo(), maps,jishuju2(3));
 
             }
 
@@ -568,11 +571,61 @@ public class PrintActivity extends BaseActivity {
 //        s=s4;
         s = s5;
 //        s = s6;
+        String s554 = "{\n" +
+                "    \"kehuxingmi\":\"张安\",\n" +
+                "    \"guige\":\"40*30*20\",\n" +
+                "    \"heji\":\"22.35\",\n" +
+                "    \"xiaoshouri\":\"2023-02-02\",\n" +
+                "    \"liebiao\":[\n" +
+                "        {\n" +
+                "            \"zhongliang\":\"5.8745\",\n" +
+                "            \"jiage\":\"2\",\n" +
+                "            \"he\":\"11.335\",\n" +
+                "            \"wuliaoming\":\"镀锌方管\"\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"zhongliang\":\"5.8745\",\n" +
+                "            \"jiage\":\"2\",\n" +
+                "            \"he\":\"11.335\",\n" +
+                "            \"wuliaoming\":\"镀锌方管\"\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"zhongliang\":\"5.8745\",\n" +
+                "            \"jiage\":\"2\",\n" +
+                "            \"he\":\"11.335\",\n" +
+                "            \"wuliaoming\":\"镀锌方管\"\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"zhongliang\":\"5.8745\",\n" +
+                "            \"jiage\":\"2\",\n" +
+                "            \"he\":\"11.335\",\n" +
+                "            \"wuliaoming\":\"镀锌方管\"\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"zhongliang\":\"5.8745\",\n" +
+                "            \"jiage\":\"2\",\n" +
+                "            \"he\":\"11.335\",\n" +
+                "            \"wuliaoming\":\"镀锌方管\"\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"zhongliang\":\"5.8745\",\n" +
+                "            \"jiage\":\"2\",\n" +
+                "            \"he\":\"11.335\",\n" +
+                "            \"wuliaoming\":\"镀锌方管\"\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"zhongliang\":\"3.335\",\n" +
+                "            \"he\":\"11.335\",\n" +
+                "            \"jiage\":\"3\",\n" +
+                "            \"wuliaoming\":\"镀锌方管333\"\n" +
+                "        }\n" +
+                "    ]\n" +
+                "}";
         List<String> list = new ArrayList<>();
         list.add(s5);
         list.add(s55);
         list.add(s6);
-
+        list.add(s554);
         return list.get(i);
     }
 

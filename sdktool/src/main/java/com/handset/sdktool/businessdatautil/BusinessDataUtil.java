@@ -9,10 +9,14 @@ import com.handset.sdktool.Config;
 import com.handset.sdktool.bean.BusinessElementBean;
 import com.handset.sdktool.dto.BusinessDTO;
 import com.handset.sdktool.dto.BusinessElementRelationshipDTO;
+import com.handset.sdktool.dto.CompanyAssociationDTO;
+import com.handset.sdktool.dto.CompanyDTO;
 import com.handset.sdktool.dto.ElementDTO;
 import com.handset.sdktool.dto.PaperDTO;
 import com.handset.sdktool.dto.PrinterDTO;
 import com.handset.sdktool.dto.PrinterPaperRelationshipDTO;
+import com.handset.sdktool.listener.CompanyAsListener;
+import com.handset.sdktool.listener.InitCompanyListener;
 import com.handset.sdktool.net.NetUtil;
 import com.handset.sdktool.net.OnResponse;
 import com.handset.sdktool.net.base.BaseBean;
@@ -29,7 +33,7 @@ import io.reactivex.schedulers.Schedulers;
 import okhttp3.RequestBody;
 
 /**
- * @ClassName: DataUtil
+ * @ClassName: BusinessDataUtil
  * @author: wr
  * @date: 2022/11/15 16:07
  * @Description:作用描述
@@ -52,7 +56,7 @@ public class BusinessDataUtil {
     /**
      * 设置业务数据（注意只有第一次或点击同步数据时会保存）
      */
-    public void initBusinessData(Context context, List<BusinessElementBean> businessElementBeanList) {
+    public void initBusinessData(Context context, String companyId, List<BusinessElementBean> businessElementBeanList) {
 
         businessDTOList.clear();
         elementDTOList.clear();
@@ -81,13 +85,9 @@ public class BusinessDataUtil {
             businessElementRelationshipDTOList.add(businessElementRelationshipDTO);
         }
 
-//        if (SharedPreferenceUtil.get(context, Config.RELATIONSHIPMAPDATA, "").toString().length() == 0) {
         String businessdata = new Gson().toJson(businessElementBeanList);
-        Log.e("dddd===", businessdata + "");
         SharedPreferenceUtil.put(context, Config.RELATIONSHIPMAPDATA, businessdata);
-
-        addProfessionalWork(context, businessDTOList);
-//        }
+        addProfessionalWork(context, companyId, businessDTOList);
 
 
     }
@@ -95,7 +95,7 @@ public class BusinessDataUtil {
     /**
      * 添加業務
      */
-    private void addProfessionalWork(Context context, List<BusinessDTO> businessDTOList) {
+    private void addProfessionalWork(Context context, String companyId, List<BusinessDTO> businessDTOList) {
         Gson gson = new Gson();
         String strEntity = gson.toJson(businessDTOList);
         DebugLog.e("json===" + strEntity);
@@ -107,8 +107,25 @@ public class BusinessDataUtil {
                     @Override
                     public void onNext(BaseBean<Bean> listBaseBean) {
                         if (listBaseBean.isCodeSuccess()) {
-                            DebugLog.e("json===cc");
+                            DebugLog.e("json===" + companyId);
                             addElementInBatches(context, elementDTOList);
+                            List<String> listids = new ArrayList<>();
+                            for (BusinessDTO businessDTO : businessDTOList) {
+                                listids.add(businessDTO.getServicetypeNo());
+                            }
+                            if (companyId != null) {
+                                updateCompanyTemplRel(new CompanyAssociationDTO(companyId, listids), new CompanyAsListener() {
+                                    @Override
+                                    public void onSuccess(BaseBean listBaseBean) {
+
+                                    }
+
+                                    @Override
+                                    public void onError(Throwable e) {
+
+                                    }
+                                });
+                            }
                         } else {
                             Toast.makeText(context, listBaseBean.getResultMessage(), Toast.LENGTH_SHORT).show();
                         }
@@ -126,6 +143,34 @@ public class BusinessDataUtil {
                     }
                 });
 
+    }
+
+    /**
+     * 公司关联业务
+     */
+    public void updateCompanyTemplRel(CompanyAssociationDTO companyAssociationDTO, CompanyAsListener companyAsListener) {
+
+        Gson gson = new Gson();
+        String strEntity = gson.toJson(companyAssociationDTO);
+        RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json;charset=UTF-8"), strEntity);
+        NetUtil.getInstance().api().updateCompanyTemplRel(NetConfig.IP, body)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new OnResponse<BaseBean>() {
+                    @Override
+                    public void onNext(BaseBean listBaseBean) {
+                        companyAsListener.onSuccess(listBaseBean);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        companyAsListener.onError(e);
+                    }
+
+                    @Override
+                    public void onComplete() {
+                    }
+                });
     }
 
     /**
@@ -367,6 +412,67 @@ public class BusinessDataUtil {
 
                     }
                 });
+    }
+
+    /**
+     * 初始化公司
+     */
+    public void initCompany(InitCompanyListener initCompanyListener) {
+        if (NetConfig.INTRANETIP == null || NetConfig.INTRANETIP.length() == 0) {
+            initCompanyListener.onError(new Throwable("未配置公司IP或域名"));
+            return;
+        }
+        NetUtil.getInstance().api().getCompanyInfoDomain(NetConfig.IP)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new OnResponse<List<CompanyDTO>>() {
+                    @Override
+                    public void onNext(List<CompanyDTO> listBaseBean) {
+                        boolean checkRe = true;
+                        for (CompanyDTO companyDTO : listBaseBean) {
+                            if (companyDTO.getIp().contains(NetConfig.INTRANETIP) || NetConfig.INTRANETIP.contains(companyDTO.getIp())) {
+                                NetConfig.COMPANYID = companyDTO.getId();
+                                initCompanyListener.onSuccess(companyDTO.getId());
+                                checkRe = false;
+                            }
+                        }
+                        if (checkRe) {
+                            Gson gson = new Gson();
+                            String strEntity = gson.toJson(new CompanyDTO("", NetConfig.COMPANYNAME, NetConfig.INTRANETIP, NetConfig.INTRANETIP));
+                            RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json;charset=UTF-8"), strEntity);
+                            NetUtil.getInstance().api().saveCompanyInfoDomain(NetConfig.IP, body)
+                                    .subscribeOn(Schedulers.io())
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .subscribe(new OnResponse<BaseBean>() {
+                                        @Override
+                                        public void onNext(BaseBean basebean) {
+                                            initCompanyListener.onSuccess(basebean.getId());
+//                                            SharedPreferenceUtil.put(context, Config.COMPANYID, basebean.getId());
+                                            NetConfig.COMPANYID = basebean.getId();
+                                        }
+
+                                        @Override
+                                        public void onError(Throwable e) {
+                                            initCompanyListener.onError(new Throwable("公司创建失败"));
+                                        }
+
+                                        @Override
+                                        public void onComplete() {
+                                        }
+                                    });
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        initCompanyListener.onError(new Throwable("公司创建失败！"));
+                    }
+
+                    @Override
+                    public void onComplete() {
+                    }
+                });
+
     }
 
 }

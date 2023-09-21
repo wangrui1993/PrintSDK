@@ -9,6 +9,7 @@ package com.handset.sdktool.net.base;
 public class BaseBean<T> {
     private String status;
     private String resultMessage;
+    private String id;
     private final String CODE_SUCCESS = "200";
     private String code;
     private String msg;
@@ -93,5 +94,13 @@ public class BaseBean<T> {
 
     public void setResultMessage(String resultMessage) {
         this.resultMessage = resultMessage;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

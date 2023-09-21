@@ -98,7 +98,7 @@ public interface ApiServiceBackups {
      * @return
      */
     @Headers({"Content-type:application/json;charset=UTF-8"})
-    @POST(NetConfig.BASE_IP_PLUS + "printtemplate/config/addBusinessElementRelInBatches")
+    @POST(NetConfig.BASE_IP_PLUS + "printtemplate/config/saveBusinessElementRelInBatches")
     Observable<BaseBean<Bean>> addBusinessElementRelInBatches(@Body RequestBody body);
 
     /**

@@ -139,8 +139,6 @@ public class ConnectBlueToothActivity extends AppCompatActivity {
                 DataUtil.getInstance().getTemplateByBusinessCode(getIntent().getStringExtra("id"), new GetTemplateByBusinessCode() {
                     @Override
                     public void onSuccess(ModleDTO listBaseBean) {
-                        Log.e("mapmap==",getIntent().getStringExtra("id"));
-                        Log.e("mapmap==",new Gson().toJson(listBaseBean));
                         for (ModleDTO.ComponentsBean componentsBean : listBaseBean.getComponents()) {
                             if (componentsBean.getComponentTypeId().equals("5")) {
                                 LabelBoard labelBoard=new Gson().fromJson(componentsBean.getComponentContent(),LabelBoard.class);
@@ -163,7 +161,32 @@ public class ConnectBlueToothActivity extends AppCompatActivity {
                         Log.e("MyPrintUtil---","2");
                         MyPrintUtil printUtil = new MyPrintUtil(listBaseBean,getResources().getDisplayMetrics());
                         rl_pre.setVisibility(View.VISIBLE);
-                        printUtil.preview(iv_image);
+                        printUtil.preview(iv_image,"TSC");
+//                        Log.e("mapmap==",getIntent().getStringExtra("id"));
+//                        Log.e("mapmap==",new Gson().toJson(listBaseBean));
+//                        for (ModleDTO.ComponentsBean componentsBean : listBaseBean.getComponents()) {
+//                            if (componentsBean.getComponentTypeId().equals("5")) {
+//                                LabelBoard labelBoard=new Gson().fromJson(componentsBean.getComponentContent(),LabelBoard.class);
+//
+//
+//                                for (LabelItem labelItem2 : labelBoard.getLabelItems()) {
+//                                    LabelBoard labelBoard2=new Gson().fromJson(labelItem2.getDataJson(),LabelBoard.class);
+//
+//                                    for (LabelItem labelItem3 : labelBoard2.getLabelItems()) {
+//                                        LabelBoard labelBoard3=new Gson().fromJson(labelItem3.getDataJson(),LabelBoard.class);
+//                                        Log.e("3cha---", labelItem3.getDataJson());
+//                                    }
+//
+//                                    Log.e("2cha---", labelItem2.getDataJson());
+//                                }
+//                                Log.e("1cha---", componentsBean.getComponentContent());
+//                            }
+//                        }
+//                        dismissLoadingDialog();
+//                        Log.e("MyPrintUtil---","2");
+//                        MyPrintUtil printUtil = new MyPrintUtil(listBaseBean,getResources().getDisplayMetrics());
+//                        rl_pre.setVisibility(View.VISIBLE);
+//                        printUtil.preview(iv_image);
                     }
 
                     @Override

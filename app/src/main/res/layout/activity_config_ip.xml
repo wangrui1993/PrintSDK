@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/action_bar"
+        android:layout_width="fill_parent"
+        android:layout_height="50.0dip"
+        android:background="#2266EE"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/img"
+            android:layout_width="50.0dip"
+            android:layout_height="50.0dip"
+            android:padding="15.0dip"
+            android:scaleType="fitXY"
+            android:src="@drawable/psdk_ic_return"
+            android:tag="binding_1" />
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="服务器设置"
+            android:textColor="@color/white"
+            android:textSize="18.0sp" />
+
+        <ImageView
+            android:id="@+id/img_connect"
+            android:layout_width="40.0dip"
+            android:layout_height="40.0dip"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10.0dip"
+            android:scaleType="fitXY"
+            android:src="@drawable/print_ic_printer_disconnect"
+            android:tag="binding_2"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:background="@color/white"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="12dp"
+                android:text="IP+端口或域名"
+                android:textColor="@color/black"
+                android:textSize="11sp" />
+
+            <EditText
+                android:id="@+id/et_input_ip_pda"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/shape_bg_input_gray_r4"
+                android:hint="请输入 IP端口或域名"
+                android:imeOptions="actionSearch"
+                android:inputType="text"
+                android:maxLines="1"
+                android:padding="8dp"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingVertical="12dp"
+                android:paddingEnd="10dp"
+                android:textColor="@color/black" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="12dp"
+                    android:text="端口"
+                    android:textColor="@color/black" />
+
+                <EditText
+                    android:id="@+id/et_input_pord_pda"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/shape_bg_input_gray_r4"
+                    android:hint="请输入端口"
+                    android:imeOptions="actionSearch"
+                    android:inputType="numberDecimal"
+                    android:maxLines="1"
+                    android:padding="8dp"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp" />
+
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:orientation="horizontal"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="8dp">
+
+            <TextView
+                android:id="@+id/tv_commit"
+                style="@style/ThemeButton"
+                android:text="保存" />
+
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/recycle_view"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@id/rl_title"
+        android:layout_toRightOf="@id/list_menu"
+        android:background="#40e1e1e1"
+        android:paddingHorizontal="5dp"
+        android:paddingTop="5dp" />
+</LinearLayout>

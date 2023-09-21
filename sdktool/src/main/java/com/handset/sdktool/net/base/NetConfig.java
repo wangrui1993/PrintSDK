@@ -10,11 +10,17 @@ public class NetConfig {
     public static void init(String ip) {
         IP = ip;
     }
-
-    public static String IP = "http://192.168.30.49:8090/";
-    public static final String BASE_IP = "http://192.168.30.49:8090/";
+    public static void init(String ip,String intranetIP,String companyName) {
+        IP = ip;
+        INTRANETIP = intranetIP;
+        COMPANYNAME = companyName;
+    }
+    public static String IP = "http://192.168.30.192:8090/";//外网IP
+    public static String INTRANETIP = "";//
+    public static String COMPANYNAME = "";//
+    public static final String BASE_IP = "http://192.168.30.192:8090/";
     public static final String BASE_IP_PLUS = BASE_IP + "";
-
+    public static String COMPANYID = null;//
     public static String TOKEN;
     public static String COOKIE = "";
 

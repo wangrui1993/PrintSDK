@@ -31,7 +31,11 @@ import com.handset.sdktool.data.DataUtil;
 import com.handset.sdktool.dto.BusinessDTO;
 import com.handset.sdktool.dto.ElementDTO;
 import com.handset.sdktool.dto.ModleDTO;
+import com.handset.sdktool.listener.GetAllBusinessListener;
+import com.handset.sdktool.listener.GetAllTemplateListener;
+import com.handset.sdktool.listener.GetBusinessServiceByCompanyIdListener;
 import com.handset.sdktool.listener.GetElementByBusiness;
+import com.handset.sdktool.net.base.ModleListBean;
 import com.handset.sdktool.util.HanZiToPinYin;
 
 import java.util.ArrayList;
@@ -47,12 +51,12 @@ public class AddBusinessActivity extends AppCompatActivity {
     private SelectElementAdapter mSelectElementAdapter;
     private List<BusinessDTO> mListBusiness = new ArrayList<>();
     private List<ElementDTO> mListElement = new ArrayList<>();
+    List<BusinessElementBean> oldBusinessElementBeanList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_business);
-
         recycle_view = (RecyclerView) findViewById(R.id.recycle_view);
         add = (TextView) findViewById(R.id.add);
         save = (TextView) findViewById(R.id.save);
@@ -74,21 +78,6 @@ public class AddBusinessActivity extends AppCompatActivity {
             mListElement.addAll(businessElementBeanList);
         }
 
-//        DataUtil.getInstance().getProfessionalWork(new GetAllBusinessListener() {
-//            @Override
-//            public void onSuccess(List<BusinessDTO> listBaseBean) {
-//                mListBusiness.addAll(listBaseBean);
-//                if (mListBusiness.size() > 0) {
-//                    mBusinessSelectAdapter.setSelectPosition(0);
-//                    getElement(listBaseBean.get(0).getServicetypeNo());
-//                }
-//            }
-//
-//            @Override
-//            public void onError(Throwable e) {
-//                Toast.makeText(AddBusinessActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-//            }
-//        });
         close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -109,39 +98,68 @@ public class AddBusinessActivity extends AppCompatActivity {
                     Toast.makeText(AddBusinessActivity.this, "请填写业务名称", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                Log.e("cdcdc--", mListElement.size() + ":");
 
                 for (ElementDTO bean : mListElement) {
                     if (bean.getElementName() != null && !bean.getElementName().isEmpty() &&
                             (bean.getElementCode() == null || bean.getElementCode().isEmpty())) {
                         bean.setElementCode(HanZiToPinYin.getPinyin(bean.getElementName()));
-                        Log.e("cdcdc---", bean.getElementCode());
                     }
                 }
                 BusinessDTO addProfessionalWorkDTO = new BusinessDTO();
                 addProfessionalWorkDTO.setServicetype(et_name.getText().toString().trim());
-                addProfessionalWorkDTO.setServicetypeNo(HanZiToPinYin.getPinyin(et_name.getText().toString().trim()));//业务的唯一标识
+                addProfessionalWorkDTO.setServicetypeNo(HanZiToPinYin.getIPSample(getIntent().getStringExtra("ip"))
+                        + HanZiToPinYin.getAllFirstLetter(et_name.getText().toString().trim()) +
+                        (oldBusinessElementBeanList.size() + 1));//业务的唯一标识
                 BusinessElementBean businessElementBean = new BusinessElementBean(addProfessionalWorkDTO, mListElement);
 
+//                List<BusinessElementBean> businessElementBeanList = new ArrayList<>();
+//                businessElementBeanList.add(businessElementBean);
+//                BusinessDataUtil.getInstance().initBusinessData(AddBusinessActivity.this, businessElementBeanList);
+                oldBusinessElementBeanList.add(businessElementBean);
+                BusinessDataUtil.getInstance().initBusinessData(AddBusinessActivity.this, getIntent().getStringExtra("companyId"), oldBusinessElementBeanList);
+            }
+        });
+        getBusinessServiceByCompanyId();
+    }
 
-                List<BusinessElementBean> businessElementBeanList = new ArrayList<>();
-                businessElementBeanList.add(businessElementBean);
-                BusinessDataUtil.getInstance().initBusinessData(AddBusinessActivity.this, businessElementBeanList);
+    /**
+     * 获取业务（此处不合理，莹后台统一返回，现无接口）
+     */
+    private void getBusinessServiceByCompanyId() {
+        DataUtil.getInstance().getBusinessServiceByCompanyId(getIntent().getStringExtra("companyId"), new GetBusinessServiceByCompanyIdListener() {
+            @Override
+            public void onSuccess(List<BusinessDTO> listBaseBean) {
+                mListBusiness.addAll(listBaseBean);
+                if (mListBusiness.size() > 0) {
+                    for (BusinessDTO businessDTO : mListBusiness) {
+                        if (getIntent().getStringExtra("servicetypeNo") == null ||
+                                !getIntent().getStringExtra("servicetypeNo").equals(businessDTO.getServicetypeNo())) {
+                            getElement(businessDTO.getServicetypeNo(), businessDTO);
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                if (e.getMessage().contains("End of input at line 1 column 1 path $")) {
+                    Toast.makeText(AddBusinessActivity.this, "暂无数据", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(AddBusinessActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
 
     /**
-     * 获取元素
+     * 根据业务获取元素（此处不合理，莹后台统一返回，现无接口）
      */
-    private void getElement(String id) {
+    private void getElement(String id, BusinessDTO businessDTO) {
         DataUtil.getInstance().getElementByBusiness(id, new GetElementByBusiness() {
             @Override
             public void onSuccess(List<ElementDTO> listBaseBean) {
-                mListElement.clear();
-                mListElement.addAll(listBaseBean);
-                mSelectElementAdapter.notifyDataSetChanged();
-
+                BusinessElementBean businessElementBean = new BusinessElementBean(businessDTO, listBaseBean);
+                oldBusinessElementBeanList.add(businessElementBean);
             }
 
             @Override
@@ -150,7 +168,6 @@ public class AddBusinessActivity extends AppCompatActivity {
             }
         });
     }
-
 
     class SelectElementAdapter extends RecyclerView.Adapter<SelectElementAdapter.Holder> {
 

@@ -77,6 +77,35 @@ public class ModleDTO implements Serializable {
         private String paperId;
         private double width;
         private double height;
+        private String isValid;//0 启用 （模板是否启用）
+        private int screenWidth;
+        private int screenHeight;
+
+        public String getIsValid() {
+            return isValid;
+        }
+
+        public void setIsValid(String isValid) {
+            this.isValid = isValid;
+        }
+
+        public int getScreenWidth() {
+            return screenWidth;
+        }
+
+        public void setScreenWidth(int screenWidth) {
+            this.screenWidth = screenWidth;
+        }
+
+        public int getScreenHeight() {
+            return screenHeight;
+        }
+
+        public void setScreenHeight(int screenHeight) {
+            this.screenHeight = screenHeight;
+        }
+
+
 
         public String getId() {
             return id;
