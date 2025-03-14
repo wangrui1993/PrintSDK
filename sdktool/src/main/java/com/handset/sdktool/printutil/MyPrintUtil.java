@@ -28,8 +28,8 @@ import com.handset.sdktool.util.Device;
 import com.handset.sdktool.util.DeviceUtil;
 import com.handset.sdktool.util.LabelBoardAnalysisUtil;
 import com.handset.sdktool.util.UtilGetObtainInkPoints;
-import com.jz.zabersdk.util.ConnectState;
-import com.jz.zabersdk.util.PrinterControllerBitmap2;
+//import com.jz.zabersdk.util.ConnectState;
+//import com.jz.zabersdk.util.PrinterControllerBitmap2;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
@@ -69,8 +69,6 @@ public class MyPrintUtil {
     }
 
     /**
-     * 用于内部无列表数据 如：报工标签
-     *
      * @param datalist
      * @param deviceModel
      * @return
@@ -82,41 +80,19 @@ public class MyPrintUtil {
         if (modleDTO.getTemplate().getPrinterId().equals("1")) {//斑马打印机
             DeviceUtil.setDevive(Device.ZEBAR);
         }
-        //200dpi 8 dot = 1mm dot-墨点  汉印1mm 8墨点
-        int pagew = (int) modleDTO.getTemplate().getWidth() * UtilGetObtainInkPoints.getObtainInkPoints(deviceModel);
-        int pageh = (int) modleDTO.getTemplate().getHeight() * UtilGetObtainInkPoints.getObtainInkPoints(deviceModel);
         List<Bitmap> list = new ArrayList<>();
         for (Map<String, Object> bean : datalist) {
+            //200dpi 8 dot = 1mm dot-墨点  汉印1mm 8墨点
+            int pagew = (int) modleDTO.getTemplate().getWidth() * UtilGetObtainInkPoints.getObtainInkPoints(deviceModel);
+            int pageh = PrintDataUtil.calculationHeight1(modleDTO.getComponents(), bean, pagew,
+                    (int) modleDTO.getTemplate().getHeight() * UtilGetObtainInkPoints.getObtainInkPoints(deviceModel), deviceModel, modleDTO);
             Bitmap bitmap = calculationHeight1(modleDTO.getComponents(), bean, pagew, pageh, deviceModel);
             list.add(bitmap);
         }
         return list;
     }
 
-    /**
-     * 用于内部有列表数据 如：采购单
-     *
-     * @param datalist
-     * @param deviceModel
-     * @return
-     */
-    public List<Bitmap> dataListGenerationImage(List<Map<String, Object>> datalist, String deviceModel) {
-        if (modleDTO == null || modleDTO.getTemplate() == null) {
-            return null;
-        }
-        if (modleDTO.getTemplate().getPrinterId().equals("1")) {//斑马打印机
-            DeviceUtil.setDevive(Device.ZEBAR);
-        }
-        //200dpi 8 dot = 1mm dot-墨点  汉印1mm 8墨点
-        int pagew = (int) modleDTO.getTemplate().getWidth() * UtilGetObtainInkPoints.getObtainInkPoints(deviceModel);
-        int pageh = (int) modleDTO.getTemplate().getHeight() * UtilGetObtainInkPoints.getObtainInkPoints(deviceModel);
-        List<Bitmap> list = new ArrayList<>();
-        for (Map<String, Object> bean : datalist) {
-            Bitmap bitmap = calculationHeight1(modleDTO.getComponents(), bean, pagew, pageh, deviceModel);
-            list.add(bitmap);
-        }
-        return list;
-    }
+
 
     public void preview(ImageView imageView, String deviceModel) {
         this.deviceModel = deviceModel;
@@ -1567,7 +1543,6 @@ public class MyPrintUtil {
      * @throws Exception
      */
     private void printTextBitmap(Canvas canvas, Paint textPaint3, ModleDTO.ComponentsBean componentsBean, double bili, int plusHeight) {
-        Log.e("11cddcdzz==", getBili(Double.valueOf(componentsBean.getSize()) * 2) + "==" + componentsBean.getSize());
         Paint textPaint2 = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.DITHER_FLAG);
         textPaint2.setColor(Color.BLACK);
 

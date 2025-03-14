@@ -119,7 +119,16 @@ public class AddBusinessActivity extends AppCompatActivity {
                 BusinessDataUtil.getInstance().initBusinessData(AddBusinessActivity.this, getIntent().getStringExtra("companyId"), oldBusinessElementBeanList);
             }
         });
-        getBusinessServiceByCompanyId();
+        if(getIntent().getStringExtra("companyId")!=null){
+            getBusinessServiceByCompanyId();
+        }else {
+            if(getIntent().getStringExtra("servicetypeNo")!=null){
+                BusinessDTO businessDTO = new BusinessDTO(getIntent().getStringExtra("servicetype"),getIntent().getStringExtra("servicetypeNo"));
+                Log.e("pageh==sss=2",businessDTO.toString());
+                getElement(businessDTO.getServicetypeNo(), businessDTO);
+            }
+        }
+
     }
 
     /**

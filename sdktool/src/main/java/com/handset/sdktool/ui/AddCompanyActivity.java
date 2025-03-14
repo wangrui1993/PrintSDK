@@ -39,14 +39,14 @@ public class AddCompanyActivity extends BaseActivity {
     private EditText et_name;
     private List<CompanyDTO> mListBusiness = new ArrayList<>();
     private TextView add;
-    private TextView save, tv_independence, tv_unindependence;
+    private TextView save, tv_independence, tv_unindependence,tv_all;
     private CompanyAdapter mBusinessAdapter;
     private Map<String, String> companyInfo = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        companyInfo.put("independence","0");//0-独立 1-非独立
+        companyInfo.put("independence", "0");//0-独立IP 1-非独立IP
         setContentView(R.layout.activity_set_company);
         mBusinessAdapter = new CompanyAdapter(this, mListBusiness);
         recycle_view = (RecyclerView) findViewById(R.id.recycle_view);
@@ -55,18 +55,27 @@ public class AddCompanyActivity extends BaseActivity {
         save = (TextView) findViewById(R.id.save);
         et_ip = (EditText) findViewById(R.id.et_ip);
         et_name = (EditText) findViewById(R.id.et_name);
-
+        tv_all= (TextView) findViewById(R.id.tv_all);
         tv_independence = (TextView) findViewById(R.id.tv_independence);
         tv_unindependence = (TextView) findViewById(R.id.tv_unindependence);
 
         recycle_view.setLayoutManager(new LinearLayoutManager(this));
         recycle_view.setAdapter(mBusinessAdapter);
+        tv_all.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(AddCompanyActivity.this, AllAssociationBusinessActivity.class);
+//                intent.putExtra("companyId", mListBusiness.get(i).getId());
+//                intent.putExtra("ip", mListBusiness.get(i).getIp());
+                startActivity(intent);
+            }
+        });
         tv_independence.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 tv_independence.setTextColor(getResources().getColor(R.color.theme_200));
                 tv_unindependence.setTextColor(getResources().getColor(R.color.theme_bbbbbb));
-                companyInfo.put("independence","0");
+                companyInfo.put("independence", "0");
             }
         });
         tv_unindependence.setOnClickListener(new View.OnClickListener() {
@@ -74,7 +83,7 @@ public class AddCompanyActivity extends BaseActivity {
             public void onClick(View view) {
                 tv_unindependence.setTextColor(getResources().getColor(R.color.theme_200));
                 tv_independence.setTextColor(getResources().getColor(R.color.theme_bbbbbb));
-                companyInfo.put("independence","1");
+                companyInfo.put("independence", "1");
             }
         });
         save.setOnClickListener(new View.OnClickListener() {
@@ -85,17 +94,17 @@ public class AddCompanyActivity extends BaseActivity {
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.e("companyInfo=",new Gson().toJson(companyInfo));
-                if(et_ip.getText().toString().trim().length()==0){
-                    Toast.makeText(AddCompanyActivity.this,"请填写IP",Toast.LENGTH_SHORT).show();
+                Log.e("companyInfo=", new Gson().toJson(companyInfo));
+                if (et_ip.getText().toString().trim().length() == 0) {
+                    Toast.makeText(AddCompanyActivity.this, "请填写IP", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                if(et_name.getText().toString().trim().length()==0){
-                    Toast.makeText(AddCompanyActivity.this,"请填写公司名称",Toast.LENGTH_SHORT).show();
+                if (et_name.getText().toString().trim().length() == 0) {
+                    Toast.makeText(AddCompanyActivity.this, "请填写公司名称", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 new XPopup.Builder(AddCompanyActivity.this).asConfirm("确认添加", "是否添加该公司", (OnConfirmListener) () -> {
-                    CompanyDTO companyDTO = new CompanyDTO("",
+                    CompanyDTO companyDTO = new CompanyDTO(
                             et_name.getText().toString().trim(), et_ip.getText().toString().trim(), new Gson().toJson(companyInfo));
                     DataUtil.getInstance().saveCompanyInfoDomain(companyDTO
                             , new AddCompanyListener() {

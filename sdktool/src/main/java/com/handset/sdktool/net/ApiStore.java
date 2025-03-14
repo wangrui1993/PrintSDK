@@ -54,6 +54,7 @@ public class ApiStore {
                 connectTimeout(120, TimeUnit.SECONDS).
                 readTimeout(120, TimeUnit.SECONDS).
                 writeTimeout(120, TimeUnit.SECONDS)
+                .addInterceptor(new HttpHttpsInterceptor2())
                 .addInterceptor(new Interceptor() {
                                     @Override
                                     public Response intercept(@NonNull Chain chain) throws IOException {
@@ -64,7 +65,7 @@ public class ApiStore {
                                     }
                                 }
                 ).addInterceptor(new HttpLoggingInterceptor());
-
+//        builder.interceptors().add(new HttpHttpsInterceptor2());
         builder.interceptors().add(new Interceptor() {
             @Override
             public Response intercept(Chain chain) throws IOException {

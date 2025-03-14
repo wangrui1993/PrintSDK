@@ -7,6 +7,10 @@ pluginManagement {
         maven { url 'https://maven.aliyun.com/repository/jcenter'}
         maven { url 'https://maven.aliyun.com/repository/google'}
         maven {url 'https://maven.aliyun.com/repository/gradle-plugin'}
+        maven {//佳博打印机
+            url  "http://118.31.6.84:8081/repository/maven-public/"
+            allowInsecureProtocol true
+        }
     }
 }
 dependencyResolutionManagement {
@@ -18,6 +22,10 @@ dependencyResolutionManagement {
         maven { url 'https://maven.aliyun.com/repository/jcenter'}
         maven { url 'https://maven.aliyun.com/repository/google'}
         maven {url 'https://maven.aliyun.com/repository/gradle-plugin'}
+        maven {//佳博打印机
+            url  "http://118.31.6.84:8081/repository/maven-public/"
+            allowInsecureProtocol true
+        }
     }
 }
 rootProject.name = "PrintSDK"

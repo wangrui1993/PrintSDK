@@ -1,5 +1,7 @@
 package com.handset.sdktool.data;
 
+import android.util.Log;
+
 import com.google.gson.Gson;
 import com.handset.sdktool.Config;
 import com.handset.sdktool.dto.BusinessDTO;
@@ -214,6 +216,7 @@ public class DataUtil {
         Gson gson = new Gson();
         String strEntity = gson.toJson(companyDTO);
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json;charset=UTF-8"), strEntity);
+        Log.e("dfdscdfdf","fdfdddd");
         NetUtil.getInstance().api().saveCompanyInfoDomain(NetConfig.IP, body)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

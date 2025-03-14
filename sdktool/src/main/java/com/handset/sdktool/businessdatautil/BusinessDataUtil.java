@@ -1,12 +1,15 @@
 package com.handset.sdktool.businessdatautil;
 
+import android.app.Application;
 import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.handset.sdktool.Config;
 import com.handset.sdktool.bean.BusinessElementBean;
+import com.handset.sdktool.data.DataUtil;
 import com.handset.sdktool.dto.BusinessDTO;
 import com.handset.sdktool.dto.BusinessElementRelationshipDTO;
 import com.handset.sdktool.dto.CompanyAssociationDTO;
@@ -16,17 +19,24 @@ import com.handset.sdktool.dto.PaperDTO;
 import com.handset.sdktool.dto.PrinterDTO;
 import com.handset.sdktool.dto.PrinterPaperRelationshipDTO;
 import com.handset.sdktool.listener.CompanyAsListener;
+import com.handset.sdktool.listener.GetBusinessServiceByCompanyIdListener;
+import com.handset.sdktool.listener.GetCompanyBusinessListener;
 import com.handset.sdktool.listener.InitCompanyListener;
 import com.handset.sdktool.net.NetUtil;
 import com.handset.sdktool.net.OnResponse;
 import com.handset.sdktool.net.base.BaseBean;
 import com.handset.sdktool.net.base.Bean;
 import com.handset.sdktool.net.base.NetConfig;
+import com.handset.sdktool.ui.AddBusinessActivity;
 import com.handset.sdktool.util.DebugLog;
+import com.handset.sdktool.util.SPUtil;
 import com.handset.sdktool.util.SharedPreferenceUtil;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -93,6 +103,48 @@ public class BusinessDataUtil {
     }
 
     /**
+     * 编辑业务
+     */
+    public void editProfessionalWork(Context context, List<BusinessDTO> businessDTOList) {
+        elementDTOList.clear();
+        Gson gson = new Gson();
+        String strEntity = gson.toJson(businessDTOList);
+        DebugLog.e("json===" + strEntity);
+        RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json;charset=UTF-8"), strEntity);
+        NetUtil.getInstance().api().addServiceInBatches(NetConfig.IP, body)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new OnResponse<BaseBean<Bean>>() {
+                    @Override
+                    public void onNext(BaseBean<Bean> listBaseBean) {
+                        if (listBaseBean.isCodeSuccess()) {
+                            addElementInBatches(context, elementDTOList);
+                            List<String> listids = new ArrayList<>();
+                            for (BusinessDTO businessDTO : businessDTOList) {
+                                listids.add(businessDTO.getServicetypeNo());
+                            }
+                            DebugLog.e("json===" + listids);
+                        } else {
+                            Toast.makeText(context, listBaseBean.getResultMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        DebugLog.e("onError===" + e.getMessage() + "===" + e.getLocalizedMessage());
+                        Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+
+    }
+
+
+    /**
      * 添加業務
      */
     private void addProfessionalWork(Context context, String companyId, List<BusinessDTO> businessDTOList) {
@@ -113,6 +165,7 @@ public class BusinessDataUtil {
                             for (BusinessDTO businessDTO : businessDTOList) {
                                 listids.add(businessDTO.getServicetypeNo());
                             }
+                            DebugLog.e("json===" + listids);
                             if (companyId != null) {
                                 updateCompanyTemplRel(new CompanyAssociationDTO(companyId, listids), new CompanyAsListener() {
                                     @Override
@@ -213,7 +266,7 @@ public class BusinessDataUtil {
     /**
      * 2.9.批量添加业务元素关系
      */
-    private void addBusinessElementRelInBatches(Context context, List<BusinessElementRelationshipDTO> businessElementRelationshipDTOList) {
+    public void addBusinessElementRelInBatches(Context context, List<BusinessElementRelationshipDTO> businessElementRelationshipDTOList) {
         Gson gson = new Gson();
         String strEntity = gson.toJson(businessElementRelationshipDTOList);
         DebugLog.e("1json===" + strEntity);
@@ -416,39 +469,115 @@ public class BusinessDataUtil {
 
     /**
      * 初始化公司
+     *
+     * @param independence        0-独立IP 1-非独立IP
+     * @param initCompanyListener
      */
-    public void initCompany(InitCompanyListener initCompanyListener) {
-        if (NetConfig.INTRANETIP == null || NetConfig.INTRANETIP.length() == 0) {
-            initCompanyListener.onError(new Throwable("未配置公司IP或域名"));
+    public void initFirstCompany(String independence, InitCompanyListener initCompanyListener) {
+        Map<String, String> companyInfo = new HashMap<>();
+        companyInfo.put("independence", independence);
+        companyInfo.put("uid", NetConfig.USERID);
+        Gson gson = new Gson();
+        String strEntity = gson.toJson(new CompanyDTO("", NetConfig.COMPANYNAME, NetConfig.IP, new Gson().toJson(companyInfo)));
+        RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json;charset=UTF-8"), strEntity);
+        Log.e("dfdscdfdf2", "fdfdddd");
+        NetUtil.getInstance().api().saveCompanyInfoDomain(NetConfig.IP, body)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new OnResponse<BaseBean>() {
+                    @Override
+                    public void onNext(BaseBean basebean) {
+                        SPUtil.saveParam(NetConfig.KEY_COMPANYID, basebean.getId());
+                        initCompanyListener.onSuccess(basebean.getId());
+                        NetConfig.COMPANYID = basebean.getId();
+                        List<String> listids = new ArrayList<>();
+                        listids.add("wlxtjxhd1");
+                        listids.add("wlxtjxhdxp2");
+                        updateCompanyTemplRel(new CompanyAssociationDTO(basebean.getId(), listids), new CompanyAsListener() {
+                            @Override
+                            public void onSuccess(BaseBean listBaseBean) {
+
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        initCompanyListener.onError(new Throwable("公司创建失败"));
+                    }
+
+                    @Override
+                    public void onComplete() {
+                    }
+                });
+    }
+
+    /**
+     * 初始化公司
+     *
+     * @param independence        0-独立IP  1-非独立IP
+     * @param initCompanyListener
+     */
+    public void initCompany(String independence, InitCompanyListener initCompanyListener) {
+        if (NetConfig.USERID == null || NetConfig.USERID.length() == 0) {
+            initCompanyListener.onError(new Throwable("用户ID为空"));
             return;
         }
+        Gson gson = new Gson();
+        Type type = new TypeToken<Map<String, String>>() {
+        }.getType();
         NetUtil.getInstance().api().getCompanyInfoDomain(NetConfig.IP)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new OnResponse<List<CompanyDTO>>() {
                     @Override
                     public void onNext(List<CompanyDTO> listBaseBean) {
-                        boolean checkRe = true;
+                        boolean checkRe = true;//TRUE是不重复
                         for (CompanyDTO companyDTO : listBaseBean) {
-                            if (companyDTO.getIp().contains(NetConfig.INTRANETIP) || NetConfig.INTRANETIP.contains(companyDTO.getIp())) {
+                            Map<String, String> map = gson.fromJson(companyDTO.getDomain(), type);
+                            if (map.get("uid") != null && map.get("uid").contains(NetConfig.USERID)) {
                                 NetConfig.COMPANYID = companyDTO.getId();
+                                SPUtil.saveParam(NetConfig.KEY_COMPANYID, companyDTO.getId());
                                 initCompanyListener.onSuccess(companyDTO.getId());
                                 checkRe = false;
                             }
                         }
                         if (checkRe) {
+                            Map<String, String> companyInfo = new HashMap<>();
+                            companyInfo.put("independence", independence);
+                            companyInfo.put("uid", NetConfig.USERID);
                             Gson gson = new Gson();
-                            String strEntity = gson.toJson(new CompanyDTO("", NetConfig.COMPANYNAME, NetConfig.INTRANETIP, NetConfig.INTRANETIP));
+                            String strEntity = gson.toJson(new CompanyDTO("", NetConfig.COMPANYNAME, NetConfig.IP, new Gson().toJson(companyInfo)));
                             RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json;charset=UTF-8"), strEntity);
+                            Log.e("dfdscdfdf3", "fdfdddd");
                             NetUtil.getInstance().api().saveCompanyInfoDomain(NetConfig.IP, body)
                                     .subscribeOn(Schedulers.io())
                                     .observeOn(AndroidSchedulers.mainThread())
                                     .subscribe(new OnResponse<BaseBean>() {
                                         @Override
                                         public void onNext(BaseBean basebean) {
+                                            SPUtil.saveParam(NetConfig.KEY_COMPANYID, basebean.getId());
                                             initCompanyListener.onSuccess(basebean.getId());
-//                                            SharedPreferenceUtil.put(context, Config.COMPANYID, basebean.getId());
                                             NetConfig.COMPANYID = basebean.getId();
+                                            List<String> listids = new ArrayList<>();
+                                            listids.add("3168xhd2");
+                                            listids.add("3168xhdxp2");
+                                            updateCompanyTemplRel(new CompanyAssociationDTO(basebean.getId(), listids), new CompanyAsListener() {
+                                                @Override
+                                                public void onSuccess(BaseBean listBaseBean) {
+
+                                                }
+
+                                                @Override
+                                                public void onError(Throwable e) {
+
+                                                }
+                                            });
                                         }
 
                                         @Override
@@ -474,5 +603,75 @@ public class BusinessDataUtil {
                 });
 
     }
+
+
+    /**
+     * 根据公司获取业务
+     */
+    public void getCompanyBusiness(GetCompanyBusinessListener getCompanyBusinessListener) {
+        String companyid = SPUtil.getStringParam(NetConfig.KEY_COMPANYID);
+        if (companyid == null || companyid.length() == 0) {
+            getCompanyBusinessListener.onError(new Throwable("未获取到公司id"));
+            return;
+        }
+        DataUtil.getInstance().getBusinessServiceByCompanyId(companyid, new GetBusinessServiceByCompanyIdListener() {
+            @Override
+            public void onSuccess(List<BusinessDTO> listBaseBean) {
+                getCompanyBusinessListener.onSuccess(listBaseBean);
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                getCompanyBusinessListener.onError(e);
+            }
+        });
+
+    }
+
+
+    /**
+     * 编辑业务  添加元素，然后业务关联元素
+     */
+    public void editBusinesss(Context context, List<ElementDTO> elementDTOList, String serviceId) {
+        Gson gson = new Gson();
+        String strEntity = gson.toJson(elementDTOList);
+        DebugLog.e("1json===" + strEntity);
+        RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json;charset=UTF-8"), strEntity);
+
+        NetUtil.getInstance().api().addElementInBatches(NetConfig.IP, body)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new OnResponse<BaseBean<Bean>>() {
+                    @Override
+                    public void onNext(BaseBean<Bean> listBaseBean) {
+                        if (listBaseBean.isCodeSuccess()) {
+                            List<BusinessElementRelationshipDTO> businessList = new ArrayList<>();
+                            List<String> elementIdList = new ArrayList<>();
+                            for (int i = 0; i < elementDTOList.size(); i++) {
+                                elementIdList.add(elementDTOList.get(i).getId());
+                            }
+                            BusinessElementRelationshipDTO businessElementRelationshipDTO = new BusinessElementRelationshipDTO();
+                            businessElementRelationshipDTO.setElementIdList(elementIdList);
+                            businessElementRelationshipDTO.setServiceId(serviceId);
+                            businessList.add(businessElementRelationshipDTO);
+                            addBusinessElementRelInBatches(context, businessList);
+                        } else {
+                            Toast.makeText(context, listBaseBean.getResultMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        DebugLog.e("onError===" + e.getMessage() + "===" + e.getLocalizedMessage());
+                        Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
 
 }

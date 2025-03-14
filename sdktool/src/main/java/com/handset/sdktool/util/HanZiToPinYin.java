@@ -1,5 +1,7 @@
 package com.handset.sdktool.util;
 
+import android.util.Log;
+
 import net.sourceforge.pinyin4j.PinyinHelper;
 import net.sourceforge.pinyin4j.format.HanyuPinyinCaseType;
 import net.sourceforge.pinyin4j.format.HanyuPinyinOutputFormat;
@@ -55,10 +57,18 @@ public class HanZiToPinYin {
     }
 
     public static String getIPSample(String hanzi) {
-        hanzi = hanzi.substring(7, hanzi.length()  );
-        hanzi = hanzi.replace(".", "");
-
-        return hanzi;
+        Log.e("sttt==",hanzi);
+        if(hanzi.startsWith("192.168")){
+            hanzi = hanzi.substring(7, hanzi.length()  );
+            hanzi = hanzi.replace(".", "");
+            hanzi = hanzi.replace(":", "");
+            return hanzi;
+        }else {
+            hanzi = hanzi.replace(".", "");
+            hanzi = hanzi.replace("-", "");
+            hanzi = hanzi.substring(0, 5  );
+            return hanzi;
+        }
     }
 
 

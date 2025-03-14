@@ -108,7 +108,7 @@ public class SynchronizeBusinessActivity extends BaseActivity {
                                     startActivity(intent);
                                 } else {
                                     new XPopup.Builder(SynchronizeBusinessActivity.this).asConfirm("确认删除？", "是否确认删除该业务", (OnConfirmListener) () -> {
-                                        List<BusinessDTO> businessDTOList =new ArrayList<>();
+                                        List<BusinessDTO> businessDTOList = new ArrayList<>();
                                         businessDTOList.add(mListBusiness.get(i));
                                         DataUtil.getInstance().delServiceInBatches(businessDTOList, new DeleteCompanyListener() {
                                             @Override
@@ -118,7 +118,7 @@ public class SynchronizeBusinessActivity extends BaseActivity {
                                                 mListElement.clear();
                                                 mBusinessSelectAdapter.notifyDataSetChanged();
                                                 mSelectElementAdapter.notifyDataSetChanged();
-                                                if(mListBusiness.size()>0){
+                                                if (mListBusiness.size() > 0) {
                                                     mBusinessSelectAdapter.setSelectPosition(0);
                                                     mListElement.clear();
                                                     mListElement.addAll(oldBusinessElementBeanList.get(0).getElementDTOList());
@@ -195,7 +195,7 @@ public class SynchronizeBusinessActivity extends BaseActivity {
      */
     private void getElement(String id, BusinessDTO businessDTO, int index) {
         showLoadingDialog();
-        Log.e("businessDTO==",businessDTO.getServicetype());
+        Log.e("businessDTO==", businessDTO.getServicetype());
         DataUtil.getInstance().getElementByBusiness(id, new GetElementByBusiness() {
             @Override
             public void onSuccess(List<ElementDTO> listBaseBean) {
@@ -258,14 +258,16 @@ public class SynchronizeBusinessActivity extends BaseActivity {
         public final class Holder extends RecyclerView.ViewHolder {
             private final ViewGroup parent;
             private final TextView textView;
+            private final TextView textView2;
             private final ImageView iv_delete;
             final BusinessSelectAdapter this$0;
 
-            public Holder(BusinessSelectAdapter labelEditMenuAdapter, View view, TextView drawableTextView, ImageView iv_delete,
+            public Holder(BusinessSelectAdapter labelEditMenuAdapter, View view, TextView drawableTextView, TextView drawableTextView2, ImageView iv_delete,
                           ViewGroup viewGroup) {
                 super(view);
                 this.this$0 = labelEditMenuAdapter;
                 this.textView = drawableTextView;
+                this.textView2 = drawableTextView2;
                 this.iv_delete = iv_delete;
                 this.parent = viewGroup;
             }
@@ -279,6 +281,10 @@ public class SynchronizeBusinessActivity extends BaseActivity {
                 return this.textView;
             }
 
+            public TextView getTextView2() {
+                return this.textView2;
+            }
+
             public ImageView getIv_delete() {
                 return iv_delete;
             }
@@ -290,8 +296,9 @@ public class SynchronizeBusinessActivity extends BaseActivity {
             View inflate = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_select_business, viewGroup, false);
             Intrinsics.checkNotNullExpressionValue(inflate, "view");
             TextView tv_name = inflate.findViewById(R.id.tv_name);
+            TextView tv_code = inflate.findViewById(R.id.tv_code);
             ImageView iv_delete = inflate.findViewById(R.id.iv_delete);
-            return new Holder(this, inflate, (TextView) tv_name, iv_delete, viewGroup);
+            return new Holder(this, inflate, (TextView) tv_name, (TextView) tv_code, iv_delete, viewGroup);
         }
 
         @Override // androidx.recyclerview.widget.RecyclerView.Adapter
@@ -307,6 +314,7 @@ public class SynchronizeBusinessActivity extends BaseActivity {
                 holder.itemView.setLayoutParams(new AbsListView.LayoutParams(width / 2, height / 4));
             }
             holder.getTextView().setText(list.get(i).getServicetype());
+            holder.getTextView2().setText(list.get(i).getServicetypeNo());
             if (selectPosition == i) {
                 holder.getTextView().setTextColor(this.context.getResources().getColor(R.color.theme));
             } else {
@@ -400,7 +408,7 @@ public class SynchronizeBusinessActivity extends BaseActivity {
                 holder.itemView.setLayoutParams(new AbsListView.LayoutParams(width / 2, height / 4));
             }
             holder.getTextView().setText(list.get(i).getElementName());
-            holder.getTextView2().setText(list.get(i).getElementDesc());
+            holder.getTextView2().setText(list.get(i).getElementCode());
             if (selectPosition == i) {
                 holder.getTextView().setTextColor(this.context.getResources().getColor(R.color.white));
                 holder.getTextView2().setTextColor(this.context.getResources().getColor(R.color.white));

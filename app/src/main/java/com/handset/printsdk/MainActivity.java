@@ -1,7 +1,6 @@
 package com.handset.printsdk;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -10,30 +9,24 @@ import com.handset.printsdk.base.SPConfig;
 import com.handset.sdktool.bean.BusinessElementBean;
 import com.handset.sdktool.businessdatautil.BusinessDataUtil;
 import com.handset.sdktool.businessdatautil.PrintDataUtil;
-import com.handset.sdktool.data.DataUtil;
 import com.handset.sdktool.dto.BusinessDTO;
 import com.handset.sdktool.dto.ElementDTO;
-import com.handset.sdktool.listener.GetBusinessServiceByCompanyIdListener;
 import com.handset.sdktool.listener.InitCompanyListener;
 import com.handset.sdktool.net.base.NetConfig;
 import com.handset.sdktool.ui.AddCompanyActivity;
 import com.handset.sdktool.ui.SynchronizeBusinessActivity;
 import com.handset.sdktool.ui.SynchronizePrintActivity;
+import com.handset.sdktool.util.SPUtil;
 import com.handset.sdktool.util.SharedPreferenceUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.BindView;
 
 public class MainActivity extends BaseActivity {
-    @BindView(R.id.tv_business_data)
     TextView tv_business_data;
-    @BindView(R.id.tv_print)
     TextView tv_print;
-    @BindView(R.id.tv_print_test)
     TextView tv_print_test;
-    @BindView(R.id.tv_business)
     TextView tv_business;
 
     @Override
@@ -43,12 +36,32 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public void initView(Bundle savedInstanceState) {
+          tv_business_data =(TextView)findViewById(R.id.tv_business_data);
+          tv_print =(TextView)findViewById(R.id.tv_print);
+          tv_print_test =(TextView)findViewById(R.id.tv_print_test);
+          tv_business =(TextView)findViewById(R.id.tv_business);
+
+
         String ip = (String) SharedPreferenceUtil.get(mContext, SPConfig.IP, "");
-        NetConfig.init(ip );
+//        NetConfig.init(ip,"uid2","ceshi2" );
+        SPUtil.init(this);
 //        NetConfig.init(ip,"192.168.31.78","ces");
 //        BusinessDataUtil.getInstance().initCompany(new InitCompanyListener() {
 //            @Override
 //            public void onSuccess(String companyId) {
+//            }
+//
+//            @Override
+//            public void onError(Throwable e) {
+//
+//            }
+//        });
+
+//
+//        BusinessDataUtil.getInstance().initCompany("1", new InitCompanyListener() {
+//            @Override
+//            public void onSuccess(String companyId) {
+//
 //            }
 //
 //            @Override

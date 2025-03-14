@@ -9,6 +9,7 @@
     android:orientation="vertical">
 
     <LinearLayout
+        android:id="@+id/ll_item"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
@@ -34,17 +35,24 @@
             android:id="@+id/tv_independence"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="#bbbbbb"
             android:padding="15dp"
-            android:text="独立" />
+            android:text="独立IP"
+            android:textColor="#bbbbbb" />
 
         <TextView
             android:id="@+id/tv_unindependence"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="15dp"
-            android:textColor="#bbbbbb"
-            android:text="非独立" />
+            android:text="非独立IP"
+            android:textColor="#bbbbbb" />
+
+        <ImageView
+            android:id="@+id/iv_delete"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_margin="10dp"
+            android:src="@mipmap/deletee" />
     </LinearLayout>
 
     <View

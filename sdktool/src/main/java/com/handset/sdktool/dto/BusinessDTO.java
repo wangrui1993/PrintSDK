@@ -24,6 +24,7 @@ public class BusinessDTO {
      */
     public BusinessDTO(String servicetype, String servicetypeNo) {
         this.servicetype = servicetype;
+        this.servicetypeNo = servicetypeNo;
     }
 
     /**

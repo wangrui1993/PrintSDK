@@ -8,27 +8,30 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.handset.printsdk.base.BaseActivity;
-import com.handset.sdktool.bean.PrintPaperBean;
-import com.handset.sdktool.data.BusinessData;
 import com.handset.sdktool.data.ControllerUtil;
 import com.handset.sdktool.data.DataUtil;
 import com.handset.sdktool.dto.BusinessDTO;
+import com.handset.sdktool.listener.DeleteCompanyListener;
 import com.handset.sdktool.listener.GetAllBusinessListener;
 import com.handset.sdktool.listener.OnRecycleViewItemClickListener;
-import com.handset.sdktool.modle.ModleData;
-import com.handset.sdktool.ui.ConnectBlueToothActivity;
+import com.handset.sdktool.net.base.BaseBean;
+import com.handset.sdktool.ui.AddBusinessActivity;
+import com.handset.sdktool.ui.EditBusinessActivity;
 import com.handset.sdktool.ui.SynchronizeBusinessActivity;
-import com.handset.sdktool.util.DebugLog;
-import com.handset.sdktool.util.GetJsonDataUtil;
+import com.lxj.xpopup.XPopup;
+import com.lxj.xpopup.interfaces.OnConfirmListener;
+import com.lxj.xpopup.interfaces.OnSelectListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,16 +39,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import butterknife.BindView;
+
 
 public class PrintActivity extends BaseActivity {
-    @BindView(R.id.tv_search_print)
     TextView tv_search_print;
-    @BindView(R.id.tv_connect_print)
     TextView tv_connect_print;
-    @BindView(R.id.tv_print_test)
     TextView tv_print_test;
-    @BindView(R.id.rv)
     RecyclerView rv;
     private BusinessSelectAdapter mBusinessSelectAdapter;
     private List<BusinessDTO> mListBusiness = new ArrayList<>();
@@ -57,13 +56,14 @@ public class PrintActivity extends BaseActivity {
 
     @Override
     public void initView(Bundle savedInstanceState) {
-
-
+          tv_search_print=(TextView)findViewById(R.id.tv_search_print);
+          tv_connect_print=(TextView)findViewById(R.id.tv_connect_print);
+          tv_print_test=(TextView)findViewById(R.id.tv_print_test);
+          rv=(RecyclerView)findViewById(R.id.rv);
 
         mBusinessSelectAdapter = new BusinessSelectAdapter(this, mListBusiness);
-        rv.setLayoutManager(new LinearLayoutManager(this));
+        rv.setLayoutManager(new GridLayoutManager(this, 2));
         rv.setAdapter(mBusinessSelectAdapter);
-
         rv.addOnItemTouchListener(new OnRecycleViewItemClickListener(this, rv) {
             @Override
             public void onItemClick(RecyclerView.ViewHolder viewHolder, int i) {
@@ -72,12 +72,33 @@ public class PrintActivity extends BaseActivity {
                 List<Map<String, Object>> maps = new ArrayList<>();
                 maps.add(jishuju2(3));
 //                ControllerUtil.getInstance().printBitmapById(PrintActivity.this, mListBusiness.get(i).getServicetypeNo(), 1, map, "192.168.31.68", 9100, "TSC");
-                ControllerUtil.getInstance().openPrintPage(PrintActivity.this, mListBusiness.get(i).getServicetypeNo(), maps,jishuju2(3));
+                ControllerUtil.getInstance().openPrintPage(PrintActivity.this, mListBusiness.get(i).getServicetypeNo(), maps, jishuju2(3));
 
             }
 
             @Override
             public void onItemLongClick(RecyclerView.ViewHolder viewHolder, int i) {
+                String[] strings = new String[2];
+                strings[0] = "编辑";
+                strings[1] = "删除";
+                new XPopup.Builder(PrintActivity.this)
+                        .asCenterList("操作", strings, new OnSelectListener() {
+                            @Override
+                            public void onSelect(int position, String text) {
+                                if (position == 0) {
+                                    Intent intent = new Intent(PrintActivity.this, EditBusinessActivity.class);
+                                    intent.putExtra("title", mListBusiness.get(i).getServicetype());
+                                    Log.e("pageh==sss=", mListBusiness.get(i).toString());
+                                    intent.putExtra("servicetypeNo", mListBusiness.get(i).getServicetypeNo());
+                                    intent.putExtra("servicetype", mListBusiness.get(i).getServicetype());
+                                    startActivity(intent);
+                                } else {
+                                    deleteBusiness(mBusinessSelectAdapter.list.get(i));
+                                }
+                            }
+                        }).show();
+
+
             }
         });
         tv_search_print.setOnClickListener(new View.OnClickListener() {
@@ -93,9 +114,14 @@ public class PrintActivity extends BaseActivity {
 
             }
         });
+        getProfessionalWorkList();
+    }
+
+    private void getProfessionalWorkList() {
         DataUtil.getInstance().getProfessionalWork(new GetAllBusinessListener() {
             @Override
             public void onSuccess(List<BusinessDTO> listBaseBean) {
+                mListBusiness.clear();
                 mListBusiness.addAll(listBaseBean);
                 if (mListBusiness.size() > 0) {
                     mBusinessSelectAdapter.setSelectPosition(0);
@@ -155,6 +181,25 @@ public class PrintActivity extends BaseActivity {
 
         return map;
     }
+
+    private void deleteBusiness(BusinessDTO businessDTO) {
+        new XPopup.Builder(PrintActivity.this).asConfirm("确认删除？", "是否确认删除该业务", (OnConfirmListener) () -> {
+            List<BusinessDTO> businessDTOList = new ArrayList<>();
+            businessDTOList.add(businessDTO);
+            DataUtil.getInstance().delServiceInBatches(businessDTOList, new DeleteCompanyListener() {
+                @Override
+                public void onSuccess(BaseBean listBaseBean) {
+                    getProfessionalWorkList();
+                }
+
+                @Override
+                public void onError(Throwable e) {
+                    showToast("删除失败");
+                }
+            });
+        }).show();
+    }
+
 
     private Map<String, Object> jishuju2(int i) {
 
@@ -571,56 +616,142 @@ public class PrintActivity extends BaseActivity {
 //        s=s4;
         s = s5;
 //        s = s6;
+//        String s554 = "{\n" +
+//                "    \"kehuxingmi\":\"张安\",\n" +
+//                "    \"guige\":\"40*30*20\",\n" +
+//                "    \"heji\":\"22.35\",\n" +
+//                "    \"xiaoshouri\":\"2023-02-02\",\n" +
+//                "    \"liebiao\":[\n" +
+//                "        {\n" +
+//                "            \"zhongliang\":\"5.8745\",\n" +
+//                "            \"jiage\":\"2\",\n" +
+//                "            \"he\":\"11.335\",\n" +
+//                "            \"wuliaoming\":\"镀锌方管\"\n" +
+//                "        },\n" +
+//                "        {\n" +
+//                "            \"zhongliang\":\"5.8745\",\n" +
+//                "            \"jiage\":\"2\",\n" +
+//                "            \"he\":\"11.335\",\n" +
+//                "            \"wuliaoming\":\"镀锌方管\"\n" +
+//                "        },\n" +
+//                "        {\n" +
+//                "            \"zhongliang\":\"5.8745\",\n" +
+//                "            \"jiage\":\"2\",\n" +
+//                "            \"he\":\"11.335\",\n" +
+//                "            \"wuliaoming\":\"镀锌方管\"\n" +
+//                "        },\n" +
+//                "        {\n" +
+//                "            \"zhongliang\":\"5.8745\",\n" +
+//                "            \"jiage\":\"2\",\n" +
+//                "            \"he\":\"11.335\",\n" +
+//                "            \"wuliaoming\":\"镀锌方管\"\n" +
+//                "        },\n" +
+//                "        {\n" +
+//                "            \"zhongliang\":\"5.8745\",\n" +
+//                "            \"jiage\":\"2\",\n" +
+//                "            \"he\":\"11.335\",\n" +
+//                "            \"wuliaoming\":\"镀锌方管\"\n" +
+//                "        },\n" +
+//                "        {\n" +
+//                "            \"zhongliang\":\"5.8745\",\n" +
+//                "            \"jiage\":\"2\",\n" +
+//                "            \"he\":\"11.335\",\n" +
+//                "            \"wuliaoming\":\"镀锌方管\"\n" +
+//                "        },\n" +
+//                "        {\n" +
+//                "            \"zhongliang\":\"3.335\",\n" +
+//                "            \"he\":\"11.335\",\n" +
+//                "            \"jiage\":\"3\",\n" +
+//                "            \"wuliaoming\":\"镀锌方管333\"\n" +
+//                "        }\n" +
+//                "    ]\n" +
+//                "}";
+
+
         String s554 = "{\n" +
-                "    \"kehuxingmi\":\"张安\",\n" +
-                "    \"guige\":\"40*30*20\",\n" +
-                "    \"heji\":\"22.35\",\n" +
-                "    \"xiaoshouri\":\"2023-02-02\",\n" +
+                "    \"title\":\"测试销货单\",\n" +
+                "    \"xiaoshouri\":\"2022-12-12\",\n" +
+                "    \"kehuxingming\":\"张三\",\n" +
+                "    \"lianxidian\":\"12312341234\",\n" +
+                "    \"heji\":\"¥8888.88\",\n" +
+                "    \"hejida\":\"¥888.88\",\n" +
                 "    \"liebiao\":[\n" +
                 "        {\n" +
-                "            \"zhongliang\":\"5.8745\",\n" +
-                "            \"jiage\":\"2\",\n" +
-                "            \"he\":\"11.335\",\n" +
-                "            \"wuliaoming\":\"镀锌方管\"\n" +
+                "            \"wuliaoming\":\"5.8745\",\n" +
+                "            \"guige\":\"2\",\n" +
+                "            \"zhongliang\":\"11.335\",\n" +
+                "            \"he\":\"11.331\",\n" +
+                "            \"mainQty\":\"11.335\",\n" +
+                "            \"packQty\":\"11.335\",\n" +
+                "            \"auxQty\":\"11.335\",\n" +
+                "            \"jiage\":\"镀锌方管\"\n" +
                 "        },\n" +
                 "        {\n" +
-                "            \"zhongliang\":\"5.8745\",\n" +
-                "            \"jiage\":\"2\",\n" +
-                "            \"he\":\"11.335\",\n" +
-                "            \"wuliaoming\":\"镀锌方管\"\n" +
+                "            \"wuliaoming\":\"5.8745\",\n" +
+                "            \"guige\":\"2\",\n" +
+                "            \"zhongliang\":\"11.335\",\n" +
+                "            \"he\":\"11.331\",\n" +
+                "            \"mainQty\":\"11.335\",\n" +
+                "            \"packQty\":\"11.335\",\n" +
+                "            \"auxQty\":\"11.335\",\n" +
+                "            \"jiage\":\"镀锌方管\"\n" +
                 "        },\n" +
                 "        {\n" +
-                "            \"zhongliang\":\"5.8745\",\n" +
-                "            \"jiage\":\"2\",\n" +
-                "            \"he\":\"11.335\",\n" +
-                "            \"wuliaoming\":\"镀锌方管\"\n" +
+                "            \"wuliaoming\":\"5.8745\",\n" +
+                "            \"guige\":\"2\",\n" +
+                "            \"zhongliang\":\"11.335\",\n" +
+                "            \"he\":\"11.331\",\n" +
+                "            \"mainQty\":\"11.335\",\n" +
+                "            \"packQty\":\"11.335\",\n" +
+                "            \"auxQty\":\"11.335\",\n" +
+                "            \"jiage\":\"镀锌方管\"\n" +
                 "        },\n" +
                 "        {\n" +
-                "            \"zhongliang\":\"5.8745\",\n" +
-                "            \"jiage\":\"2\",\n" +
-                "            \"he\":\"11.335\",\n" +
-                "            \"wuliaoming\":\"镀锌方管\"\n" +
+                "            \"wuliaoming\":\"5.8745\",\n" +
+                "            \"guige\":\"2\",\n" +
+                "            \"zhongliang\":\"11.335\",\n" +
+                "            \"he\":\"11.332\",\n" +
+                "            \"mainQty\":\"11.335\",\n" +
+                "            \"packQty\":\"11.335\",\n" +
+                "            \"auxQty\":\"11.335\",\n" +
+                "            \"jiage\":\"镀锌方管\"\n" +
                 "        },\n" +
                 "        {\n" +
-                "            \"zhongliang\":\"5.8745\",\n" +
-                "            \"jiage\":\"2\",\n" +
-                "            \"he\":\"11.335\",\n" +
-                "            \"wuliaoming\":\"镀锌方管\"\n" +
+                "            \"wuliaoming\":\"5.8745\",\n" +
+                "            \"guige\":\"2\",\n" +
+                "            \"zhongliang\":\"11.335\",\n" +
+                "            \"he\":\"11.333\",\n" +
+                "            \"mainQty\":\"11.335\",\n" +
+                "            \"packQty\":\"11.335\",\n" +
+                "            \"auxQty\":\"11.335\",\n" +
+                "            \"jiage\":\"镀锌方管\"\n" +
                 "        },\n" +
                 "        {\n" +
-                "            \"zhongliang\":\"5.8745\",\n" +
-                "            \"jiage\":\"2\",\n" +
-                "            \"he\":\"11.335\",\n" +
-                "            \"wuliaoming\":\"镀锌方管\"\n" +
+                "            \"wuliaoming\":\"5.8745\",\n" +
+                "            \"guige\":\"2\",\n" +
+                "            \"zhongliang\":\"11.335\",\n" +
+                "            \"he\":\"11.334\",\n" +
+                "            \"mainQty\":\"11.335\",\n" +
+                "            \"packQty\":\"11.335\",\n" +
+                "            \"auxQty\":\"11.335\",\n" +
+                "            \"jiage\":\"镀锌方管\"\n" +
                 "        },\n" +
                 "        {\n" +
-                "            \"zhongliang\":\"3.335\",\n" +
+                "            \"wuliaoming\":\"5.8745\",\n" +
+                "            \"guige\":\"2\",\n" +
+                "            \"zhongliang\":\"11.335\",\n" +
                 "            \"he\":\"11.335\",\n" +
-                "            \"jiage\":\"3\",\n" +
-                "            \"wuliaoming\":\"镀锌方管333\"\n" +
+                "            \"mainQty\":\"11.335\",\n" +
+                "            \"packQty\":\"11.335\",\n" +
+                "            \"auxQty\":\"11.335\",\n" +
+                "            \"jiage\":\"镀锌方管\"\n" +
                 "        }\n" +
-                "    ]\n" +
+                "    ],\n" +
+                "    \"jiagongfei\":\"¥8888.88\",\n" +
+                "    \"yunfei\":\"¥888.88\"\n" +
                 "}";
+
+
         List<String> list = new ArrayList<>();
         list.add(s5);
         list.add(s55);
@@ -659,13 +790,17 @@ public class PrintActivity extends BaseActivity {
         public final class Holder extends RecyclerView.ViewHolder {
             private final ViewGroup parent;
             private final TextView textView;
+            private final TextView textView2;
+            private final ImageView iv_delete;
             final BusinessSelectAdapter this$0;
 
-            public Holder(BusinessSelectAdapter labelEditMenuAdapter, View view, TextView drawableTextView,
+            public Holder(BusinessSelectAdapter labelEditMenuAdapter, View view, TextView drawableTextView, TextView drawableTextView2, ImageView iv_delete,
                           ViewGroup viewGroup) {
                 super(view);
                 this.this$0 = labelEditMenuAdapter;
                 this.textView = drawableTextView;
+                this.textView2 = drawableTextView2;
+                this.iv_delete = iv_delete;
                 this.parent = viewGroup;
             }
 
@@ -677,14 +812,22 @@ public class PrintActivity extends BaseActivity {
                 return this.textView;
             }
 
+            public TextView getTextView2() {
+                return this.textView2;
+            }
+
+            public ImageView getIv_delete() {
+                return iv_delete;
+            }
         }
 
         @Override // androidx.recyclerview.widget.RecyclerView.Adapter
         public BusinessSelectAdapter.Holder onCreateViewHolder(ViewGroup viewGroup, int i) {
             View inflate = LayoutInflater.from(viewGroup.getContext()).inflate(com.handset.sdktool.R.layout.item_select_business, viewGroup, false);
             TextView tv_name = inflate.findViewById(com.handset.sdktool.R.id.tv_name);
-
-            return new BusinessSelectAdapter.Holder(this, inflate, (TextView) tv_name, viewGroup);
+            TextView tv_code = inflate.findViewById(com.handset.sdktool.R.id.tv_code);
+            ImageView iv_delete = inflate.findViewById(com.handset.sdktool.R.id.iv_delete);
+            return new BusinessSelectAdapter.Holder(this, inflate, (TextView) tv_name, (TextView) tv_code, (ImageView) iv_delete, viewGroup);
         }
 
         @Override // androidx.recyclerview.widget.RecyclerView.Adapter
@@ -698,7 +841,16 @@ public class PrintActivity extends BaseActivity {
             if (holder.itemView.getContext().getResources().getConfiguration().orientation == 2) {
                 holder.itemView.setLayoutParams(new AbsListView.LayoutParams(width / 2, height / 4));
             }
+            holder.getTextView2().setVisibility(View.VISIBLE);
+            holder.getIv_delete().setVisibility(View.VISIBLE);
             holder.getTextView().setText(list.get(i).getServicetype());
+            holder.getTextView2().setText(list.get(i).getServicetypeNo());
+            holder.getIv_delete().setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    deleteBusiness(list.get(i));
+                }
+            });
             if (selectPosition == i) {
                 holder.getTextView().setTextColor(this.context.getResources().getColor(com.handset.sdktool.R.color.theme));
             } else {

@@ -47,8 +47,8 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:background="@color/white"
         android:layout_height="wrap_content"
+        android:background="@color/white"
         android:orientation="vertical">
 
 
@@ -119,6 +119,24 @@
             </LinearLayout>
         </LinearLayout>
 
+        <TextView
+            android:id="@+id/tv_select"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:gravity="center"
+            android:hint="请选择关联公司"
+            android:padding="15dp" />
+
+        <GridView
+            android:id="@+id/gv"
+            android:visibility="gone"
+            android:numColumns="auto_fit"
+            android:columnWidth="80dp"
+            android:stretchMode="columnWidth"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -130,11 +148,17 @@
             <TextView
                 android:id="@+id/tv_commit"
                 style="@style/ThemeButton"
-                android:text="保存" />
+                android:text="使用" />
 
 
         </LinearLayout>
     </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="15dp"
+        android:text="历史记录" />
 
     <ListView
         android:id="@+id/recycle_view"

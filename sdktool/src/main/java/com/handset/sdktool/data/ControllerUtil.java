@@ -2,19 +2,14 @@ package com.handset.sdktool.data;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.blankj.utilcode.util.Utils;
-//import com.example.lc_print_sdk.PrintUtil;
-import com.google.gson.Gson;
 import com.handset.sdktool.dto.ModleDTO;
-import com.handset.sdktool.event.LabelBoard;
-import com.handset.sdktool.event.LabelItem;
 import com.handset.sdktool.listener.GetTemplateByBusinessCode;
 import com.handset.sdktool.printutil.MyPrintUtil;
 import com.handset.sdktool.ui.ConnectBlueToothActivity;
+import com.handset.sdktool.ui.ConnectUSBActivity;
 
 import java.util.List;
 import java.util.Map;
@@ -47,7 +42,7 @@ public class ControllerUtil {
     public void openPrintPage(Context context, String businessId, List<Map<String, Object>> maps, Map<String, Object> map) {
         BusinessData.getInstance().setMaps(maps);
         BusinessData.getInstance().setMap(map);
-        Intent intent = new Intent(context, ConnectBlueToothActivity.class);
+        Intent intent = new Intent(context, ConnectUSBActivity.class);//ConnectBlueToothActivity ConnectUSBActivity
         intent.putExtra("id", businessId);
         context.startActivity(intent);
     }

@@ -22,8 +22,6 @@ import com.handset.sdktool.net.OnResponse;
 import com.lxj.xpopup.XPopup;
 import com.lxj.xpopup.core.BasePopupView;
 
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
 
 
 /**
@@ -36,7 +34,6 @@ public abstract class BaseActivity extends AppCompatActivity implements BaseView
     protected Context mContext;
     protected Bundle bundle;
     protected BasePopupView popupView;
-    private Unbinder unbinder;
     protected View rootView;
 
 
@@ -55,7 +52,6 @@ public abstract class BaseActivity extends AppCompatActivity implements BaseView
         }
         Log.e(TAG, "--->OnCreate");
 
-        unbinder = ButterKnife.bind(this);
         bundle = getIntent().getExtras();
         if (bundle == null) {
             bundle = new Bundle();
@@ -215,7 +211,6 @@ public abstract class BaseActivity extends AppCompatActivity implements BaseView
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unbinder.unbind();
     }
 
 

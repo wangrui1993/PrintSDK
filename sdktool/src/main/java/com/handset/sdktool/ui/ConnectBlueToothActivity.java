@@ -45,6 +45,7 @@ import com.tbruyelle.rxpermissions.RxPermissions;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import cpcl.PrinterHelper;
 import kotlin.jvm.internal.Intrinsics;
@@ -161,7 +162,12 @@ public class ConnectBlueToothActivity extends AppCompatActivity {
                         Log.e("MyPrintUtil---","2");
                         MyPrintUtil printUtil = new MyPrintUtil(listBaseBean,getResources().getDisplayMetrics());
                         rl_pre.setVisibility(View.VISIBLE);
-                        printUtil.preview(iv_image,"TSC");
+//                        printUtil.preview(iv_image,"TSC");
+
+                        List<Map<String, Object>> d=new ArrayList<>();
+                        d.add( BusinessData.getInstance().getMap());
+                        iv_image.setImageBitmap(printUtil.dataGenerationImage(d,"TSC").get(0));
+
 //                        Log.e("mapmap==",getIntent().getStringExtra("id"));
 //                        Log.e("mapmap==",new Gson().toJson(listBaseBean));
 //                        for (ModleDTO.ComponentsBean componentsBean : listBaseBean.getComponents()) {

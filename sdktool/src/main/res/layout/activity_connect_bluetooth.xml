@@ -54,13 +54,12 @@
             <!--            app:drawableTint="@color/colorPrimary" />-->
         </LinearLayout>
 
-
         <TextView
             android:id="@+id/print"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:gravity="center"
-            android:text="打印"
+            android:text="蓝牙打印"
             android:textColor="@color/black"
             android:textSize="14.0sp" />
 

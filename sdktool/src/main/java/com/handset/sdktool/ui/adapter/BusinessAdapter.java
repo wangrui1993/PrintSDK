@@ -63,8 +63,9 @@ public class BusinessAdapter extends RecyclerView.Adapter<BusinessAdapter.Holder
         View inflate = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_business, viewGroup, false);
         Intrinsics.checkNotNullExpressionValue(inflate, "view");
         TextView tv_text = inflate.findViewById(R.id.tv_name);
+        TextView tv_2 = inflate.findViewById(R.id.tv_2);
         ImageView iv_image = inflate.findViewById(R.id.iv_image);
-        return new BusinessAdapter.Holder(this, inflate, (TextView) tv_text, (ImageView) iv_image);
+        return new BusinessAdapter.Holder(this, inflate, (TextView) tv_text,(TextView) tv_2, (ImageView) iv_image);
     }
 
     @Override // androidx.recyclerview.widget.RecyclerView.Adapter
@@ -75,6 +76,7 @@ public class BusinessAdapter extends RecyclerView.Adapter<BusinessAdapter.Holder
     public void onBindViewHolder(BusinessAdapter.Holder holder, int i) {
 
         holder.getTv_name().setText(list.get(i).getServicetype());
+        holder.getTv2().setText(list.get(i).getServicetypeNo());
         if (type==0) {
             holder.getIv_image().setVisibility(View.GONE);
         }else {
@@ -88,15 +90,16 @@ public class BusinessAdapter extends RecyclerView.Adapter<BusinessAdapter.Holder
     }
 
     public final class Holder extends RecyclerView.ViewHolder {
-        private final TextView tv_name;
+        private final TextView tv_name,tv_2;
         private final ImageView iv_image;
         final BusinessAdapter this$0;
 
         public Holder(BusinessAdapter labelEditMenuAdapter, View view,
-                      TextView tv_name, ImageView iv_image) {
+                      TextView tv_name, TextView tv_2, ImageView iv_image) {
             super(view);
             this.this$0 = labelEditMenuAdapter;
             this.tv_name = tv_name;
+            this.tv_2 = tv_2;
             this.iv_image = iv_image;
         }
 
@@ -106,6 +109,9 @@ public class BusinessAdapter extends RecyclerView.Adapter<BusinessAdapter.Holder
 
         public TextView getTv_name() {
             return tv_name;
+        }
+        public TextView getTv2() {
+            return tv_2;
         }
     }
 }
