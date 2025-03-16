@@ -43,7 +43,7 @@
         android:layout_height="50dp"
         android:layout_marginHorizontal="15dp"
         android:gravity="center"
-        android:text="全部模板"
+        android:text="全部业务"
         android:layout_below="@+id/rl_title"
         android:textColor="@color/text_585858"
         android:textSize="16sp" />
